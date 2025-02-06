@@ -1,0 +1,28 @@
+[package]
+name = "cgp-example-transfer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+cgp                 = { version = "0.3.0" }
+
+[patch.crates-io]
+cgp                         = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp-core                    = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp-extra                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp-async                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp-async-macro             = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp-component               = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp-component-macro         = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp-component-macro-lib     = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp-type                    = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp-field                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp-field-macro             = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp-field-macro-lib         = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp-error                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp-error-extra             = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp-error-anyhow            = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp-run                     = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp-runtime                 = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp-sync                    = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp-inner                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
