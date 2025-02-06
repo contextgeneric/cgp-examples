@@ -5,6 +5,8 @@ edition = "2021"
 
 [dependencies]
 cgp                 = { version = "0.3.0" }
+futures             = { version = "0.3.31" }
+num-traits          = { version = "0.2.19" }
 
 [patch.crates-io]
 cgp                         = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
