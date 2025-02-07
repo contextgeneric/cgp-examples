@@ -24,6 +24,7 @@ where
 
         if let Some((user_id, password)) = app.basic_authentication_header() {
             let m_hashed_password = app.query_user_hashed_password(user_id).await?;
+
             if let Some(hashed_password) = m_hashed_password {
                 if App::check_password(password, &hashed_password) {
                     *app.logged_in_user() = Some(user_id.clone());

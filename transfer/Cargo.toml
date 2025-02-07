@@ -9,22 +9,22 @@ futures             = { version = "0.3.31" }
 num-traits          = { version = "0.2.19" }
 
 [patch.crates-io]
-cgp                         = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
-cgp-core                    = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
-cgp-extra                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
-cgp-async                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
-cgp-async-macro             = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
-cgp-component               = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
-cgp-component-macro         = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
-cgp-component-macro-lib     = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
-cgp-type                    = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
-cgp-field                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
-cgp-field-macro             = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
-cgp-field-macro-lib         = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
-cgp-error                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
-cgp-error-extra             = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
-cgp-error-anyhow            = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
-cgp-run                     = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
-cgp-runtime                 = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
-cgp-sync                    = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
-cgp-inner                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "provider-check" }
+cgp                         = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp-core                    = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp-extra                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp-async                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp-async-macro             = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp-component               = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp-component-macro         = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp-component-macro-lib     = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp-type                    = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp-field                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp-field-macro             = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp-field-macro-lib         = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp-error                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp-error-extra             = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp-error-anyhow            = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp-run                     = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp-runtime                 = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp-sync                    = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp-inner                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
