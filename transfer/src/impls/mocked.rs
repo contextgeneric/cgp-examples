@@ -21,34 +21,19 @@ pub trait HasMockedPasswords: HasUserIdType + HasHashedPasswordType {
     fn mocked_passwords(&self) -> &BTreeMap<Self::UserId, Self::HashedPassword>;
 }
 
-#[cgp_auto_getter]
-pub trait HasBasicAuthenticationHeader: HasUserIdType + HasPasswordType {
-    fn basic_authentication_header(&self) -> &Option<(Self::UserId, Self::Password)>;
-}
-
-impl<App> UserAuthenticator<App> for UseMockedApp
+impl<App> UserHashedPasswordQuerier<App> for UseMockedApp
 where
-    App: HasMockedPasswords
-        + CanCheckPassword
-        + HasLoggedInUserMut
-        + HasBasicAuthenticationHeader
-        + CanRaiseAsyncError<String>,
-    App::UserId: Ord + Clone,
+    App: HasMockedPasswords + CanRaiseAsyncError<String>,
+    App::UserId: Ord,
+    App::HashedPassword: Clone,
 {
-    async fn authenticate_user(app: &mut App) -> Result<(), App::Error> {
-        if app.logged_in_user().is_some() {
-            return Ok(());
-        }
+    async fn query_user_hashed_password(
+        app: &App,
+        user_id: &App::UserId,
+    ) -> Result<Option<App::HashedPassword>, App::Error> {
+        let hashed_password = app.mocked_passwords().get(user_id).cloned();
 
-        if let Some((user_id, password)) = app.basic_authentication_header() {
-            if let Some(hashed_password) = app.mocked_passwords().get(user_id) {
-                if App::check_password(password, hashed_password) {
-                    *app.logged_in_user() = Some(user_id.clone());
-                }
-            }
-        }
-
-        Ok(())
+        Ok(hashed_password)
     }
 }
 
