@@ -69,7 +69,7 @@ pub trait CanQueryUserHashedPassword:
 pub trait CanQueryCurrentUserBalance:
     HasUserIdType + HasCurrencyType + HasQuantityType + HasAsyncErrorType
 {
-    async fn get_current_user_balance(
+    async fn query_current_user_balance(
         &self,
         currency: &Self::Currency,
     ) -> Result<Self::Quantity, Self::Error>;

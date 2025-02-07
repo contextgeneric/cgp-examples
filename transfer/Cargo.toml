@@ -7,6 +7,7 @@ edition = "2021"
 cgp                 = { version = "0.3.0" }
 futures             = { version = "0.3.31" }
 num-traits          = { version = "0.2.19" }
+serde               = { version = "1.0.217", features = ["derive"]}
 
 [patch.crates-io]
 cgp                         = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }

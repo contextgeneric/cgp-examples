@@ -54,7 +54,7 @@ where
     App::Currency: Ord + Clone,
     App::Quantity: Clone,
 {
-    async fn get_current_user_balance(
+    async fn query_current_user_balance(
         app: &App,
         currency: &App::Currency,
     ) -> Result<App::Quantity, App::Error> {
