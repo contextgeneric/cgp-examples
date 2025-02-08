@@ -5,7 +5,7 @@ use cgp::prelude::*;
 use futures::lock::Mutex;
 use num_traits::{CheckedAdd, CheckedSub};
 
-use crate::traits::*;
+use crate::interfaces::*;
 
 pub struct UseMockedApp;
 

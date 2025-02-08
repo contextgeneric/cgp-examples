@@ -2,7 +2,7 @@ use core::marker::PhantomData;
 
 use cgp::prelude::*;
 
-use crate::traits::*;
+use crate::interfaces::*;
 
 pub struct UseBasicAuth<InHandler>(pub PhantomData<InHandler>);
 
@@ -27,7 +27,7 @@ where
 
     async fn handle_api(
         app: &mut App,
-        request: &Self::Request,
+        request: Self::Request,
     ) -> Result<Self::Response, <App>::Error> {
         if app.logged_in_user().is_none() {
             if let Some((user_id, password)) = request.basic_authentication_header() {

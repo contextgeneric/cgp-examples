@@ -4,29 +4,7 @@ use cgp::core::component::UseDelegate;
 use cgp::prelude::*;
 use serde::Serialize;
 
-use crate::traits::*;
-
-pub struct AuthenticateUser<InHandler>(pub PhantomData<InHandler>);
-
-#[cgp_provider(ApiHandlerComponent)]
-impl<App, Api, InHandler> ApiHandler<App, Api> for AuthenticateUser<InHandler>
-where
-    App: CanAuthenticateUser,
-    InHandler: ApiHandler<App, Api>,
-{
-    type Request = InHandler::Request;
-
-    type Response = InHandler::Response;
-
-    async fn handle_api(
-        app: &mut App,
-        request: &Self::Request,
-    ) -> Result<Self::Response, App::Error> {
-        app.authenticate_user().await?;
-
-        InHandler::handle_api(app, request).await
-    }
-}
+use crate::interfaces::*;
 
 #[cgp_provider(ApiHandlerComponent)]
 impl<App, Api, Components, Delegate> ApiHandler<App, Api> for UseDelegate<Components>
@@ -41,7 +19,7 @@ where
 
     async fn handle_api(
         app: &mut App,
-        request: &Self::Request,
+        request: Self::Request,
     ) -> Result<Self::Response, App::Error> {
         Delegate::handle_api(app, request).await
     }
@@ -70,7 +48,7 @@ where
 
     type Response = ();
 
-    async fn handle_api(app: &mut App, request: &Request) -> Result<(), App::Error> {
+    async fn handle_api(app: &mut App, request: Request) -> Result<(), App::Error> {
         app.transfer_money(request.recipient(), request.currency(), request.quantity())
             .await?;
 
@@ -107,7 +85,7 @@ where
 
     async fn handle_api(
         app: &mut App,
-        request: &Request,
+        request: Request,
     ) -> Result<QueryBalanceResponse<App>, App::Error> {
         let balance = app.query_current_user_balance(request.currency()).await?;
 
