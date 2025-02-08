@@ -11,7 +11,7 @@ pub trait CanHandleApi<Api>: HasAsyncErrorType {
 
     type Response: Async;
 
-    async fn handle_api(&mut self, request: Self::Request) -> Result<Self::Response, Self::Error>;
+    async fn handle_api(&self, request: Self::Request) -> Result<Self::Response, Self::Error>;
 }
 
 #[cgp_provider(ApiHandlerComponent)]
@@ -25,10 +25,7 @@ where
 
     type Response = Delegate::Response;
 
-    async fn handle_api(
-        app: &mut App,
-        request: Self::Request,
-    ) -> Result<Self::Response, App::Error> {
+    async fn handle_api(app: &App, request: Self::Request) -> Result<Self::Response, App::Error> {
         Delegate::handle_api(app, request).await
     }
 }

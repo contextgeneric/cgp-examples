@@ -22,10 +22,10 @@ where
 #[cgp_provider(ApiHandlerComponent)]
 impl<App, Api, InHandler> ApiHandler<App, Api> for UseBasicAuth<InHandler>
 where
-    App: HasLoggedInUserMut
-        + CanExtractBasicAuthHeader<InHandler::Request>
+    App: CanExtractBasicAuthHeader<InHandler::Request>
         + CanQueryUserHashedPassword
         + CanCheckPassword,
+    InHandler::Request: HasLoggedInUserMut<App>,
     InHandler: ApiHandler<App, Api>,
     App::UserId: Clone,
 {
@@ -34,10 +34,10 @@ where
     type Response = InHandler::Response;
 
     async fn handle_api(
-        app: &mut App,
+        app: &App,
         mut request: Self::Request,
     ) -> Result<Self::Response, <App>::Error> {
-        if app.logged_in_user().is_none() {
+        if request.logged_in_user().is_none() {
             if let Some((user_id, password)) =
                 App::extract_basic_authentication_header(&mut request).await
             {
@@ -45,7 +45,7 @@ where
 
                 if let Some(hashed_password) = m_hashed_password {
                     if App::check_password(&password, &hashed_password) {
-                        *app.logged_in_user() = Some(user_id.clone());
+                        *request.logged_in_user() = Some(user_id.clone());
                     }
                 }
             }

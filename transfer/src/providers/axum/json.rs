@@ -17,10 +17,7 @@ where
 
     type Response = Json<InHandler::Response>;
 
-    async fn handle_api(
-        app: &mut App,
-        request: Self::Request,
-    ) -> Result<Self::Response, App::Error> {
+    async fn handle_api(app: &App, request: Self::Request) -> Result<Self::Response, App::Error> {
         let response = InHandler::handle_api(app, request).await?;
         Ok(Json(response))
     }

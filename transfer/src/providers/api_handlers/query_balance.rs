@@ -26,18 +26,18 @@ where
 #[cgp_provider(ApiHandlerComponent)]
 impl<App, Api, Request> ApiHandler<App, Api> for HandleQueryBalance<Request>
 where
-    App: CanQueryUserBalance + HasLoggedInUser + CanRaiseAsyncError<String>,
-    Request: Async + HasQueryBalanceFields<App>,
+    App: CanQueryUserBalance + CanRaiseAsyncError<String>,
+    Request: Async + HasLoggedInUser<App> + HasQueryBalanceFields<App>,
 {
     type Request = Request;
 
     type Response = QueryBalanceResponse<App>;
 
     async fn handle_api(
-        app: &mut App,
+        app: &App,
         request: Request,
     ) -> Result<QueryBalanceResponse<App>, App::Error> {
-        let user = app
+        let user = request
             .logged_in_user()
             .as_ref()
             .ok_or_else(|| App::raise_error("you must first login".into()))?;

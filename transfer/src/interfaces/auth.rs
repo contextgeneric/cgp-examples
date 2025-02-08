@@ -3,13 +3,19 @@ use cgp::prelude::*;
 use crate::interfaces::{HasHashedPasswordType, HasPasswordType, HasUserIdType};
 
 #[cgp_auto_getter]
-pub trait HasLoggedInUser: HasUserIdType {
-    fn logged_in_user(&self) -> &Option<Self::UserId>;
+pub trait HasLoggedInUser<App>
+where
+    App: HasUserIdType,
+{
+    fn logged_in_user(&self) -> &Option<App::UserId>;
 }
 
 #[cgp_auto_getter]
-pub trait HasLoggedInUserMut: HasUserIdType {
-    fn logged_in_user(&mut self) -> &mut Option<Self::UserId>;
+pub trait HasLoggedInUserMut<App>
+where
+    App: HasUserIdType,
+{
+    fn logged_in_user(&mut self) -> &mut Option<App::UserId>;
 }
 
 #[cgp_component {

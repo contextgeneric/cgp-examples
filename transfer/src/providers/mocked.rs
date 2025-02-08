@@ -52,7 +52,7 @@ where
 #[cgp_provider(UserBalanceQuerierComponent)]
 impl<App> UserBalanceQuerier<App> for UseMockedApp
 where
-    App: HasMockedUserBalances + HasLoggedInUser + CanRaiseAsyncError<String>,
+    App: HasMockedUserBalances + CanRaiseAsyncError<String>,
     App::UserId: Ord + Clone,
     App::Currency: Ord + Clone,
     App::Quantity: Clone,
@@ -77,7 +77,7 @@ where
 #[cgp_provider(MoneyTransferrerComponent)]
 impl<App> MoneyTransferrer<App> for UseMockedApp
 where
-    App: HasMockedUserBalances + HasLoggedInUser + CanRaiseAsyncError<String>,
+    App: HasMockedUserBalances + CanRaiseAsyncError<String>,
     App::Quantity: CheckedAdd + CheckedSub,
     App::UserId: Ord + Clone,
     App::Currency: Ord + Clone,
