@@ -5,14 +5,16 @@ use cgp::prelude::*;
     provider: HttpErrorRaiser,
 }]
 pub trait CanRaiseHttpError<Code, Detail>: HasAsyncErrorType {
-    fn raise_http_error(detail: Detail) -> Self::Error;
+    fn raise_http_error(_code: Code, detail: Detail) -> Self::Error;
 }
 
-pub struct Unauthorized;
+pub struct ErrUnauthorized;
 
-pub struct BadRequest;
+pub struct ErrBadRequest;
 
-pub struct InternalServerError;
+pub struct ErrNotFound;
+
+pub struct ErrInternal;
 
 #[cgp_provider(HttpErrorRaiserComponent)]
 impl<Context, Components, Code, Detail> HttpErrorRaiser<Context, Code, Detail>
@@ -22,7 +24,7 @@ where
     Components: DelegateComponent<(Code, Detail)>,
     Components::Delegate: HttpErrorRaiser<Context, Code, Detail>,
 {
-    fn raise_http_error(detail: Detail) -> Context::Error {
-        Components::Delegate::raise_http_error(detail)
+    fn raise_http_error(code: Code, detail: Detail) -> Context::Error {
+        Components::Delegate::raise_http_error(code, detail)
     }
 }

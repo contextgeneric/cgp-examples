@@ -24,7 +24,7 @@ pub trait HasMockedPasswords: HasUserIdType + HasHashedPasswordType {
 #[cgp_provider(UserHashedPasswordQuerierComponent)]
 impl<App> UserHashedPasswordQuerier<App> for UseMockedApp
 where
-    App: HasMockedPasswords + CanRaiseAsyncError<String>,
+    App: HasMockedPasswords + HasAsyncErrorType,
     App::UserId: Ord,
     App::HashedPassword: Clone,
 {
@@ -52,7 +52,7 @@ where
 #[cgp_provider(UserBalanceQuerierComponent)]
 impl<App> UserBalanceQuerier<App> for UseMockedApp
 where
-    App: HasMockedUserBalances + CanRaiseAsyncError<String>,
+    App: HasMockedUserBalances + CanRaiseHttpError<ErrNotFound, String>,
     App::UserId: Ord + Clone,
     App::Currency: Ord + Clone,
     App::Quantity: Clone,
@@ -67,7 +67,10 @@ where
         let user_balance = user_balances
             .get(&(user.clone(), currency.clone()))
             .ok_or_else(|| {
-                App::raise_error(format!("user not found in mocked database: {user}"))
+                App::raise_http_error(
+                    ErrNotFound,
+                    format!("user not found in mocked database: {user}"),
+                )
             })?;
 
         Ok(user_balance.clone())
@@ -77,7 +80,9 @@ where
 #[cgp_provider(MoneyTransferrerComponent)]
 impl<App> MoneyTransferrer<App> for UseMockedApp
 where
-    App: HasMockedUserBalances + CanRaiseAsyncError<String>,
+    App: HasMockedUserBalances
+        + CanRaiseHttpError<ErrNotFound, String>
+        + CanRaiseHttpError<ErrBadRequest, String>,
     App::Quantity: CheckedAdd + CheckedSub,
     App::UserId: Ord + Clone,
     App::Currency: Ord + Clone,
@@ -95,21 +100,29 @@ where
         let recipient_key = (recipient.clone(), currency.clone());
 
         let old_sender_balance = user_balances.get(&sender_key).ok_or_else(|| {
-            App::raise_error(format!("sender not found in mocked database: {sender}"))
+            App::raise_http_error(
+                ErrNotFound,
+                format!("sender not found in mocked database: {sender}"),
+            )
         })?;
 
         let old_recipient_balance = user_balances.get(&recipient_key).ok_or_else(|| {
-            App::raise_error(format!(
-                "recipient not found in mocked database: {recipient}"
-            ))
+            App::raise_http_error(
+                ErrNotFound,
+                format!("recipient not found in mocked database: {recipient}"),
+            )
         })?;
 
         let new_sender_balance = old_sender_balance.checked_sub(quantity)
-            .ok_or_else(|| App::raise_error(format!("sender {sender} has insufficient balance {old_sender_balance} to transfer {quantity}")))?;
+            .ok_or_else(|| App::raise_http_error(ErrBadRequest, format!("sender {sender} has insufficient balance {old_sender_balance} to transfer {quantity}")))?;
 
-        let new_recipient_balance = old_recipient_balance
-            .checked_add(quantity)
-            .ok_or_else(|| App::raise_error(format!("recipient already has too much money!")))?;
+        let new_recipient_balance =
+            old_recipient_balance.checked_add(quantity).ok_or_else(|| {
+                App::raise_http_error(
+                    ErrBadRequest,
+                    format!("recipient already has too much money!"),
+                )
+            })?;
 
         user_balances.insert(sender_key, new_sender_balance);
         user_balances.insert(recipient_key, new_recipient_balance);

@@ -5,7 +5,8 @@ use axum::http::StatusCode;
 use cgp::prelude::*;
 
 use crate::interfaces::{
-    BadRequest, HttpErrorRaiser, HttpErrorRaiserComponent, InternalServerError, Unauthorized,
+    ErrBadRequest, ErrInternal, ErrNotFound, ErrUnauthorized, HttpErrorRaiser,
+    HttpErrorRaiserComponent,
 };
 use crate::types::AppError;
 
@@ -13,19 +14,25 @@ pub trait IsStatusCode {
     fn status_code() -> StatusCode;
 }
 
-impl IsStatusCode for Unauthorized {
+impl IsStatusCode for ErrUnauthorized {
     fn status_code() -> StatusCode {
         StatusCode::UNAUTHORIZED
     }
 }
 
-impl IsStatusCode for BadRequest {
+impl IsStatusCode for ErrBadRequest {
     fn status_code() -> StatusCode {
         StatusCode::BAD_REQUEST
     }
 }
 
-impl IsStatusCode for InternalServerError {
+impl IsStatusCode for ErrNotFound {
+    fn status_code() -> StatusCode {
+        StatusCode::NOT_FOUND
+    }
+}
+
+impl IsStatusCode for ErrInternal {
     fn status_code() -> StatusCode {
         StatusCode::INTERNAL_SERVER_ERROR
     }
@@ -40,7 +47,7 @@ where
     Code: IsStatusCode,
     Detail: Display,
 {
-    fn raise_http_error(detail: Detail) -> AppError {
+    fn raise_http_error(_code: Code, detail: Detail) -> AppError {
         AppError {
             status_code: Code::status_code(),
             detail: anyhow!("{detail}"),
@@ -57,7 +64,7 @@ where
     Code: IsStatusCode,
     anyhow::Error: From<Detail>,
 {
-    fn raise_http_error(detail: Detail) -> AppError {
+    fn raise_http_error(_code: Code, detail: Detail) -> AppError {
         AppError {
             status_code: Code::status_code(),
             detail: detail.into(),
