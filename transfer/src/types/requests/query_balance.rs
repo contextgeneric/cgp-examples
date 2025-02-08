@@ -7,20 +7,16 @@ use serde::Deserialize;
 use crate::types::DemoCurrency;
 
 #[derive(HasField)]
-pub struct TransferRequest {
+pub struct QueryBalanceRequest {
     pub currency: DemoCurrency,
-    pub recipient: String,
-    pub quantity: u64,
     pub auth_header: Option<(String, String)>,
     pub logged_in_user: Option<String>,
 }
 
-impl From<AxumTransferRequest> for TransferRequest {
-    fn from((Query(query), auth): AxumTransferRequest) -> Self {
+impl From<AxumQueryBalanceRequest> for QueryBalanceRequest {
+    fn from((Query(query), auth): AxumQueryBalanceRequest) -> Self {
         Self {
             currency: query.currency,
-            recipient: query.recipient,
-            quantity: query.quantity,
             auth_header: auth
                 .map(|Authorization(basic)| (basic.username().into(), basic.password().into())),
             logged_in_user: None,
@@ -28,11 +24,9 @@ impl From<AxumTransferRequest> for TransferRequest {
     }
 }
 
-#[derive(Deserialize)]
-pub struct TransferQuery {
-    pub currency: DemoCurrency,
-    pub recipient: String,
-    pub quantity: u64,
-}
+pub type AxumQueryBalanceRequest = (Query<QueryBalanceQuery>, Option<Authorization<Basic>>);
 
-pub type AxumTransferRequest = (Query<TransferQuery>, Option<Authorization<Basic>>);
+#[derive(Deserialize)]
+pub struct QueryBalanceQuery {
+    pub currency: DemoCurrency,
+}
