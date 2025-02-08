@@ -6,26 +6,19 @@ use crate::interfaces::*;
 
 pub struct UseBasicAuth<InHandler>(pub PhantomData<InHandler>);
 
-#[cgp_component {
-    provider: BasicAuthHeaderExtractor,
-}]
-#[async_trait]
-pub trait CanExtractBasicAuthHeader<Request>: HasUserIdType + HasPasswordType
+#[cgp_auto_getter]
+pub trait HasBasicAuthHeader<App>
 where
-    Request: Async,
+    App: HasUserIdType + HasPasswordType,
 {
-    async fn extract_basic_authentication_header(
-        request: &mut Request,
-    ) -> Option<(Self::UserId, Self::Password)>;
+    fn basic_auth_header(&self) -> &Option<(App::UserId, App::Password)>;
 }
 
 #[cgp_provider(ApiHandlerComponent)]
 impl<App, Api, InHandler> ApiHandler<App, Api> for UseBasicAuth<InHandler>
 where
-    App: CanExtractBasicAuthHeader<InHandler::Request>
-        + CanQueryUserHashedPassword
-        + CanCheckPassword,
-    InHandler::Request: HasLoggedInUserMut<App>,
+    App: CanQueryUserHashedPassword + CanCheckPassword,
+    InHandler::Request: HasLoggedInUserMut<App> + HasBasicAuthHeader<App>,
     InHandler: ApiHandler<App, Api>,
     App::UserId: Clone,
 {
@@ -38,9 +31,7 @@ where
         mut request: Self::Request,
     ) -> Result<Self::Response, <App>::Error> {
         if request.logged_in_user().is_none() {
-            if let Some((user_id, password)) =
-                App::extract_basic_authentication_header(&mut request).await
-            {
+            if let Some((user_id, password)) = request.basic_auth_header() {
                 let m_hashed_password = app.query_user_hashed_password(&user_id).await?;
 
                 if let Some(hashed_password) = m_hashed_password {

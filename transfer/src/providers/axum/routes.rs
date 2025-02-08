@@ -9,7 +9,7 @@ use axum::Router;
 use cgp::prelude::HasErrorType;
 
 use crate::interfaces::CanHandleApi;
-use crate::types::ApiError;
+use crate::types::AppError;
 
 pub struct GetMethod;
 
@@ -19,9 +19,8 @@ pub trait CanAddRoute<App, Api, Method> {
     fn add_route(self, _tag: PhantomData<(Api, Method)>, path: &str) -> Self;
 }
 
-pub fn handle_api_error(err: ApiError) -> (StatusCode, String) {
-    let status_code =
-        StatusCode::from_u16(err.status_code).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR);
+pub fn handle_api_error(err: AppError) -> (StatusCode, String) {
+    let status_code = err.status_code;
 
     let detail = err.detail.to_string();
 
@@ -30,7 +29,7 @@ pub fn handle_api_error(err: ApiError) -> (StatusCode, String) {
 
 impl<App, Api> CanAddRoute<App, Api, GetMethod> for Router<Arc<App>>
 where
-    App: HasErrorType<Error = ApiError> + CanHandleApi<Api>,
+    App: HasErrorType<Error = AppError> + CanHandleApi<Api>,
     App::Request: FromRequest<Arc<App>>,
     App::Response: IntoResponse,
 {
@@ -48,7 +47,7 @@ where
 
 impl<App, Api> CanAddRoute<App, Api, PostMethod> for Router<Arc<App>>
 where
-    App: HasErrorType<Error = ApiError> + CanHandleApi<Api>,
+    App: HasErrorType<Error = AppError> + CanHandleApi<Api>,
     App::Request: FromRequest<Arc<App>>,
     App::Response: IntoResponse,
 {

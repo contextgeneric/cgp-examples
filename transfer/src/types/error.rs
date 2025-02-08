@@ -1,4 +1,6 @@
-pub struct ApiError {
-    pub status_code: u16,
+use axum::http::StatusCode;
+
+pub struct AppError {
+    pub status_code: StatusCode,
     pub detail: anyhow::Error,
 }
