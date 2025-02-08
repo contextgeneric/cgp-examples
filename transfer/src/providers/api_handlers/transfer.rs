@@ -21,7 +21,7 @@ where
 #[cgp_provider(ApiHandlerComponent)]
 impl<App, Api, Request> ApiHandler<App, Api> for HandleTransfer<Request>
 where
-    App: CanTransferMoney + CanRaiseAsyncError<String>,
+    App: CanTransferMoney + CanRaiseHttpError<ErrUnauthorized, String>,
     Request: Async + HasLoggedInUser<App> + HasTransferMoneyFields<App>,
 {
     type Request = Request;
@@ -29,10 +29,12 @@ where
     type Response = ();
 
     async fn handle_api(app: &App, request: Request) -> Result<(), App::Error> {
-        let sender = request
-            .logged_in_user()
-            .as_ref()
-            .ok_or_else(|| App::raise_error("you must first login to perform transfer".into()))?;
+        let sender = request.logged_in_user().as_ref().ok_or_else(|| {
+            App::raise_http_error(
+                ErrUnauthorized,
+                "you must first login to perform transfer".into(),
+            )
+        })?;
 
         app.transfer_money(
             &sender,

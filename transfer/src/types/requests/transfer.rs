@@ -1,4 +1,5 @@
 use axum::extract::Query;
+use axum_extra::TypedHeader;
 use cgp::prelude::*;
 use headers::authorization::Basic;
 use headers::Authorization;
@@ -11,18 +12,21 @@ pub struct TransferRequest {
     pub currency: DemoCurrency,
     pub recipient: String,
     pub quantity: u64,
-    pub auth_header: Option<(String, String)>,
+    pub basic_auth_header: Option<(String, String)>,
     pub logged_in_user: Option<String>,
 }
 
 impl From<AxumTransferRequest> for TransferRequest {
     fn from((Query(query), auth): AxumTransferRequest) -> Self {
+        let basic_auth_header = auth.map(|TypedHeader(Authorization(basic))| {
+            (basic.username().into(), basic.password().into())
+        });
+
         Self {
             currency: query.currency,
             recipient: query.recipient,
             quantity: query.quantity,
-            auth_header: auth
-                .map(|Authorization(basic)| (basic.username().into(), basic.password().into())),
+            basic_auth_header,
             logged_in_user: None,
         }
     }
@@ -35,4 +39,7 @@ pub struct TransferQuery {
     pub quantity: u64,
 }
 
-pub type AxumTransferRequest = (Query<TransferQuery>, Option<Authorization<Basic>>);
+pub type AxumTransferRequest = (
+    Query<TransferQuery>,
+    Option<TypedHeader<Authorization<Basic>>>,
+);

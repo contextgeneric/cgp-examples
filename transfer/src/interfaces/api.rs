@@ -14,6 +14,10 @@ pub trait CanHandleApi<Api>: HasAsyncErrorType {
     async fn handle_api(&self, request: Self::Request) -> Result<Self::Response, Self::Error>;
 }
 
+pub struct TransferApi;
+
+pub struct QueryBalanceApi;
+
 #[cgp_provider(ApiHandlerComponent)]
 impl<App, Api, Components, Delegate> ApiHandler<App, Api> for UseDelegate<Components>
 where

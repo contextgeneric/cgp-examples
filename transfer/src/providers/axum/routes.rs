@@ -1,7 +1,7 @@
 use core::marker::PhantomData;
 use std::sync::Arc;
 
-use axum::extract::{FromRequest, State};
+use axum::extract::{FromRequestParts, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::{get, post};
@@ -30,7 +30,7 @@ pub fn handle_api_error(err: AppError) -> (StatusCode, String) {
 impl<App, Api> CanAddRoute<App, Api, GetMethod> for Router<Arc<App>>
 where
     App: HasErrorType<Error = AppError> + CanHandleApi<Api>,
-    App::Request: FromRequest<Arc<App>>,
+    App::Request: FromRequestParts<Arc<App>>,
     App::Response: IntoResponse,
 {
     fn add_route(self, _tag: PhantomData<(Api, GetMethod)>, path: &str) -> Self {
@@ -48,7 +48,7 @@ where
 impl<App, Api> CanAddRoute<App, Api, PostMethod> for Router<Arc<App>>
 where
     App: HasErrorType<Error = AppError> + CanHandleApi<Api>,
-    App::Request: FromRequest<Arc<App>>,
+    App::Request: FromRequestParts<Arc<App>>,
     App::Response: IntoResponse,
 {
     fn add_route(self, _tag: PhantomData<(Api, PostMethod)>, path: &str) -> Self {

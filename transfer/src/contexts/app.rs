@@ -1,6 +1,7 @@
 use std::collections::BTreeMap;
 use std::sync::Arc;
 
+use axum::Router;
 use cgp::core::component::UseDelegate;
 use cgp::core::error::ErrorTypeComponent;
 use cgp::prelude::*;
@@ -8,7 +9,10 @@ use futures::lock::Mutex;
 
 use crate::interfaces::*;
 use crate::providers::*;
-use crate::types::{AppError, DemoCurrency};
+use crate::types::{
+    AppError, AxumQueryBalanceRequest, AxumTransferRequest, DemoCurrency, QueryBalanceRequest,
+    TransferRequest,
+};
 
 #[derive(HasField)]
 pub struct MockApp {
@@ -38,10 +42,12 @@ delegate_components! {
             UseType<DemoCurrency>,
         [
             PasswordCheckerComponent,
+            UserHashedPasswordQuerierComponent,
             UserBalanceQuerierComponent,
             MoneyTransferrerComponent,
         ]:
             UseMockedApp,
+        ApiHandlerComponent: UseDelegate<ApiHandlers>,
     }
 }
 
@@ -54,9 +60,40 @@ delegate_components! {
     }
 }
 
-pub trait CanUseMockedAppComponents:
-    CanUseComponent<UserBalanceQuerierComponent> + CanUseComponent<MoneyTransferrerComponent>
+pub struct ApiHandlers;
+
+delegate_components! {
+    ApiHandlers {
+        QueryBalanceApi:
+            HandleFromRequest<
+                AxumQueryBalanceRequest,
+                ResponseToJson<
+                    UseBasicAuth<
+                        HandleQueryBalance<QueryBalanceRequest>
+                    >>>,
+        TransferApi:
+            HandleFromRequest<
+                AxumTransferRequest,
+                UseBasicAuth<
+                    HandleTransfer<TransferRequest>
+                >
+            >,
+    }
+}
+
+pub trait CanUseMockAppComponents:
+    CanUseComponent<UserBalanceQuerierComponent>
+    + CanUseComponent<MoneyTransferrerComponent>
+    + CanUseComponent<ApiHandlerComponent, QueryBalanceApi>
+    + CanUseComponent<ApiHandlerComponent, TransferApi>
 {
 }
 
-impl CanUseMockedAppComponents for MockApp {}
+impl CanUseMockAppComponents for MockApp {}
+
+pub trait CanAddApiRoutes:
+    CanAddRoute<MockApp, QueryBalanceApi, GetMethod> + CanAddRoute<MockApp, TransferApi, PostMethod>
+{
+}
+
+impl CanAddApiRoutes for Router<Arc<MockApp>> {}
