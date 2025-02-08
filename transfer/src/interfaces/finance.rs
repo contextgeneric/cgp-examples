@@ -6,11 +6,12 @@ use crate::interfaces::{HasCurrencyType, HasQuantityType, HasUserIdType};
     provider: UserBalanceQuerier,
 }]
 #[async_trait]
-pub trait CanQueryCurrentUserBalance:
+pub trait CanQueryUserBalance:
     HasUserIdType + HasCurrencyType + HasQuantityType + HasAsyncErrorType
 {
-    async fn query_current_user_balance(
+    async fn query_user_balance(
         &self,
+        user: &Self::UserId,
         currency: &Self::Currency,
     ) -> Result<Self::Quantity, Self::Error>;
 }
@@ -24,6 +25,7 @@ pub trait CanTransferMoney:
 {
     async fn transfer_money(
         &self,
+        sender: &Self::UserId,
         recipient: &Self::UserId,
         currency: &Self::Currency,
         quantity: &Self::Quantity,

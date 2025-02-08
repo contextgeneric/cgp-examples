@@ -57,15 +57,11 @@ where
     App::Currency: Ord + Clone,
     App::Quantity: Clone,
 {
-    async fn query_current_user_balance(
+    async fn query_user_balance(
         app: &App,
+        user: &App::UserId,
         currency: &App::Currency,
     ) -> Result<App::Quantity, App::Error> {
-        let user = app
-            .logged_in_user()
-            .as_ref()
-            .ok_or_else(|| App::raise_error("user is not logged in".into()))?;
-
         let user_balances = app.mocked_user_balances().lock().await;
 
         let user_balance = user_balances
@@ -88,15 +84,11 @@ where
 {
     async fn transfer_money(
         app: &App,
+        sender: &App::UserId,
         recipient: &App::UserId,
         currency: &App::Currency,
         quantity: &App::Quantity,
     ) -> Result<(), App::Error> {
-        let sender = app
-            .logged_in_user()
-            .as_ref()
-            .ok_or_else(|| App::raise_error("sender is not logged in".into()))?;
-
         let mut user_balances = app.mocked_user_balances().lock().await;
 
         let sender_key = (sender.clone(), currency.clone());

@@ -26,7 +26,7 @@ where
 #[cgp_provider(ApiHandlerComponent)]
 impl<App, Api, Request> ApiHandler<App, Api> for HandleQueryBalance<Request>
 where
-    App: CanQueryCurrentUserBalance,
+    App: CanQueryUserBalance + HasLoggedInUser + CanRaiseAsyncError<String>,
     Request: Async + HasQueryBalanceFields<App>,
 {
     type Request = Request;
@@ -37,7 +37,12 @@ where
         app: &mut App,
         request: Request,
     ) -> Result<QueryBalanceResponse<App>, App::Error> {
-        let balance = app.query_current_user_balance(request.currency()).await?;
+        let user = app
+            .logged_in_user()
+            .as_ref()
+            .ok_or_else(|| App::raise_error("you must first login".into()))?;
+
+        let balance = app.query_user_balance(user, request.currency()).await?;
 
         Ok(QueryBalanceResponse { balance })
     }
