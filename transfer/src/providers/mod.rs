@@ -1,9 +1,7 @@
+mod api_handlers;
 mod axum;
-mod basic_auth;
-mod handlers;
 mod mocked;
 
+pub use api_handlers::*;
 pub use axum::*;
-pub use basic_auth::*;
-pub use handlers::*;
 pub use mocked::*;

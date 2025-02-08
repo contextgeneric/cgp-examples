@@ -8,6 +8,7 @@ use headers::Authorization;
 use crate::interfaces::{HasPasswordType, HasUserIdType};
 use crate::providers::{BasicAuthHeaderExtractor, BasicAuthHeaderExtractorComponent};
 
+#[cgp_auto_getter]
 pub trait HasRequestParts {
     fn request_parts(&mut self) -> &mut Option<Parts>;
 }
