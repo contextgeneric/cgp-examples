@@ -21,6 +21,7 @@ pub trait HasMockedPasswords: HasUserIdType + HasHashedPasswordType {
     fn mocked_passwords(&self) -> &BTreeMap<Self::UserId, Self::HashedPassword>;
 }
 
+#[cgp_provider(UserHashedPasswordQuerierComponent)]
 impl<App> UserHashedPasswordQuerier<App> for UseMockedApp
 where
     App: HasMockedPasswords + CanRaiseAsyncError<String>,
@@ -37,6 +38,7 @@ where
     }
 }
 
+#[cgp_provider(PasswordCheckerComponent)]
 impl<App> PasswordChecker<App> for UseMockedApp
 where
     App: HasPasswordType + HasHashedPasswordType<HashedPassword = App::Password>,
@@ -47,6 +49,7 @@ where
     }
 }
 
+#[cgp_provider(UserBalanceQuerierComponent)]
 impl<App> UserBalanceQuerier<App> for UseMockedApp
 where
     App: HasMockedUserBalances + HasLoggedInUser + CanRaiseAsyncError<String>,

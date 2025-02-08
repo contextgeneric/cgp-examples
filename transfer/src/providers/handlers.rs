@@ -39,6 +39,7 @@ where
     fn quantity(&self) -> &App::Quantity;
 }
 
+#[cgp_provider(ApiHandlerComponent)]
 impl<App, Api, Request> ApiHandler<App, Api> for HandleTransfer<Request>
 where
     App: CanTransferMoney,
@@ -74,6 +75,7 @@ where
     pub balance: App::Quantity,
 }
 
+#[cgp_provider(ApiHandlerComponent)]
 impl<App, Api, Request> ApiHandler<App, Api> for HandleQueryBalance<Request>
 where
     App: CanQueryCurrentUserBalance,

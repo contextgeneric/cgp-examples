@@ -5,27 +5,31 @@ edition = "2021"
 
 [dependencies]
 cgp                 = { version = "0.3.0" }
+cgp-component-macro = { version = "0.3.0", features = ["provider-supertrait"] }
 futures             = { version = "0.3.31" }
 num-traits          = { version = "0.2.19" }
 serde               = { version = "1.0.217", features = ["derive"]}
+axum                = { version = "0.8.1" }
+axum-extra          = { version = "0.10.0", features = ["typed-header"]}
+headers             = { version = "0.4.0" }
 
 [patch.crates-io]
-cgp                         = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
-cgp-core                    = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
-cgp-extra                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
-cgp-async                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
-cgp-async-macro             = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
-cgp-component               = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
-cgp-component-macro         = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
-cgp-component-macro-lib     = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
-cgp-type                    = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
-cgp-field                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
-cgp-field-macro             = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
-cgp-field-macro-lib         = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
-cgp-error                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
-cgp-error-extra             = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
-cgp-error-anyhow            = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
-cgp-run                     = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
-cgp-runtime                 = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
-cgp-sync                    = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
-cgp-inner                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "generic-auto-getter" }
+cgp                         = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
+cgp-core                    = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
+cgp-extra                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
+cgp-async                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
+cgp-async-macro             = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
+cgp-component               = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
+cgp-component-macro         = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
+cgp-component-macro-lib     = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
+cgp-type                    = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
+cgp-field                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
+cgp-field-macro             = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
+cgp-field-macro-lib         = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
+cgp-error                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
+cgp-error-extra             = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
+cgp-error-anyhow            = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
+cgp-run                     = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
+cgp-runtime                 = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
+cgp-sync                    = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
+cgp-inner                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
