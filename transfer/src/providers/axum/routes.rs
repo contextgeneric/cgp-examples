@@ -2,11 +2,14 @@ use core::marker::PhantomData;
 use std::sync::Arc;
 
 use axum::extract::{FromRequest, State};
+use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::{get, post};
 use axum::Router;
+use cgp::prelude::HasErrorType;
 
 use crate::interfaces::CanHandleApi;
+use crate::types::ApiError;
 
 pub struct GetMethod;
 
@@ -16,11 +19,19 @@ pub trait CanAddRoute<App, Api, Method> {
     fn add_route(self, _tag: PhantomData<(Api, Method)>, path: &str) -> Self;
 }
 
+pub fn handle_api_error(err: ApiError) -> (StatusCode, String) {
+    let status_code =
+        StatusCode::from_u16(err.status_code).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR);
+
+    let detail = err.detail.to_string();
+
+    (status_code, detail)
+}
+
 impl<App, Api> CanAddRoute<App, Api, GetMethod> for Router<Arc<App>>
 where
-    App: CanHandleApi<Api>,
+    App: HasErrorType<Error = ApiError> + CanHandleApi<Api>,
     App::Request: FromRequest<Arc<App>>,
-    App::Error: IntoResponse,
     App::Response: IntoResponse,
 {
     fn add_route(self, _tag: PhantomData<(Api, GetMethod)>, path: &str) -> Self {
@@ -28,7 +39,7 @@ where
             path,
             get(
                 |(State(app), request): (State<Arc<App>>, App::Request)| async move {
-                    app.handle_api(request).await
+                    app.handle_api(request).await.map_err(handle_api_error)
                 },
             ),
         )
@@ -37,9 +48,8 @@ where
 
 impl<App, Api> CanAddRoute<App, Api, PostMethod> for Router<Arc<App>>
 where
-    App: CanHandleApi<Api>,
+    App: HasErrorType<Error = ApiError> + CanHandleApi<Api>,
     App::Request: FromRequest<Arc<App>>,
-    App::Error: IntoResponse,
     App::Response: IntoResponse,
 {
     fn add_route(self, _tag: PhantomData<(Api, PostMethod)>, path: &str) -> Self {
@@ -47,7 +57,7 @@ where
             path,
             post(
                 |(State(app), request): (State<Arc<App>>, App::Request)| async move {
-                    app.handle_api(request).await
+                    app.handle_api(request).await.map_err(handle_api_error)
                 },
             ),
         )

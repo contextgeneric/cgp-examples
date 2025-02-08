@@ -11,14 +11,14 @@ pub struct UseMockedApp;
 
 #[cgp_auto_getter]
 pub trait HasMockedUserBalances: HasUserIdType + HasCurrencyType + HasQuantityType {
-    fn mocked_user_balances(
+    fn user_balances(
         &self,
     ) -> &Arc<Mutex<BTreeMap<(Self::UserId, Self::Currency), Self::Quantity>>>;
 }
 
 #[cgp_auto_getter]
 pub trait HasMockedPasswords: HasUserIdType + HasHashedPasswordType {
-    fn mocked_passwords(&self) -> &BTreeMap<Self::UserId, Self::HashedPassword>;
+    fn user_passwords(&self) -> &BTreeMap<Self::UserId, Self::HashedPassword>;
 }
 
 #[cgp_provider(UserHashedPasswordQuerierComponent)]
@@ -32,7 +32,7 @@ where
         app: &App,
         user_id: &App::UserId,
     ) -> Result<Option<App::HashedPassword>, App::Error> {
-        let hashed_password = app.mocked_passwords().get(user_id).cloned();
+        let hashed_password = app.user_passwords().get(user_id).cloned();
 
         Ok(hashed_password)
     }
@@ -62,7 +62,7 @@ where
         user: &App::UserId,
         currency: &App::Currency,
     ) -> Result<App::Quantity, App::Error> {
-        let user_balances = app.mocked_user_balances().lock().await;
+        let user_balances = app.user_balances().lock().await;
 
         let user_balance = user_balances
             .get(&(user.clone(), currency.clone()))
@@ -89,7 +89,7 @@ where
         currency: &App::Currency,
         quantity: &App::Quantity,
     ) -> Result<(), App::Error> {
-        let mut user_balances = app.mocked_user_balances().lock().await;
+        let mut user_balances = app.user_balances().lock().await;
 
         let sender_key = (sender.clone(), currency.clone());
         let recipient_key = (recipient.clone(), currency.clone());

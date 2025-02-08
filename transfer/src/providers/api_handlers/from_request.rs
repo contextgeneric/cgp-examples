@@ -11,7 +11,7 @@ impl<App, Api, Request, InHandler> ApiHandler<App, Api> for HandleFromRequest<Re
 where
     App: HasAsyncErrorType,
     InHandler: ApiHandler<App, Api>,
-    InHandler::Request: From<Request>,
+    Request: Into<InHandler::Request>,
     Request: Async,
 {
     type Request = Request;
@@ -30,7 +30,8 @@ impl<App, Api, Response, InHandler> ApiHandler<App, Api> for HandleFromResponse<
 where
     App: HasAsyncErrorType,
     InHandler: ApiHandler<App, Api>,
-    Response: Async + From<InHandler::Response>,
+    InHandler::Response: Into<Response>,
+    Response: Async,
 {
     type Request = InHandler::Request;
 
