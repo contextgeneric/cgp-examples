@@ -8,7 +8,7 @@ use axum::routing::{get, post};
 use axum::Router;
 use cgp::prelude::HasErrorType;
 
-use crate::interfaces::CanHandleApi;
+use crate::interfaces::{CanHandleApi, QueryBalanceApi, TransferApi};
 use crate::types::AppError;
 
 pub struct GetMethod;
@@ -60,5 +60,19 @@ where
                 },
             ),
         )
+    }
+}
+
+pub trait CanAddMainApiRoutes<App> {
+    fn add_main_api_routes(self) -> Self;
+}
+
+impl<App> CanAddMainApiRoutes<App> for Router<Arc<App>>
+where
+    Self: CanAddRoute<App, QueryBalanceApi, GetMethod> + CanAddRoute<App, TransferApi, PostMethod>,
+{
+    fn add_main_api_routes(self) -> Self {
+        self.add_route(PhantomData::<(QueryBalanceApi, GetMethod)>, "/balance")
+            .add_route(PhantomData::<(TransferApi, PostMethod)>, "/transfer")
     }
 }

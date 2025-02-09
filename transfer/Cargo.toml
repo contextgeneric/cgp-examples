@@ -3,6 +3,10 @@ name = "cgp-example-transfer"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "server"
+path = "bin/server.rs"
+
 [dependencies]
 cgp                 = { version = "0.3.0" }
 cgp-component-macro = { version = "0.3.0", features = ["provider-supertrait"] }
@@ -13,6 +17,7 @@ serde               = { version = "1.0.217", features = ["derive"]}
 axum                = { version = "0.8.1" }
 axum-extra          = { version = "0.10.0", features = ["typed-header"]}
 headers             = { version = "0.4.0" }
+tokio               = { version = "1.43.0", features = ["full"] }
 
 [patch.crates-io]
 cgp                         = { git = "https://github.com/contextgeneric/cgp.git", branch = "preserve-provider-bounds" }
