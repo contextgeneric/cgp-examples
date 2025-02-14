@@ -29,7 +29,7 @@ where
     async fn handle_api(
         app: &App,
         mut request: Self::Request,
-    ) -> Result<Self::Response, <App>::Error> {
+    ) -> Result<Self::Response, App::Error> {
         if request.logged_in_user().is_none() {
             if let Some((user_id, password)) = request.basic_auth_header() {
                 let m_hashed_password = app.query_user_hashed_password(&user_id).await?;

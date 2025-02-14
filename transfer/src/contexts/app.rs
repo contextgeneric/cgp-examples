@@ -14,6 +14,7 @@ use crate::types::{
     TransferRequest,
 };
 
+#[cgp_context(MockAppProvider)]
 #[derive(HasField, Default)]
 pub struct MockApp {
     pub user_balances: Arc<Mutex<BTreeMap<(String, DemoCurrency), u64>>>,
@@ -41,14 +42,8 @@ impl MockApp {
     }
 }
 
-pub struct MockAppComponents;
-
-impl HasComponents for MockApp {
-    type Components = MockAppComponents;
-}
-
 delegate_components! {
-    MockAppComponents {
+    MockAppProvider {
         ErrorTypeComponent: UseType<AppError>,
         HttpErrorRaiserComponent: UseDelegate<HandleAppErrors>,
         [
