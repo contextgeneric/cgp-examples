@@ -3,27 +3,30 @@ name = "cgp-example-greet"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "greet"
+path = "bin/greet.rs"
+
 [dependencies]
-cgp                 = { version = "0.3.0" }
-cgp-component-macro = { version = "0.3.0", features = ["provider-supertrait"] }
+cgp                 = { version = "0.3.0", features = ["provider-supertrait"] }
 
 [patch.crates-io]
-cgp                         = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-core                    = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-extra                   = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-async                   = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-async-macro             = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-component               = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-component-macro         = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-component-macro-lib     = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-type                    = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-field                   = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-field-macro             = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-field-macro-lib         = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-error                   = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-error-extra             = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-error-anyhow            = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-run                     = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-runtime                 = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-sync                    = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-inner                   = { git = "https://github.com/contextgeneric/cgp.git" }
+cgp                         = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }
+cgp-core                    = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }
+cgp-extra                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }
+cgp-async                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }
+cgp-async-macro             = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }
+cgp-component               = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }
+cgp-component-macro         = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }
+cgp-component-macro-lib     = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }
+cgp-type                    = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }
+cgp-field                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }
+cgp-field-macro             = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }
+cgp-field-macro-lib         = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }
+cgp-error                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }
+cgp-error-extra             = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }
+cgp-error-anyhow            = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }
+cgp-run                     = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }
+cgp-runtime                 = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }
+cgp-sync                    = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }
+cgp-inner                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "new-cgp-provider" }

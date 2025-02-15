@@ -1,10 +1,6 @@
-use core::marker::PhantomData;
-
 use cgp::prelude::*;
 
 use crate::interfaces::*;
-
-pub struct UseBasicAuth<InHandler>(pub PhantomData<InHandler>);
 
 #[cgp_auto_getter]
 pub trait HasBasicAuthHeader<App>
@@ -14,7 +10,7 @@ where
     fn basic_auth_header(&self) -> &Option<(App::UserId, App::Password)>;
 }
 
-#[cgp_provider(ApiHandlerComponent)]
+#[new_cgp_provider(ApiHandlerComponent)]
 impl<App, Api, InHandler> ApiHandler<App, Api> for UseBasicAuth<InHandler>
 where
     App: CanQueryUserHashedPassword + CanCheckPassword,

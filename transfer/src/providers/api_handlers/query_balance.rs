@@ -1,11 +1,7 @@
-use core::marker::PhantomData;
-
 use cgp::prelude::*;
 use serde::Serialize;
 
 use crate::interfaces::*;
-
-pub struct HandleQueryBalance<Request>(pub PhantomData<Request>);
 
 #[cgp_auto_getter]
 pub trait HasQueryBalanceFields<App>
@@ -23,7 +19,7 @@ where
     pub balance: App::Quantity,
 }
 
-#[cgp_provider(ApiHandlerComponent)]
+#[new_cgp_provider(ApiHandlerComponent)]
 impl<App, Api, Request> ApiHandler<App, Api> for HandleQueryBalance<Request>
 where
     App: CanQueryUserBalance + CanRaiseHttpError<ErrUnauthorized, String>,

@@ -1,12 +1,8 @@
-use core::marker::PhantomData;
-
 use cgp::prelude::*;
 
 use crate::interfaces::{ApiHandler, ApiHandlerComponent};
 
-pub struct HandleFromRequest<Request, InHandler>(pub PhantomData<(Request, InHandler)>);
-
-#[cgp_provider(ApiHandlerComponent)]
+#[new_cgp_provider(ApiHandlerComponent)]
 impl<App, Api, Request, InHandler> ApiHandler<App, Api> for HandleFromRequest<Request, InHandler>
 where
     App: HasAsyncErrorType,
@@ -23,9 +19,7 @@ where
     }
 }
 
-pub struct HandleFromResponse<Response, InHandler>(pub PhantomData<(Response, InHandler)>);
-
-#[cgp_provider(ApiHandlerComponent)]
+#[new_cgp_provider(ApiHandlerComponent)]
 impl<App, Api, Response, InHandler> ApiHandler<App, Api> for HandleFromResponse<Response, InHandler>
 where
     App: HasAsyncErrorType,
