@@ -60,10 +60,12 @@ delegate_components! {
             PasswordCheckerComponent,
             UserHashedPasswordQuerierComponent,
             UserBalanceQuerierComponent,
-            MoneyTransferrerComponent,
         ]:
             UseMockedApp,
-        ApiHandlerComponent: UseDelegate<ApiHandlers>,
+        MoneyTransferrerComponent:
+            NoTransferToSelf<UseMockedApp>,
+        ApiHandlerComponent:
+            UseDelegate<ApiHandlers>,
     }
 }
 
