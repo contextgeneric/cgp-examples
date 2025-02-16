@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use axum::Router;
 use cgp::core::component::UseDelegate;
-use cgp::core::error::ErrorTypeComponent;
+use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::prelude::*;
 use futures::lock::Mutex;
 
@@ -44,17 +44,17 @@ impl MockApp {
 
 delegate_components! {
     MockAppProvider {
-        ErrorTypeComponent: UseType<AppError>,
+        ErrorTypeProviderComponent: UseType<AppError>,
         HttpErrorRaiserComponent: UseDelegate<HandleAppErrors>,
         [
-            UserIdTypeComponent,
-            PasswordTypeComponent,
-            HashedPasswordTypeComponent,
+            UserIdTypeProviderComponent,
+            PasswordTypeProviderComponent,
+            HashedPasswordTypeProviderComponent,
         ]:
             UseType<String>,
-        QuantityTypeComponent:
+        QuantityTypeProviderComponent:
             UseType<u64>,
-        CurrencyTypeComponent:
+        CurrencyTypeProviderComponent:
             UseType<DemoCurrency>,
         [
             PasswordCheckerComponent,

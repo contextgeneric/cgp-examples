@@ -9,7 +9,10 @@ pub trait CanGreet {
     fn greet(&self);
 }
 
-cgp_type!(Name);
+#[cgp_type]
+pub trait HasNameType {
+    type Name;
+}
 
 #[cgp_auto_getter]
 pub trait HasName: HasNameType {
