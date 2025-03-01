@@ -10,7 +10,7 @@ where
     fn basic_auth_header(&self) -> &Option<(App::UserId, App::Password)>;
 }
 
-#[new_cgp_provider(ApiHandlerComponent)]
+#[cgp_new_provider(ApiHandlerComponent)]
 impl<App, Api, InHandler> ApiHandler<App, Api> for UseBasicAuth<InHandler>
 where
     App: CanQueryUserHashedPassword + CanCheckPassword,

@@ -19,7 +19,7 @@ pub trait HasName: HasNameType {
     fn name(&self) -> &Self::Name;
 }
 
-#[new_cgp_provider(GreeterComponent)]
+#[cgp_new_provider(GreeterComponent)]
 impl<Context> Greeter<Context> for GreetHello
 where
     Context: HasName,
@@ -38,7 +38,7 @@ pub struct Person {
 
 delegate_components! {
     PersonProvider {
-        NameTypeComponent: UseType<String>,
+        NameTypeProviderComponent: UseType<String>,
         GreeterComponent: GreetHello,
     }
 }

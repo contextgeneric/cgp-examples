@@ -14,7 +14,7 @@ where
     fn quantity(&self) -> &App::Quantity;
 }
 
-#[new_cgp_provider(ApiHandlerComponent)]
+#[cgp_new_provider(ApiHandlerComponent)]
 impl<App, Api, Request> ApiHandler<App, Api> for HandleTransfer<Request>
 where
     App: CanTransferMoney + CanRaiseHttpError<ErrUnauthorized, String>,

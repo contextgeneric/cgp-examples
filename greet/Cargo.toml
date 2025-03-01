@@ -5,10 +5,10 @@ edition = "2021"
 
 [[bin]]
 name = "greet"
-path = "bin/greet.rs"
+path = "bin/greet_name.rs"
 
 [dependencies]
-cgp                 = { version = "0.3.0", features = ["provider-supertrait"] }
+cgp                 = { version = "0.4.0" }
 
 [patch.crates-io]
 cgp                         = { git = "https://github.com/contextgeneric/cgp.git" }
