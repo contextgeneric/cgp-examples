@@ -10,8 +10,7 @@ use futures::lock::Mutex;
 use crate::interfaces::*;
 use crate::providers::*;
 use crate::types::{
-    AppError, AxumQueryBalanceRequest, AxumTransferRequest, DemoCurrency, QueryBalanceRequest,
-    TransferRequest,
+    AppError, AxumQueryBalanceRequest, AxumTransferRequest, DemoCurrency, QueryBalanceRequest, TransferRequest
 };
 
 #[cgp_context(MockAppProvider)]
@@ -99,15 +98,18 @@ delegate_components! {
     }
 }
 
-pub trait CanUseMockAppComponents:
-    CanUseComponent<UserBalanceQuerierComponent>
-    + CanUseComponent<MoneyTransferrerComponent>
-    + CanUseComponent<ApiHandlerComponent, QueryBalanceApi>
-    + CanUseComponent<ApiHandlerComponent, TransferApi>
-{
+check_components! {
+    CanUseMockApp for MockApp
+    {
+        QuantityTypeProviderComponent,
+        UserBalanceQuerierComponent,
+        MoneyTransferrerComponent,
+        ApiHandlerComponent: [
+            QueryBalanceApi,
+            TransferApi,
+        ],
+    }
 }
-
-impl CanUseMockAppComponents for MockApp {}
 
 pub trait CanAddApiRoutes: CanAddMainApiRoutes<MockApp> {}
 
