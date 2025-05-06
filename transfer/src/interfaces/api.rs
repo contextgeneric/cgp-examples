@@ -1,10 +1,7 @@
 use cgp::core::component::UseDelegate;
 use cgp::prelude::*;
 
-#[cgp_component {
-    provider: ApiHandler,
-    context: App,
-}]
+#[cgp_component(ApiHandler)]
 #[async_trait]
 pub trait CanHandleApi<Api>: HasAsyncErrorType {
     type Request: Send + Sync;
@@ -18,7 +15,7 @@ pub struct TransferApi;
 
 pub struct QueryBalanceApi;
 
-#[cgp_provider(ApiHandlerComponent)]
+#[cgp_provider]
 impl<App, Api, Components, Delegate> ApiHandler<App, Api> for UseDelegate<Components>
 where
     App: HasAsyncErrorType,

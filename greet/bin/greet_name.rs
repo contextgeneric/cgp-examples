@@ -2,9 +2,7 @@ use core::fmt::Display;
 
 use cgp::prelude::*;
 
-#[cgp_component {
-    provider: Greeter,
-}]
+#[cgp_component(Greeter)]
 pub trait CanGreet {
     fn greet(&self);
 }
@@ -19,7 +17,7 @@ pub trait HasName: HasNameType {
     fn name(&self) -> &Self::Name;
 }
 
-#[cgp_new_provider(GreeterComponent)]
+#[cgp_new_provider]
 impl<Context> Greeter<Context> for GreetHello
 where
     Context: HasName,
@@ -30,14 +28,14 @@ where
     }
 }
 
-#[cgp_context(PersonProvider)]
+#[cgp_context]
 #[derive(HasField)]
 pub struct Person {
     pub name: String,
 }
 
 delegate_components! {
-    PersonProvider {
+    PersonComponents {
         NameTypeProviderComponent: UseType<String>,
         GreeterComponent: GreetHello,
     }

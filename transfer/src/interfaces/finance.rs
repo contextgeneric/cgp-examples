@@ -2,9 +2,7 @@ use cgp::prelude::*;
 
 use crate::interfaces::{HasCurrencyType, HasQuantityType, HasUserIdType};
 
-#[cgp_component {
-    provider: UserBalanceQuerier,
-}]
+#[cgp_component(UserBalanceQuerier)]
 #[async_trait]
 pub trait CanQueryUserBalance:
     HasUserIdType + HasCurrencyType + HasQuantityType + HasAsyncErrorType
@@ -16,9 +14,7 @@ pub trait CanQueryUserBalance:
     ) -> Result<Self::Quantity, Self::Error>;
 }
 
-#[cgp_component {
-    provider: MoneyTransferrer,
-}]
+#[cgp_component(MoneyTransferrer)]
 #[async_trait]
 pub trait CanTransferMoney:
     HasUserIdType + HasCurrencyType + HasQuantityType + HasAsyncErrorType

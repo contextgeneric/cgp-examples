@@ -1,9 +1,7 @@
 use cgp::core::component::UseDelegate;
 use cgp::prelude::*;
 
-#[cgp_component {
-    provider: HttpErrorRaiser,
-}]
+#[cgp_component(HttpErrorRaiser)]
 pub trait CanRaiseHttpError<Code, Detail>: HasAsyncErrorType {
     fn raise_http_error(_code: Code, detail: Detail) -> Self::Error;
 }

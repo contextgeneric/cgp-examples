@@ -19,7 +19,7 @@ where
     pub balance: App::Quantity,
 }
 
-#[cgp_new_provider(ApiHandlerComponent)]
+#[cgp_new_provider]
 impl<App, Api, Request> ApiHandler<App, Api> for HandleQueryBalance<Request>
 where
     App: CanQueryUserBalance + CanRaiseHttpError<ErrUnauthorized, String>,

@@ -18,16 +18,12 @@ where
     fn logged_in_user(&mut self) -> &mut Option<App::UserId>;
 }
 
-#[cgp_component {
-    provider: PasswordChecker,
-}]
+#[cgp_component(PasswordChecker)]
 pub trait CanCheckPassword: HasPasswordType + HasHashedPasswordType {
     fn check_password(password: &Self::Password, hashed_password: &Self::HashedPassword) -> bool;
 }
 
-#[cgp_component {
-    provider: UserHashedPasswordQuerier,
-}]
+#[cgp_component(UserHashedPasswordQuerier)]
 #[async_trait]
 pub trait CanQueryUserHashedPassword:
     HasUserIdType + HasHashedPasswordType + HasAsyncErrorType

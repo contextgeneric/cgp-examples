@@ -7,7 +7,7 @@ use crate::interfaces::{ApiHandler, ApiHandlerComponent};
 
 pub struct ResponseToJson<InHandler>(pub PhantomData<InHandler>);
 
-#[cgp_provider(ApiHandlerComponent)]
+#[cgp_provider]
 impl<App, Api, InHandler> ApiHandler<App, Api> for ResponseToJson<InHandler>
 where
     App: HasAsyncErrorType,

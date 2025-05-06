@@ -2,7 +2,7 @@ use cgp::prelude::*;
 
 use crate::interfaces::*;
 
-#[cgp_new_provider(MoneyTransferrerComponent)]
+#[cgp_new_provider]
 impl<App, InHandler> MoneyTransferrer<App> for NoTransferToSelf<InHandler>
 where
     App: HasUserIdType

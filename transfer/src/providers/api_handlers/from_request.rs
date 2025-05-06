@@ -2,7 +2,7 @@ use cgp::prelude::*;
 
 use crate::interfaces::{ApiHandler, ApiHandlerComponent};
 
-#[cgp_new_provider(ApiHandlerComponent)]
+#[cgp_new_provider]
 impl<App, Api, Request, InHandler> ApiHandler<App, Api> for HandleFromRequest<Request, InHandler>
 where
     App: HasAsyncErrorType,
@@ -19,7 +19,7 @@ where
     }
 }
 
-#[cgp_new_provider(ApiHandlerComponent)]
+#[cgp_new_provider]
 impl<App, Api, Response, InHandler> ApiHandler<App, Api> for HandleFromResponse<Response, InHandler>
 where
     App: HasAsyncErrorType,
