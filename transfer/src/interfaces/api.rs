@@ -7,9 +7,9 @@ use cgp::prelude::*;
 }]
 #[async_trait]
 pub trait CanHandleApi<Api>: HasAsyncErrorType {
-    type Request: Async;
+    type Request: Send + Sync;
 
-    type Response: Async;
+    type Response: Send + Sync;
 
     async fn handle_api(&self, request: Self::Request) -> Result<Self::Response, Self::Error>;
 }

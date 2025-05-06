@@ -29,9 +29,9 @@ pub fn handle_api_error(err: AppError) -> (StatusCode, String) {
 
 impl<App, Api> CanAddRoute<App, Api, GetMethod> for Router<Arc<App>>
 where
-    App: HasErrorType<Error = AppError> + CanHandleApi<Api>,
-    App::Request: FromRequestParts<Arc<App>>,
-    App::Response: IntoResponse,
+    App: 'static + HasErrorType<Error = AppError> + CanHandleApi<Api>,
+    App::Request: 'static + FromRequestParts<Arc<App>>,
+    App::Response: 'static + IntoResponse,
 {
     fn add_route(self, _tag: PhantomData<(Api, GetMethod)>, path: &str) -> Self {
         self.route(
@@ -47,9 +47,9 @@ where
 
 impl<App, Api> CanAddRoute<App, Api, PostMethod> for Router<Arc<App>>
 where
-    App: HasErrorType<Error = AppError> + CanHandleApi<Api>,
-    App::Request: FromRequestParts<Arc<App>>,
-    App::Response: IntoResponse,
+    App: 'static + HasErrorType<Error = AppError> + CanHandleApi<Api>,
+    App::Request: 'static + FromRequestParts<Arc<App>>,
+    App::Response: 'static + IntoResponse,
 {
     fn add_route(self, _tag: PhantomData<(Api, PostMethod)>, path: &str) -> Self {
         self.route(

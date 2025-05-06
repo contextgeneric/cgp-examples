@@ -10,7 +10,8 @@ use futures::lock::Mutex;
 use crate::interfaces::*;
 use crate::providers::*;
 use crate::types::{
-    AppError, AxumQueryBalanceRequest, AxumTransferRequest, DemoCurrency, QueryBalanceRequest, TransferRequest
+    AppError, AxumQueryBalanceRequest, AxumTransferRequest, DemoCurrency, QueryBalanceRequest,
+    TransferRequest,
 };
 
 #[cgp_context(MockAppProvider)]
