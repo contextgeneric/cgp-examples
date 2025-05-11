@@ -12,11 +12,11 @@ pub trait Greeter<Context>: IsProviderFor<GreeterComponent, Context, ()> {
 
 impl<Context> CanGreet for Context
 where
-    Context: HasProvider,
-    Context::Provider: Greeter<Context>,
+    Context: HasCgpProvider,
+    Context::CgpProvider: Greeter<Context>,
 {
     fn greet(&self) {
-        Context::Provider::greet(self)
+        Context::CgpProvider::greet(self)
     }
 }
 
