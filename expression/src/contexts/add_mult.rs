@@ -4,9 +4,7 @@ use cgp::prelude::*;
 
 use crate::components::LispExprTypeProviderComponent;
 use crate::dsl::{Eval, ToLisp};
-use crate::providers::{
-    AddToLisp, BinaryOpToLisp, EvalAdd, EvalLiteral, EvalMultiply, LiteralToLisp, MultiplyToLisp,
-};
+use crate::providers::{BinaryOpToLisp, EvalAdd, EvalLiteral, EvalMultiply, LiteralToLisp};
 use crate::types::{Ident, List, Literal, Plus, Times};
 
 pub type Value = u64;
@@ -18,7 +16,7 @@ pub enum Expr {
     Literal(Literal<Value>),
 }
 
-#[derive(Debug, HasFields, FromVariant, ExtractField)]
+#[derive(Eq, PartialEq, Debug, HasFields, FromVariant, ExtractField)]
 pub enum LispExpr {
     List(List<LispExpr>),
     Literal(Literal<Value>),
@@ -99,11 +97,13 @@ check_components! {
 mod test {
     use core::marker::PhantomData;
 
+    use alloc::borrow::ToOwned;
+    use alloc::vec;
     use cgp::extra::handler::CanCompute;
 
-    use crate::contexts::add_mult::{Expr, Interpreter};
-    use crate::dsl::Eval;
-    use crate::types::{Literal, Plus, Times};
+    use crate::contexts::add_mult::{Expr, Interpreter, LispExpr};
+    use crate::dsl::{Eval, ToLisp};
+    use crate::types::{Ident, List, Literal, Plus, Times};
 
     #[test]
     fn test_add_mult() {
@@ -145,6 +145,66 @@ mod test {
                 ))
             ),
             14,
+        );
+    }
+
+    #[test]
+    fn test_add_mult_to_lisp() {
+        let interpreter = Interpreter;
+        let code = PhantomData::<ToLisp>;
+
+        assert_eq!(
+            interpreter.compute(
+                code,
+                &Expr::Plus(Plus(
+                    Expr::Literal(Literal(2)).into(),
+                    Expr::Literal(Literal(3)).into()
+                ))
+            ),
+            LispExpr::List(List(vec![
+                LispExpr::Ident(Ident("+".to_owned())).into(),
+                LispExpr::Literal(Literal(2)).into(),
+                LispExpr::Literal(Literal(3)).into()
+            ]))
+        );
+
+        assert_eq!(
+            interpreter.compute(
+                code,
+                &Expr::Times(Times(
+                    Expr::Literal(Literal(2)).into(),
+                    Expr::Literal(Literal(3)).into()
+                ))
+            ),
+            LispExpr::List(List(vec![
+                LispExpr::Ident(Ident("*".to_owned())).into(),
+                LispExpr::Literal(Literal(2)).into(),
+                LispExpr::Literal(Literal(3)).into()
+            ]))
+        );
+
+        assert_eq!(
+            interpreter.compute(
+                code,
+                &Expr::Times(Times(
+                    Expr::Literal(Literal(2)).into(),
+                    Expr::Plus(Plus(
+                        Expr::Literal(Literal(3)).into(),
+                        Expr::Literal(Literal(4)).into()
+                    ))
+                    .into(),
+                ))
+            ),
+            LispExpr::List(List(vec![
+                LispExpr::Ident(Ident("*".to_owned())).into(),
+                LispExpr::Literal(Literal(2)).into(),
+                LispExpr::List(List(vec![
+                    LispExpr::Ident(Ident("+".to_owned())).into(),
+                    LispExpr::Literal(Literal(3)).into(),
+                    LispExpr::Literal(Literal(4)).into()
+                ]))
+                .into(),
+            ]))
         );
     }
 }
