@@ -2,7 +2,6 @@ use cgp::extra::dispatch::DispatchFields;
 use cgp::extra::handler::{HandleFieldValue, UseInputDelegate};
 use cgp::prelude::*;
 
-use crate::components::ExpressionTypeProviderComponent;
 use crate::dsl::Eval;
 use crate::providers::{EvalAdd, EvalLiteral, EvalMultiply};
 use crate::types::{Literal, Plus, Times};
@@ -21,8 +20,6 @@ pub struct Interpreter;
 
 delegate_components! {
     InterpreterComponents {
-        ExpressionTypeProviderComponent:
-            UseType<Expr>,
         ComputerComponent:
             UseDelegate<new CodeComponents {
                 Eval: UseInputDelegate<EvalComponents>,

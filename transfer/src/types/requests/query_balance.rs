@@ -1,8 +1,8 @@
 use axum::extract::Query;
 use axum_extra::TypedHeader;
 use cgp::prelude::*;
-use headers::authorization::Basic;
 use headers::Authorization;
+use headers::authorization::Basic;
 use serde::Deserialize;
 
 use crate::types::DemoCurrency;

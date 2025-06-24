@@ -1,6 +1,6 @@
 use cgp::prelude::*;
 
 #[cgp_type]
-pub trait HasExpressionType {
-    type Expression;
+pub trait HasLispExprType {
+    type LispExpr;
 }

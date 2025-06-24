@@ -1,11 +1,11 @@
 use core::marker::PhantomData;
 use std::sync::Arc;
 
+use axum::Router;
 use axum::extract::{FromRequestParts, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::{get, post};
-use axum::Router;
 use cgp::prelude::HasErrorType;
 
 use crate::interfaces::{CanHandleApi, QueryBalanceApi, TransferApi};
