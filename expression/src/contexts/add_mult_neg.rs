@@ -4,16 +4,17 @@ use cgp::prelude::*;
 
 use crate::components::ExpressionTypeProviderComponent;
 use crate::dsl::Eval;
-use crate::providers::{EvalAdd, EvalLiteral, EvalMultiply};
-use crate::types::{Add, Literal, Multiply};
+use crate::providers::{EvalAdd, EvalLiteral, EvalMultiply, EvalNegate};
+use crate::types::{Add, Literal, Multiply, Negate};
 
-pub type Value = u64;
+pub type Value = i64;
 
 #[derive(Debug, HasFields, FromVariant, ExtractField)]
 pub enum Expr {
     Add(Add<Expr>),
     Multiply(Multiply<Expr>),
     Literal(Literal<Value>),
+    Negate(Negate<Expr>),
 }
 
 #[cgp_context]
@@ -36,6 +37,7 @@ delegate_components! {
         Add<Expr>: EvalAdd,
         Multiply<Expr>: EvalMultiply,
         Literal<Value>: EvalLiteral,
+        Negate<Expr>: EvalNegate,
     }
 }
 
@@ -54,6 +56,7 @@ check_components! {
             (Eval, Expr),
             (Eval, Literal<Value>),
             (Eval, Add<Expr>),
+            (Eval, Negate<Expr>),
         ]
     }
 }
