@@ -204,7 +204,7 @@ dependencies = [
 [[package]]
 name = "cgp-dispatch"
 version = "0.4.1"
-source = "git+https://github.com/contextgeneric/cgp.git?branch=dispatch-handler-ref#401c758e1e31eb6a3bec6dbfcaff5d40dcab96d5"
+source = "git+https://github.com/contextgeneric/cgp.git?branch=dispatch-handler-ref#2497e50844575187947ff078199828b2d10baad1"
 dependencies = [
  "cgp-core",
  "cgp-handler",
@@ -285,7 +285,7 @@ dependencies = [
 [[package]]
 name = "cgp-handler"
 version = "0.4.1"
-source = "git+https://github.com/contextgeneric/cgp.git#439fecba9477d1ac33a486bc80d33e49f254cccb"
+source = "git+https://github.com/contextgeneric/cgp.git?branch=dispatch-handler-ref#2497e50844575187947ff078199828b2d10baad1"
 dependencies = [
  "cgp-core",
 ]

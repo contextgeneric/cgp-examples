@@ -1,5 +1,5 @@
-use cgp::extra::dispatch::{DispatchFields, DispatchFieldsRef};
-use cgp::extra::handler::{HandleFieldValue, UseInputDelegate};
+use cgp::extra::dispatch::{DispatchFieldValueRefs, DispatchFieldValues};
+use cgp::extra::handler::UseInputDelegate;
 use cgp::prelude::*;
 
 use crate::components::LispExprTypeProviderComponent;
@@ -59,7 +59,7 @@ impl Computer<Interpreter, Eval, Expr> for DispatchEval {
     type Output = Value;
 
     fn compute(context: &Interpreter, code: PhantomData<Eval>, expr: Expr) -> Self::Output {
-        <DispatchFields<HandleFieldValue<UseContext>>>::compute(context, code, expr)
+        DispatchFieldValues::compute(context, code, expr)
     }
 }
 
@@ -68,7 +68,7 @@ impl<'a> Computer<Interpreter, ToLisp, &'a Expr> for DispatchEval {
     type Output = LispExpr;
 
     fn compute(context: &Interpreter, code: PhantomData<ToLisp>, expr: &Expr) -> Self::Output {
-        <DispatchFieldsRef<HandleFieldValue<UseContext>>>::compute(context, code, expr)
+        DispatchFieldValueRefs::compute(context, code, expr)
     }
 }
 
