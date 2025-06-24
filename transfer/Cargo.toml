@@ -1,7 +1,7 @@
 [package]
 name = "cgp-example-transfer"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [[bin]]
 name = "server"
@@ -17,23 +17,3 @@ axum                = { version = "0.8.1" }
 axum-extra          = { version = "0.10.0", features = ["typed-header"]}
 headers             = { version = "0.4.0" }
 tokio               = { version = "1.43.0", features = ["full"] }
-
-[patch.crates-io]
-cgp                         = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-core                    = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-extra                   = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-async                   = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-async-macro             = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-component               = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-macro                   = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-macro-lib               = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-type                    = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-field                   = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-error                   = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-error-extra             = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-run                     = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-runtime                 = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-sync                    = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-inner                   = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-handler                 = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-dispatch                = { git = "https://github.com/contextgeneric/cgp.git" }

@@ -1,1 +1,2 @@
-pub struct Add<Expr>(Expr, Expr);
+#[derive(Debug)]
+pub struct Add<Expr>(pub Box<Expr>, pub Box<Expr>);
