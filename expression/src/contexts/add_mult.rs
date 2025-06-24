@@ -5,14 +5,14 @@ use cgp::prelude::*;
 use crate::components::ExpressionTypeProviderComponent;
 use crate::dsl::Eval;
 use crate::providers::{EvalAdd, EvalLiteral, EvalMultiply};
-use crate::types::{Add, Literal, Multiply};
+use crate::types::{Literal, Plus, Times};
 
 pub type Value = u64;
 
 #[derive(Debug, HasFields, FromVariant, ExtractField)]
 pub enum Expr {
-    Add(Add<Expr>),
-    Multiply(Multiply<Expr>),
+    Plus(Plus<Expr>),
+    Times(Times<Expr>),
     Literal(Literal<Value>),
 }
 
@@ -33,8 +33,8 @@ delegate_components! {
 delegate_components! {
     new EvalComponents {
         Expr: DispatchExpr,
-        Add<Expr>: EvalAdd,
-        Multiply<Expr>: EvalMultiply,
+        Plus<Expr>: EvalAdd,
+        Times<Expr>: EvalMultiply,
         Literal<Value>: EvalLiteral,
     }
 }
@@ -53,7 +53,61 @@ check_components! {
         ComputerComponent: [
             (Eval, Expr),
             (Eval, Literal<Value>),
-            (Eval, Add<Expr>),
+            (Eval, Plus<Expr>),
         ]
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use core::marker::PhantomData;
+
+    use cgp::extra::handler::CanCompute;
+
+    use crate::contexts::add_mult::{Expr, Interpreter};
+    use crate::dsl::Eval;
+    use crate::types::{Literal, Plus, Times};
+
+    #[test]
+    fn test_add_mult() {
+        let interpreter = Interpreter;
+        let code = PhantomData::<Eval>;
+
+        assert_eq!(
+            interpreter.compute(
+                code,
+                Expr::Plus(Plus(
+                    Expr::Literal(Literal(2)).into(),
+                    Expr::Literal(Literal(3)).into()
+                ))
+            ),
+            5,
+        );
+
+        assert_eq!(
+            interpreter.compute(
+                code,
+                Expr::Times(Times(
+                    Expr::Literal(Literal(2)).into(),
+                    Expr::Literal(Literal(3)).into()
+                ))
+            ),
+            6,
+        );
+
+        assert_eq!(
+            interpreter.compute(
+                code,
+                Expr::Times(Times(
+                    Expr::Literal(Literal(2)).into(),
+                    Expr::Plus(Plus(
+                        Expr::Literal(Literal(3)).into(),
+                        Expr::Literal(Literal(4)).into()
+                    ))
+                    .into(),
+                ))
+            ),
+            14,
+        );
     }
 }

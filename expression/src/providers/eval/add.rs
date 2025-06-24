@@ -1,10 +1,10 @@
 use cgp::extra::handler::CanCompute;
 use cgp::prelude::*;
 
-use crate::types::Add;
+use crate::types::Plus;
 
 #[cgp_new_provider]
-impl<Context, Code, Expr, Output> Computer<Context, Code, Add<Expr>> for EvalAdd
+impl<Context, Code, Expr, Output> Computer<Context, Code, Plus<Expr>> for EvalAdd
 where
     Context: CanCompute<Code, Expr, Output = Output>,
     Output: core::ops::Add<Output = Output>,
@@ -14,7 +14,7 @@ where
     fn compute(
         context: &Context,
         code: PhantomData<Code>,
-        Add(expr_a, expr_b): Add<Expr>,
+        Plus(expr_a, expr_b): Plus<Expr>,
     ) -> Self::Output {
         let output_a = context.compute(code, *expr_a);
         let output_b = context.compute(code, *expr_b);
