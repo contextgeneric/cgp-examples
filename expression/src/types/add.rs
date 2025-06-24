@@ -1,4 +1,6 @@
 use alloc::boxed::Box;
 
-#[derive(Debug, Eq, PartialEq)]
+use cgp::prelude::*;
+
+#[derive(Debug, Eq, PartialEq, HasField)]
 pub struct Plus<Expr>(pub Box<Expr>, pub Box<Expr>);

@@ -27,4 +27,4 @@ cgp-runtime                 = { git = "https://github.com/contextgeneric/cgp.git
 cgp-sync                    = { git = "https://github.com/contextgeneric/cgp.git" }
 cgp-inner                   = { git = "https://github.com/contextgeneric/cgp.git" }
 cgp-handler                 = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-dispatch                = { git = "https://github.com/contextgeneric/cgp.git" }
+cgp-dispatch                = { git = "https://github.com/contextgeneric/cgp.git", branch = "dispatch-handler-ref" }

@@ -1,11 +1,11 @@
-use cgp::extra::dispatch::DispatchFields;
+use cgp::extra::dispatch::{DispatchFields, DispatchFieldsRef};
 use cgp::extra::handler::{HandleFieldValue, UseInputDelegate};
 use cgp::prelude::*;
 
 use crate::components::LispExprTypeProviderComponent;
 use crate::dsl::{Eval, ToLisp};
 use crate::providers::{
-    AddToLisp, EvalAdd, EvalLiteral, EvalMultiply, LiteralToLisp, MultiplyToLisp,
+    AddToLisp, BinaryOpToLisp, EvalAdd, EvalLiteral, EvalMultiply, LiteralToLisp, MultiplyToLisp,
 };
 use crate::types::{Ident, List, Literal, Plus, Times};
 
@@ -46,10 +46,10 @@ delegate_components! {
                 ToLisp:
                     UseInputDelegate<
                         new ToLispComponents {
-                            Expr: DispatchEval,
-                            Plus<Expr>: AddToLisp,
-                            Times<Expr>: MultiplyToLisp,
-                            Literal<Value>: LiteralToLisp,
+                            <'a> &'a Expr: DispatchEval,
+                            <'a> &'a Plus<Expr>: BinaryOpToLisp<symbol!("+")>,
+                            <'a> &'a Times<Expr>: BinaryOpToLisp<symbol!("*")>,
+                            <'a> &'a Literal<Value>: LiteralToLisp,
                         }
                     >,
             }>
@@ -66,11 +66,11 @@ impl Computer<Interpreter, Eval, Expr> for DispatchEval {
 }
 
 #[cgp_provider]
-impl Computer<Interpreter, ToLisp, Expr> for DispatchEval {
+impl<'a> Computer<Interpreter, ToLisp, &'a Expr> for DispatchEval {
     type Output = LispExpr;
 
-    fn compute(context: &Interpreter, code: PhantomData<ToLisp>, expr: Expr) -> Self::Output {
-        <DispatchFields<HandleFieldValue<UseContext>>>::compute(context, code, expr)
+    fn compute(context: &Interpreter, code: PhantomData<ToLisp>, expr: &Expr) -> Self::Output {
+        <DispatchFieldsRef<HandleFieldValue<UseContext>>>::compute(context, code, expr)
     }
 }
 
@@ -80,10 +80,17 @@ check_components! {
             (Eval, Expr),
             (Eval, Literal<Value>),
             (Eval, Plus<Expr>),
-            (ToLisp, Expr),
-            (ToLisp, Literal<Value>),
-            (ToLisp, Plus<Expr>),
-            (ToLisp, Times<Expr>),
+        ]
+    }
+}
+
+check_components! {
+    <'a> CanSerializeToLisp for Interpreter {
+        ComputerComponent: [
+            (ToLisp, &'a Expr),
+            (ToLisp, &'a Literal<Value>),
+            (ToLisp, &'a Plus<Expr>),
+            (ToLisp, &'a Times<Expr>),
         ]
     }
 }
