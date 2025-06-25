@@ -6,6 +6,7 @@ members = [
     "expression",
     "greet",
     "transfer",
+    "builder",
 ]
 
 
