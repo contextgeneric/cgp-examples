@@ -9,27 +9,30 @@ pub trait HasOpenAiConfig {
     fn open_ai_model(&self) -> &str;
 }
 
-pub struct ChatGptClient {
-    pub client: openai::Client,
-    pub model: openai::CompletionModel,
+#[derive(HasField, HasFields, BuildField)]
+pub struct OpenAiClient {
+    pub open_ai_client: openai::Client,
+    pub open_ai_model: openai::CompletionModel,
 }
 
 #[cgp_new_provider]
-impl<Context, Code: Send, Input: Send> Handler<Context, Code, Input> for BuildChatGptClient
+impl<Context, Code: Send, Input: Send> Handler<Context, Code, Input> for BuildOpenAiClient
 where
     Context: HasOpenAiConfig + HasAsyncErrorType,
 {
-    type Output = ChatGptClient;
+    type Output = OpenAiClient;
 
     async fn handle(
         context: &Context,
         _code: PhantomData<Code>,
         _input: Input,
     ) -> Result<Self::Output, Context::Error> {
-        let client = openai::Client::new(context.open_ai_key());
+        let open_ai_client = openai::Client::new(context.open_ai_key());
+        let open_ai_model = open_ai_client.completion_model(context.open_ai_model());
 
-        let model = client.completion_model(context.open_ai_model());
-
-        Ok(ChatGptClient { client, model })
+        Ok(OpenAiClient {
+            open_ai_client,
+            open_ai_model,
+        })
     }
 }
