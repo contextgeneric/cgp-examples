@@ -324,7 +324,9 @@ version = "0.1.0"
 dependencies = [
  "cgp",
  "cgp-error-anyhow",
+ "reqwest",
  "rig-core",
+ "serde",
  "sqlx",
 ]
 
