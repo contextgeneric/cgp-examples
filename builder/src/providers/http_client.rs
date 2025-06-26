@@ -34,3 +34,20 @@ where
         Ok(HttpClient { http_client })
     }
 }
+
+#[cgp_new_provider]
+impl<Context, Code: Send, Input: Send> Handler<Context, Code, Input> for BuildDefaultHttpClient
+where
+    Context: HasAsyncErrorType,
+{
+    type Output = HttpClient;
+
+    async fn handle(
+        _context: &Context,
+        _code: PhantomData<Code>,
+        _input: Input,
+    ) -> Result<Self::Output, Context::Error> {
+        let http_client = Client::new();
+        Ok(HttpClient { http_client })
+    }
+}
