@@ -1,5 +1,5 @@
-use cgp::extra::dispatch::DispatchFields;
-use cgp::extra::handler::{HandleFieldValue, UseInputDelegate};
+use cgp::extra::dispatch::MatchWithValueHandlers;
+use cgp::extra::handler::UseInputDelegate;
 use cgp::prelude::*;
 
 use crate::dsl::Eval;
@@ -45,7 +45,7 @@ impl Computer<Interpreter, Eval, Expr> for DispatchExpr {
     type Output = Value;
 
     fn compute(context: &Interpreter, code: PhantomData<Eval>, expr: Expr) -> Self::Output {
-        <DispatchFields<HandleFieldValue<UseContext>>>::compute(context, code, expr)
+        MatchWithValueHandlers::compute(context, code, expr)
     }
 }
 

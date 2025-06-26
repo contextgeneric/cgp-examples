@@ -1,5 +1,5 @@
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
-use cgp::extra::dispatch::{BuildWithHandlers, HandleAndBuild};
+use cgp::extra::dispatch::BuildAndMergeOutputs;
 use cgp::prelude::*;
 use cgp_error_anyhow::{RaiseAnyhowError, UseAnyhowError};
 
@@ -21,11 +21,11 @@ delegate_components! {
         ErrorRaiserComponent:
             RaiseAnyhowError,
         HandlerComponent:
-            BuildWithHandlers<
+            BuildAndMergeOutputs<
                 App,
                 Product![
-                    HandleAndBuild<BuildOpenAiClient>,
-                    HandleAndBuild<BuildSqliteClient>,
+                    BuildOpenAiClient,
+                    BuildSqliteClient,
                 ]>,
     }
 }

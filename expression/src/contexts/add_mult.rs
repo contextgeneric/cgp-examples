@@ -1,4 +1,4 @@
-use cgp::extra::dispatch::{DispatchFieldValueRefs, DispatchFieldValues};
+use cgp::extra::dispatch::{MatchWithValueHandlers, MatchWithValueHandlersRef};
 use cgp::extra::handler::UseInputDelegate;
 use cgp::prelude::*;
 
@@ -59,7 +59,7 @@ impl Computer<Interpreter, Eval, Expr> for DispatchEval {
     type Output = Value;
 
     fn compute(context: &Interpreter, code: PhantomData<Eval>, expr: Expr) -> Self::Output {
-        DispatchFieldValues::compute(context, code, expr)
+        MatchWithValueHandlers::compute(context, code, expr)
     }
 }
 
@@ -68,7 +68,7 @@ impl<'a> Computer<Interpreter, ToLisp, &'a Expr> for DispatchEval {
     type Output = LispExpr;
 
     fn compute(context: &Interpreter, code: PhantomData<ToLisp>, expr: &Expr) -> Self::Output {
-        DispatchFieldValueRefs::compute(context, code, expr)
+        MatchWithValueHandlersRef::compute(context, code, expr)
     }
 }
 

@@ -20,12 +20,12 @@ cgp-component               = { git = "https://github.com/contextgeneric/cgp.git
 cgp-macro                   = { git = "https://github.com/contextgeneric/cgp.git" }
 cgp-macro-lib               = { git = "https://github.com/contextgeneric/cgp.git" }
 cgp-type                    = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-field                   = { git = "https://github.com/contextgeneric/cgp.git" }
+cgp-field                   = { git = "https://github.com/contextgeneric/cgp.git", branch = "builder-dispatch-refactoring" }
 cgp-error                   = { git = "https://github.com/contextgeneric/cgp.git" }
 cgp-error-extra             = { git = "https://github.com/contextgeneric/cgp.git" }
 cgp-run                     = { git = "https://github.com/contextgeneric/cgp.git" }
 cgp-runtime                 = { git = "https://github.com/contextgeneric/cgp.git" }
 cgp-sync                    = { git = "https://github.com/contextgeneric/cgp.git" }
 cgp-inner                   = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-handler                 = { git = "https://github.com/contextgeneric/cgp.git", branch = "dispatch-handler-ref" }
-cgp-dispatch                = { git = "https://github.com/contextgeneric/cgp.git", branch = "dispatch-handler-ref" }
+cgp-handler                 = { git = "https://github.com/contextgeneric/cgp.git", branch = "builder-dispatch-refactoring" }
+cgp-dispatch                = { git = "https://github.com/contextgeneric/cgp.git", branch = "builder-dispatch-refactoring" }
