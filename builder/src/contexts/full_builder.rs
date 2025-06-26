@@ -10,7 +10,7 @@ use crate::providers::{BuildHttpClient, BuildOpenAiClient, BuildSqliteClient};
 #[cgp_context]
 #[derive(HasField, Deserialize)]
 pub struct FullAppBuilder {
-    pub db_path: String,
+    pub db_options: String,
     pub http_user_agent: String,
     pub open_ai_key: String,
     pub open_ai_model: String,

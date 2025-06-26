@@ -5,7 +5,9 @@ use cgp_error_anyhow::{RaiseAnyhowError, UseAnyhowError};
 use serde::Deserialize;
 
 use crate::contexts::App;
-use crate::providers::{BuildDefaultHttpClient, BuildDefaultOpenAiClient, BuildSqliteClient};
+use crate::providers::{
+    BuildDefaultHttpClient, BuildDefaultOpenAiClient, BuildDefaultSqliteClient,
+};
 
 #[cgp_context]
 #[derive(HasField, Deserialize)]
@@ -23,7 +25,7 @@ delegate_components! {
             BuildAndMergeOutputs<
                 App,
                 Product![
-                    BuildSqliteClient,
+                    BuildDefaultSqliteClient,
                     BuildDefaultHttpClient,
                     BuildDefaultOpenAiClient,
                 ]>,
