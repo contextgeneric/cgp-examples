@@ -1,26 +1,42 @@
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::dispatch::BuildAndMergeOutputs;
-use cgp::extra::handler::CanHandle;
 use cgp::prelude::*;
-use cgp_error_anyhow::{Error, RaiseAnyhowError, UseAnyhowError};
+use cgp_error_anyhow::{RaiseAnyhowError, UseAnyhowError};
+use reqwest::Client;
+use rig::agent::Agent;
+use rig::providers::{anthropic, openai};
 use serde::Deserialize;
+use sqlx::SqlitePool;
 
-use crate::contexts::App;
-use crate::providers::{BuildHttpClient, BuildOpenAiClient, BuildSqliteClient};
+use crate::providers::{
+    BuildDefaultAnthropicClient, BuildHttpClient, BuildOpenAiClient, BuildSqliteClient,
+};
+
+#[cgp_context]
+#[derive(HasField, HasFields, BuildField)]
+pub struct App {
+    pub sqlite_pool: SqlitePool,
+    pub http_client: Client,
+    pub anthropic_client: anthropic::Client,
+    pub anthropic_agent: Agent<anthropic::completion::CompletionModel>,
+    pub open_ai_client: openai::Client,
+    pub open_ai_agent: Agent<openai::CompletionModel>,
+}
 
 #[cgp_context]
 #[derive(HasField, Deserialize)]
-pub struct FullAppBuilder {
+pub struct AppBuilder {
     pub db_options: String,
     pub db_journal_mode: String,
     pub http_user_agent: String,
+    pub anthropic_key: String,
     pub open_ai_key: String,
     pub open_ai_model: String,
     pub llm_preamble: String,
 }
 
 delegate_components! {
-    FullAppBuilderComponents {
+    AppBuilderComponents {
         ErrorTypeProviderComponent:
             UseAnyhowError,
         ErrorRaiserComponent:
@@ -31,30 +47,14 @@ delegate_components! {
                 Product![
                     BuildSqliteClient,
                     BuildHttpClient,
+                    BuildDefaultAnthropicClient,
                     BuildOpenAiClient,
                 ]>,
     }
 }
 
 check_components! {
-    CanUseFullAppBuilder for FullAppBuilder {
+    CanUseAppBuilder for AppBuilder {
         HandlerComponent: ((), ()),
     }
-}
-
-pub async fn main() -> Result<(), Error> {
-    let builder = FullAppBuilder {
-        db_options: "file:./db.sqlite".to_owned(),
-        db_journal_mode: "WAL".to_owned(),
-        http_user_agent: "SUPER_AI_AGENT".to_owned(),
-        open_ai_key: "1234567890".to_owned(),
-        open_ai_model: "gpt-4o".to_owned(),
-        llm_preamble: "You are a helpful assistant".to_owned(),
-    };
-
-    let _app = builder.handle(PhantomData::<()>, ()).await?;
-
-    /* Call methods on the app here */
-
-    Ok(())
 }

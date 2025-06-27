@@ -1,8 +1,10 @@
+mod anthropic;
 mod chatgpt;
 mod http_client;
 mod sqlite;
 mod sqlite_and_http;
 
+pub use anthropic::*;
 pub use chatgpt::*;
 pub use http_client::*;
 pub use sqlite::*;
