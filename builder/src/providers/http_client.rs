@@ -14,39 +14,39 @@ pub struct HttpClient {
 }
 
 #[cgp_new_provider]
-impl<Context, Code: Send, Input: Send> Handler<Context, Code, Input> for BuildHttpClient
+impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildHttpClient
 where
-    Context: HasHttpClientConfig + CanRaiseAsyncError<reqwest::Error>,
+    Build: HasHttpClientConfig + CanRaiseAsyncError<reqwest::Error>,
 {
     type Output = HttpClient;
 
     async fn handle(
-        context: &Context,
+        build: &Build,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Context::Error> {
+    ) -> Result<Self::Output, Build::Error> {
         let http_client = Client::builder()
-            .user_agent(context.http_user_agent())
+            .user_agent(build.http_user_agent())
             .connect_timeout(Duration::from_secs(5))
             .build()
-            .map_err(Context::raise_error)?;
+            .map_err(Build::raise_error)?;
 
         Ok(HttpClient { http_client })
     }
 }
 
 #[cgp_new_provider]
-impl<Context, Code: Send, Input: Send> Handler<Context, Code, Input> for BuildDefaultHttpClient
+impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildDefaultHttpClient
 where
-    Context: HasAsyncErrorType,
+    Build: HasAsyncErrorType,
 {
     type Output = HttpClient;
 
     async fn handle(
-        _context: &Context,
+        _build: &Build,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Context::Error> {
+    ) -> Result<Self::Output, Build::Error> {
         let http_client = Client::new();
         Ok(HttpClient { http_client })
     }

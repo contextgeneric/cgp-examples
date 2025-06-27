@@ -12,6 +12,8 @@ pub trait HasSqlitePath {
 #[cgp_auto_getter]
 pub trait HasSqliteOptions {
     fn db_options(&self) -> &str;
+
+    fn db_journal_mode(&self) -> &str;
 }
 
 #[derive(HasField, HasFields, BuildField)]
@@ -20,44 +22,47 @@ pub struct SqliteClient {
 }
 
 #[cgp_new_provider]
-impl<Context, Code: Send, Input: Send> Handler<Context, Code, Input> for BuildSqliteClient
+impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildSqliteClient
 where
-    Context: HasSqliteOptions + CanRaiseAsyncError<sqlx::Error>,
+    Build: HasSqliteOptions + CanRaiseAsyncError<sqlx::Error>,
 {
     type Output = SqliteClient;
 
     async fn handle(
-        context: &Context,
+        build: &Build,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Context::Error> {
-        let db_options = SqliteConnectOptions::from_str(context.db_options())
-            .map_err(Context::raise_error)?
-            .journal_mode(SqliteJournalMode::Wal);
+    ) -> Result<Self::Output, Build::Error> {
+        let journal_mode =
+            SqliteJournalMode::from_str(build.db_journal_mode()).map_err(Build::raise_error)?;
+
+        let db_options = SqliteConnectOptions::from_str(build.db_options())
+            .map_err(Build::raise_error)?
+            .journal_mode(journal_mode);
 
         let sqlite_pool = SqlitePool::connect_with(db_options)
             .await
-            .map_err(Context::raise_error)?;
+            .map_err(Build::raise_error)?;
 
         Ok(SqliteClient { sqlite_pool })
     }
 }
 
 #[cgp_new_provider]
-impl<Context, Code: Send, Input: Send> Handler<Context, Code, Input> for BuildDefaultSqliteClient
+impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildDefaultSqliteClient
 where
-    Context: HasSqlitePath + CanRaiseAsyncError<sqlx::Error>,
+    Build: HasSqlitePath + CanRaiseAsyncError<sqlx::Error>,
 {
     type Output = SqliteClient;
 
     async fn handle(
-        context: &Context,
+        build: &Build,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Context::Error> {
-        let sqlite_pool = SqlitePool::connect(context.db_path())
+    ) -> Result<Self::Output, Build::Error> {
+        let sqlite_pool = SqlitePool::connect(build.db_path())
             .await
-            .map_err(Context::raise_error)?;
+            .map_err(Build::raise_error)?;
 
         Ok(SqliteClient { sqlite_pool })
     }

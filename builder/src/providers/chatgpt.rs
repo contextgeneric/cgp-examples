@@ -19,21 +19,21 @@ pub struct OpenAiClient {
 }
 
 #[cgp_new_provider]
-impl<Context, Code: Send, Input: Send> Handler<Context, Code, Input> for BuildOpenAiClient
+impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildOpenAiClient
 where
-    Context: HasOpenAiConfig + HasAsyncErrorType,
+    Build: HasOpenAiConfig + HasAsyncErrorType,
 {
     type Output = OpenAiClient;
 
     async fn handle(
-        context: &Context,
+        build: &Build,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Context::Error> {
-        let open_ai_client = openai::Client::new(context.open_ai_key());
+    ) -> Result<Self::Output, Build::Error> {
+        let open_ai_client = openai::Client::new(build.open_ai_key());
         let open_ai_agent = open_ai_client
-            .agent(context.open_ai_model())
-            .preamble(context.llm_preamble())
+            .agent(build.open_ai_model())
+            .preamble(build.llm_preamble())
             .build();
 
         Ok(OpenAiClient {
@@ -44,17 +44,17 @@ where
 }
 
 #[cgp_new_provider]
-impl<Context, Code: Send, Input: Send> Handler<Context, Code, Input> for BuildDefaultOpenAiClient
+impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildDefaultOpenAiClient
 where
-    Context: HasAsyncErrorType,
+    Build: HasAsyncErrorType,
 {
     type Output = OpenAiClient;
 
     async fn handle(
-        _context: &Context,
+        _build: &Build,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Context::Error> {
+    ) -> Result<Self::Output, Build::Error> {
         let open_ai_client = openai::Client::from_env();
         let open_ai_agent = open_ai_client.agent("gpt-4o").build();
 

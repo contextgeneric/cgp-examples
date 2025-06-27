@@ -22,13 +22,15 @@ pub struct App {
 impl App {
     pub async fn new(
         db_options: &str,
+        db_journal_mode: &str,
         http_user_agent: &str,
         open_ai_key: &str,
         open_ai_model: &str,
         llm_preamble: &str,
     ) -> Result<Self, Error> {
-        let db_options =
-            SqliteConnectOptions::from_str(db_options)?.journal_mode(SqliteJournalMode::Wal);
+        let journal_mode = SqliteJournalMode::from_str(db_journal_mode)?;
+
+        let db_options = SqliteConnectOptions::from_str(db_options)?.journal_mode(journal_mode);
 
         let sqlite_pool = SqlitePool::connect_with(db_options).await?;
 

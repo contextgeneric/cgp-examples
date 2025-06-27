@@ -1,7 +1,8 @@
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::dispatch::BuildAndMergeOutputs;
+use cgp::extra::handler::CanHandle;
 use cgp::prelude::*;
-use cgp_error_anyhow::{RaiseAnyhowError, UseAnyhowError};
+use cgp_error_anyhow::{Error, RaiseAnyhowError, UseAnyhowError};
 use serde::Deserialize;
 
 use crate::contexts::App;
@@ -11,6 +12,7 @@ use crate::providers::{BuildHttpClient, BuildOpenAiClient, BuildSqliteClient};
 #[derive(HasField, Deserialize)]
 pub struct FullAppBuilder {
     pub db_options: String,
+    pub db_journal_mode: String,
     pub http_user_agent: String,
     pub open_ai_key: String,
     pub open_ai_model: String,
@@ -38,4 +40,21 @@ check_components! {
     CanUseFullAppBuilder for FullAppBuilder {
         HandlerComponent: ((), ()),
     }
+}
+
+async fn main() -> Result<(), Error> {
+    let builder = FullAppBuilder {
+        db_options: "file:./db.sqlite".to_owned(),
+        db_journal_mode: "WAL".to_owned(),
+        http_user_agent: "SUPER_AI_AGENT".to_owned(),
+        open_ai_key: "1234567890".to_owned(),
+        open_ai_model: "gpt-4o".to_owned(),
+        llm_preamble: "You are a helpful assistant".to_owned(),
+    };
+
+    let app = builder.handle(PhantomData::<()>, ()).await?;
+
+    /* Call methods on the app here */
+
+    Ok(())
 }
