@@ -8,13 +8,15 @@ use rig::providers::{anthropic, openai};
 use serde::Deserialize;
 use sqlx::SqlitePool;
 
+use crate::contexts::anthropic::AnthropicApp;
+use crate::contexts::app::App;
 use crate::providers::{
     BuildDefaultAnthropicClient, BuildHttpClient, BuildOpenAiClient, BuildSqliteClient,
 };
 
 #[cgp_context]
 #[derive(HasField, HasFields, BuildField)]
-pub struct App {
+pub struct AnthropicAndChatGptApp {
     pub sqlite_pool: SqlitePool,
     pub http_client: Client,
     pub anthropic_client: anthropic::Client,
@@ -35,6 +37,12 @@ pub struct AppBuilder {
     pub llm_preamble: String,
 }
 
+pub struct BuildAnthroicAndChatGptApp;
+
+pub struct BuildChatGptApp;
+
+pub struct BuildAnthropicApp;
+
 delegate_components! {
     AppBuilderComponents {
         ErrorTypeProviderComponent:
@@ -42,19 +50,42 @@ delegate_components! {
         ErrorRaiserComponent:
             RaiseAnyhowError,
         HandlerComponent:
-            BuildAndMergeOutputs<
-                App,
-                Product![
-                    BuildSqliteClient,
-                    BuildHttpClient,
-                    BuildDefaultAnthropicClient,
-                    BuildOpenAiClient,
-                ]>,
+            UseDelegate<new BuilderHandlers {
+                BuildAnthroicAndChatGptApp:
+                BuildAndMergeOutputs<
+                        AnthropicAndChatGptApp,
+                        Product![
+                            BuildSqliteClient,
+                            BuildHttpClient,
+                            BuildDefaultAnthropicClient,
+                            BuildOpenAiClient,
+                        ]>,
+                BuildChatGptApp:
+                    BuildAndMergeOutputs<
+                        App,
+                        Product![
+                            BuildSqliteClient,
+                            BuildHttpClient,
+                            BuildOpenAiClient,
+                        ]>,
+                BuildAnthropicApp:
+                    BuildAndMergeOutputs<
+                        AnthropicApp,
+                        Product![
+                            BuildSqliteClient,
+                            BuildHttpClient,
+                            BuildDefaultAnthropicClient,
+                        ]>,
+            }>,
     }
 }
 
 check_components! {
     CanUseAppBuilder for AppBuilder {
-        HandlerComponent: ((), ()),
+        HandlerComponent: [
+            (BuildAnthroicAndChatGptApp, ()),
+            (BuildChatGptApp, ()),
+            (BuildAnthropicApp, ()),
+        ],
     }
 }

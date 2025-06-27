@@ -4,28 +4,29 @@ use cgp::prelude::*;
 use cgp_error_anyhow::{RaiseAnyhowError, UseAnyhowError};
 use reqwest::Client;
 use rig::agent::Agent;
-use rig::providers::anthropic;
+use rig::providers::openai;
 use serde::Deserialize;
-use sqlx::SqlitePool;
+use sqlx::PgPool;
 
-use crate::providers::{BuildDefaultAnthropicClient, BuildHttpClient, BuildSqliteClient};
+use crate::providers::{BuildHttpClient, BuildOpenAiClient, BuildPostgresClient};
 
 #[cgp_context]
 #[derive(HasField, HasFields, BuildField)]
-pub struct AnthropicApp {
-    pub sqlite_pool: SqlitePool,
+pub struct App {
+    pub postgres_pool: PgPool,
     pub http_client: Client,
-    pub anthropic_client: anthropic::Client,
-    pub anthropic_agent: Agent<anthropic::completion::CompletionModel>,
+    pub open_ai_client: openai::Client,
+    pub open_ai_agent: Agent<openai::CompletionModel>,
 }
 
 #[cgp_context]
 #[derive(HasField, Deserialize)]
 pub struct AppBuilder {
-    pub db_options: String,
-    pub db_journal_mode: String,
+    pub postgres_url: String,
     pub http_user_agent: String,
-    pub anthropic_key: String,
+    pub open_ai_key: String,
+    pub open_ai_model: String,
+    pub llm_preamble: String,
 }
 
 delegate_components! {
@@ -36,11 +37,11 @@ delegate_components! {
             RaiseAnyhowError,
         HandlerComponent:
             BuildAndMergeOutputs<
-                AnthropicApp,
+                App,
                 Product![
-                    BuildSqliteClient,
+                    BuildPostgresClient,
                     BuildHttpClient,
-                    BuildDefaultAnthropicClient,
+                    BuildOpenAiClient,
                 ]>,
     }
 }

@@ -5,7 +5,7 @@ use cgp::prelude::*;
 use cgp_error_anyhow::{Error, RaiseAnyhowError, UseAnyhowError};
 use serde::Deserialize;
 
-use crate::contexts::App;
+use crate::contexts::app::App;
 use crate::providers::{BuildHttpClient, BuildOpenAiClient, BuildSqliteClient};
 
 #[cgp_context]

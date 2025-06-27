@@ -4,19 +4,19 @@ use cgp::prelude::*;
 use cgp_error_anyhow::{RaiseAnyhowError, UseAnyhowError};
 use serde::Deserialize;
 
-use crate::contexts::App;
+use crate::contexts::app::App;
 use crate::providers::{
     BuildDefaultHttpClient, BuildDefaultOpenAiClient, BuildDefaultSqliteClient,
 };
 
 #[cgp_context]
 #[derive(HasField, Deserialize)]
-pub struct MinAppBuilder {
+pub struct DefaultAppBuilder {
     pub db_path: String,
 }
 
 delegate_components! {
-    MinAppBuilderComponents {
+    DefaultAppBuilderComponents {
         ErrorTypeProviderComponent:
             UseAnyhowError,
         ErrorRaiserComponent:
@@ -33,7 +33,7 @@ delegate_components! {
 }
 
 check_components! {
-    CanUseMinAppBuilder for MinAppBuilder {
+    CanUseMinAppBuilder for DefaultAppBuilder {
         HandlerComponent: ((), ()),
     }
 }
