@@ -1,10 +1,11 @@
+use cgp::extra::handler::{ComputerRef, ComputerRefComponent};
 use cgp::prelude::*;
 
 use crate::components::HasLispExprType;
 use crate::types::Literal;
 
 #[cgp_new_provider]
-impl<'a, Context, Code, T, LispExpr> Computer<Context, Code, &'a Literal<T>> for LiteralToLisp
+impl<Context, Code, T, LispExpr> ComputerRef<Context, Code, Literal<T>> for LiteralToLisp
 where
     Context: HasLispExprType<LispExpr = LispExpr>,
     LispExpr: FromVariant<symbol!("Literal"), Value = Literal<T>>,
@@ -12,7 +13,7 @@ where
 {
     type Output = LispExpr;
 
-    fn compute(
+    fn compute_ref(
         _context: &Context,
         _code: PhantomData<Code>,
         Literal(value): &Literal<T>,

@@ -1,5 +1,5 @@
 use cgp::extra::dispatch::{MatchWithValueHandlers, MatchWithValueHandlersRef};
-use cgp::extra::handler::UseInputDelegate;
+use cgp::extra::handler::{ComputerRef, ComputerRefComponent, UseInputDelegate};
 use cgp::prelude::*;
 
 use crate::components::LispExprTypeProviderComponent;
@@ -31,7 +31,7 @@ delegate_components! {
         LispExprTypeProviderComponent:
             UseType<LispExpr>,
         ComputerComponent:
-            UseDelegate<new CodeComponents {
+            UseDelegate<new ComputerCodeComponents {
                 Eval:
                     UseInputDelegate<
                         new EvalComponents {
@@ -41,16 +41,22 @@ delegate_components! {
                             Literal<Value>: EvalLiteral,
                         }
                     >,
+            }>,
+        ComputerRefComponent:
+            UseDelegate<new ComputerRefCodeComponents {
                 ToLisp:
                     UseInputDelegate<
                         new ToLispComponents {
-                            <'a> &'a Expr: DispatchEval,
-                            <'a> &'a Plus<Expr>: BinaryOpToLisp<symbol!("+")>,
-                            <'a> &'a Times<Expr>: BinaryOpToLisp<symbol!("*")>,
-                            <'a> &'a Literal<Value>: LiteralToLisp,
+                            Expr: DispatchEval,
+                            Literal<Value>: LiteralToLisp,
+                            Plus<Expr>: BinaryOpToLisp<symbol!("+")>,
+                            Times<Expr>: BinaryOpToLisp<symbol!("*")>,
+                            // Plus<Expr>: AddToLisp,
+                            // Times<Expr>: MultiplyToLisp,
                         }
                     >,
-            }>
+            }>,
+
     }
 }
 
@@ -64,11 +70,11 @@ impl Computer<Interpreter, Eval, Expr> for DispatchEval {
 }
 
 #[cgp_provider]
-impl<'a> Computer<Interpreter, ToLisp, &'a Expr> for DispatchEval {
+impl ComputerRef<Interpreter, ToLisp, Expr> for DispatchEval {
     type Output = LispExpr;
 
-    fn compute(context: &Interpreter, code: PhantomData<ToLisp>, expr: &Expr) -> Self::Output {
-        MatchWithValueHandlersRef::compute(context, code, expr)
+    fn compute_ref(context: &Interpreter, code: PhantomData<ToLisp>, expr: &Expr) -> Self::Output {
+        <MatchWithValueHandlersRef>::compute_ref(context, code, expr)
     }
 }
 
@@ -78,17 +84,12 @@ check_components! {
             (Eval, Expr),
             (Eval, Literal<Value>),
             (Eval, Plus<Expr>),
-        ]
-    }
-}
-
-check_components! {
-    <'a> CanSerializeToLisp for Interpreter {
-        ComputerComponent: [
-            (ToLisp, &'a Expr),
-            (ToLisp, &'a Literal<Value>),
-            (ToLisp, &'a Plus<Expr>),
-            (ToLisp, &'a Times<Expr>),
+        ],
+        ComputerRefComponent: [
+            (ToLisp, Expr),
+            (ToLisp, Literal<Value>),
+            (ToLisp, Plus<Expr>),
+            (ToLisp, Times<Expr>),
         ]
     }
 }
@@ -99,7 +100,7 @@ mod test {
 
     use alloc::borrow::ToOwned;
     use alloc::vec;
-    use cgp::extra::handler::CanCompute;
+    use cgp::extra::handler::{CanCompute, CanComputeRef};
 
     use crate::contexts::add_mult::{Expr, Interpreter, LispExpr};
     use crate::dsl::{Eval, ToLisp};
@@ -154,7 +155,7 @@ mod test {
         let code = PhantomData::<ToLisp>;
 
         assert_eq!(
-            interpreter.compute(
+            interpreter.compute_ref(
                 code,
                 &Expr::Plus(Plus(
                     Expr::Literal(Literal(2)).into(),
@@ -169,7 +170,7 @@ mod test {
         );
 
         assert_eq!(
-            interpreter.compute(
+            interpreter.compute_ref(
                 code,
                 &Expr::Times(Times(
                     Expr::Literal(Literal(2)).into(),
@@ -184,7 +185,7 @@ mod test {
         );
 
         assert_eq!(
-            interpreter.compute(
+            interpreter.compute_ref(
                 code,
                 &Expr::Times(Times(
                     Expr::Literal(Literal(2)).into(),
