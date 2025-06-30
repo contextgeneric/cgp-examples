@@ -26,6 +26,7 @@ pub struct AppBuilder {
     pub db_journal_mode: String,
     pub http_user_agent: String,
     pub anthropic_key: String,
+    pub llm_preamble: String,
 }
 
 delegate_components! {

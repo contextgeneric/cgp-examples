@@ -1,4 +1,5 @@
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
+use cgp::core::field::CanBuildFrom;
 use cgp::extra::dispatch::BuildAndMergeOutputs;
 use cgp::extra::handler::CanHandle;
 use cgp::prelude::*;
@@ -39,6 +40,25 @@ delegate_components! {
 check_components! {
     CanUseFullAppBuilder for FullAppBuilder {
         HandlerComponent: ((), ()),
+    }
+}
+
+#[cgp_new_provider]
+impl<Code: Send, Input: Send> Handler<FullAppBuilder, Code, Input> for BuildApp {
+    type Output = App;
+
+    async fn handle(
+        context: &FullAppBuilder,
+        code: PhantomData<Code>,
+        _input: Input,
+    ) -> Result<App, Error> {
+        let app = App::builder()
+            .build_from(BuildSqliteClient::handle(context, code, ()).await?)
+            .build_from(BuildHttpClient::handle(context, code, ()).await?)
+            .build_from(BuildOpenAiClient::handle(context, code, ()).await?)
+            .finalize_build();
+
+        Ok(app)
     }
 }
 

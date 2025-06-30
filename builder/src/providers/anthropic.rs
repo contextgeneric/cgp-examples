@@ -7,6 +7,8 @@ use rig::providers::anthropic::{self, ANTHROPIC_VERSION_LATEST, ClientBuilder};
 #[cgp_auto_getter]
 pub trait HasAnthropicConfig {
     fn anthropic_key(&self) -> &str;
+
+    fn llm_preamble(&self) -> &str;
 }
 
 #[derive(HasField, HasFields, BuildField)]
@@ -31,7 +33,10 @@ where
             .anthropic_version(ANTHROPIC_VERSION_LATEST)
             .build();
 
-        let anthropic_agent = anthropic_client.agent(anthropic::CLAUDE_3_7_SONNET).build();
+        let anthropic_agent = anthropic_client
+            .agent(anthropic::CLAUDE_3_7_SONNET)
+            .preamble(build.llm_preamble())
+            .build();
 
         Ok(AnthropicClient {
             anthropic_client,
