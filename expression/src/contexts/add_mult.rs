@@ -4,7 +4,9 @@ use cgp::prelude::*;
 
 use crate::components::LispExprTypeProviderComponent;
 use crate::dsl::{Eval, ToLisp};
-use crate::providers::{BinaryOpToLisp, EvalAdd, EvalLiteral, EvalMultiply, LiteralToLisp};
+use crate::providers::{
+    EvalAdd, EvalLiteral, EvalMultiply, LiteralToLisp, PlusToLisp, TimesToLisp,
+};
 use crate::types::{Ident, List, Literal, Plus, Times};
 
 pub type Value = u64;
@@ -31,49 +33,42 @@ delegate_components! {
         LispExprTypeProviderComponent:
             UseType<LispExpr>,
         ComputerComponent:
-            UseDelegate<new ComputerCodeComponents {
-                Eval:
-                    UseInputDelegate<
-                        new EvalComponents {
-                            Expr: DispatchEval,
-                            Plus<Expr>: EvalAdd,
-                            Times<Expr>: EvalMultiply,
-                            Literal<Value>: EvalLiteral,
-                        }
-                    >,
-            }>,
+            UseInputDelegate<
+                new EvalComponents {
+                    Expr: DispatchEval,
+                    Plus<Expr>: EvalAdd,
+                    Times<Expr>: EvalMultiply,
+                    Literal<Value>: EvalLiteral,
+                }
+            >,
         ComputerRefComponent:
-            UseDelegate<new ComputerRefCodeComponents {
-                ToLisp:
-                    UseInputDelegate<
-                        new ToLispComponents {
-                            Expr: DispatchEval,
-                            Literal<Value>: LiteralToLisp,
-                            Plus<Expr>: BinaryOpToLisp<symbol!("+")>,
-                            Times<Expr>: BinaryOpToLisp<symbol!("*")>,
-                            // Plus<Expr>: AddToLisp,
-                            // Times<Expr>: MultiplyToLisp,
-                        }
-                    >,
-            }>,
-
+            UseInputDelegate<
+                new ToLispComponents {
+                    Expr: DispatchToLisp,
+                    Literal<Value>: LiteralToLisp,
+                    // Plus<Expr>: BinaryOpToLisp<symbol!("+")>,
+                    // Times<Expr>: BinaryOpToLisp<symbol!("*")>,
+                    Plus<Expr>: PlusToLisp,
+                    Times<Expr>: TimesToLisp,
+                }
+            >,
     }
 }
 
 #[cgp_new_provider]
-impl Computer<Interpreter, Eval, Expr> for DispatchEval {
+impl<Code> Computer<Interpreter, Code, Expr> for DispatchEval {
     type Output = Value;
 
-    fn compute(context: &Interpreter, code: PhantomData<Eval>, expr: Expr) -> Self::Output {
+    fn compute(context: &Interpreter, code: PhantomData<Code>, expr: Expr) -> Self::Output {
         MatchWithValueHandlers::compute(context, code, expr)
     }
 }
 
-#[cgp_provider]
-impl ComputerRef<Interpreter, ToLisp, Expr> for DispatchEval {
+#[cgp_new_provider]
+impl<Code> ComputerRef<Interpreter, Code, Expr> for DispatchToLisp {
     type Output = LispExpr;
 
-    fn compute_ref(context: &Interpreter, code: PhantomData<ToLisp>, expr: &Expr) -> Self::Output {
+    fn compute_ref(context: &Interpreter, code: PhantomData<Code>, expr: &Expr) -> Self::Output {
         <MatchWithValueHandlersRef>::compute_ref(context, code, expr)
     }
 }

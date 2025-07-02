@@ -1,3 +1,5 @@
+use core::ops::Add;
+
 use cgp::extra::handler::CanCompute;
 use cgp::prelude::*;
 
@@ -7,7 +9,7 @@ use crate::types::Plus;
 impl<Context, Code, Expr, Output> Computer<Context, Code, Plus<Expr>> for EvalAdd
 where
     Context: CanCompute<Code, Expr, Output = Output>,
-    Output: core::ops::Add<Output = Output>,
+    Output: Add<Output = Output>,
 {
     type Output = Output;
 

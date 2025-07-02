@@ -1,3 +1,5 @@
+use core::ops::Mul;
+
 use cgp::extra::handler::CanCompute;
 use cgp::prelude::*;
 
@@ -7,7 +9,7 @@ use crate::types::Times;
 impl<Context, Code, Expr, Output> Computer<Context, Code, Times<Expr>> for EvalMultiply
 where
     Context: CanCompute<Code, Expr, Output = Output>,
-    Output: core::ops::Mul<Output = Output>,
+    Output: Mul<Output = Output>,
 {
     type Output = Output;
 
