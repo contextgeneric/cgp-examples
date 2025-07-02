@@ -2,11 +2,9 @@ use cgp::extra::dispatch::{MatchWithValueHandlers, MatchWithValueHandlersRef};
 use cgp::extra::handler::{ComputerRef, ComputerRefComponent, UseInputDelegate};
 use cgp::prelude::*;
 
-use crate::components::LispExprTypeProviderComponent;
+use crate::components::{ExprTypeProviderComponent, LispExprTypeProviderComponent};
 use crate::dsl::{Eval, ToLisp};
-use crate::providers::{
-    EvalAdd, EvalLiteral, EvalMultiply, LiteralToLisp, PlusToLisp, TimesToLisp,
-};
+use crate::providers::{BinaryOpToLisp, EvalAdd, EvalLiteral, EvalMultiply, LiteralToLisp};
 use crate::types::{Ident, List, Literal, Plus, Times};
 
 pub type Value = u64;
@@ -30,6 +28,8 @@ pub struct Interpreter;
 
 delegate_components! {
     InterpreterComponents {
+        ExprTypeProviderComponent:
+            UseType<Expr>,
         LispExprTypeProviderComponent:
             UseType<LispExpr>,
         ComputerComponent:
@@ -46,10 +46,10 @@ delegate_components! {
                 new ToLispComponents {
                     Expr: DispatchToLisp,
                     Literal<Value>: LiteralToLisp,
-                    // Plus<Expr>: BinaryOpToLisp<symbol!("+")>,
-                    // Times<Expr>: BinaryOpToLisp<symbol!("*")>,
-                    Plus<Expr>: PlusToLisp,
-                    Times<Expr>: TimesToLisp,
+                    Plus<Expr>: BinaryOpToLisp<symbol!("+")>,
+                    Times<Expr>: BinaryOpToLisp<symbol!("*")>,
+                    // Plus<Expr>: PlusToLisp,
+                    // Times<Expr>: TimesToLisp,
                 }
             >,
     }
