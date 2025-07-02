@@ -34,7 +34,7 @@ delegate_components! {
             UseType<LispExpr>,
         ComputerRefComponent:
             UseInputDelegate<
-                new ToLispComponents {
+                new ExprComputerComponents {
                     MathExpr: HandleMathExpr,
                     Literal<Value>: HandleLiteral,
                     Plus<MathExpr>: HandlePlus,
