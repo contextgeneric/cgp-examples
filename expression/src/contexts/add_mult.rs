@@ -10,9 +10,9 @@ use crate::types::{Ident, List, Literal, Plus, Times};
 pub type Value = u64;
 
 #[derive(Debug, HasFields, FromVariant, ExtractField)]
-pub enum Expr {
-    Plus(Plus<Expr>),
-    Times(Times<Expr>),
+pub enum MathExpr {
+    Plus(Plus<MathExpr>),
+    Times(Times<MathExpr>),
     Literal(Literal<Value>),
 }
 
@@ -29,25 +29,25 @@ pub struct Interpreter;
 delegate_components! {
     InterpreterComponents {
         ExprTypeProviderComponent:
-            UseType<Expr>,
+            UseType<MathExpr>,
         LispExprTypeProviderComponent:
             UseType<LispExpr>,
         ComputerComponent:
             UseInputDelegate<
                 new EvalComponents {
-                    Expr: DispatchEval,
-                    Plus<Expr>: EvalAdd,
-                    Times<Expr>: EvalMultiply,
+                    MathExpr: DispatchEval,
+                    Plus<MathExpr>: EvalAdd,
+                    Times<MathExpr>: EvalMultiply,
                     Literal<Value>: EvalLiteral,
                 }
             >,
         ComputerRefComponent:
             UseInputDelegate<
                 new ToLispComponents {
-                    Expr: DispatchToLisp,
+                    MathExpr: DispatchToLisp,
                     Literal<Value>: LiteralToLisp,
-                    Plus<Expr>: BinaryOpToLisp<symbol!("+")>,
-                    Times<Expr>: BinaryOpToLisp<symbol!("*")>,
+                    Plus<MathExpr>: BinaryOpToLisp<symbol!("+")>,
+                    Times<MathExpr>: BinaryOpToLisp<symbol!("*")>,
                     // Plus<Expr>: PlusToLisp,
                     // Times<Expr>: TimesToLisp,
                 }
@@ -56,19 +56,23 @@ delegate_components! {
 }
 
 #[cgp_new_provider]
-impl<Code> Computer<Interpreter, Code, Expr> for DispatchEval {
+impl<Code> Computer<Interpreter, Code, MathExpr> for DispatchEval {
     type Output = Value;
 
-    fn compute(context: &Interpreter, code: PhantomData<Code>, expr: Expr) -> Self::Output {
+    fn compute(context: &Interpreter, code: PhantomData<Code>, expr: MathExpr) -> Self::Output {
         MatchWithValueHandlers::compute(context, code, expr)
     }
 }
 
 #[cgp_new_provider]
-impl<Code> ComputerRef<Interpreter, Code, Expr> for DispatchToLisp {
+impl<Code> ComputerRef<Interpreter, Code, MathExpr> for DispatchToLisp {
     type Output = LispExpr;
 
-    fn compute_ref(context: &Interpreter, code: PhantomData<Code>, expr: &Expr) -> Self::Output {
+    fn compute_ref(
+        context: &Interpreter,
+        code: PhantomData<Code>,
+        expr: &MathExpr,
+    ) -> Self::Output {
         <MatchWithValueHandlersRef>::compute_ref(context, code, expr)
     }
 }
@@ -76,15 +80,15 @@ impl<Code> ComputerRef<Interpreter, Code, Expr> for DispatchToLisp {
 check_components! {
     CanUseInterpreter for Interpreter {
         ComputerComponent: [
-            (Eval, Expr),
+            (Eval, MathExpr),
             (Eval, Literal<Value>),
-            (Eval, Plus<Expr>),
+            (Eval, Plus<MathExpr>),
         ],
         ComputerRefComponent: [
-            (ToLisp, Expr),
+            (ToLisp, MathExpr),
             (ToLisp, Literal<Value>),
-            (ToLisp, Plus<Expr>),
-            (ToLisp, Times<Expr>),
+            (ToLisp, Plus<MathExpr>),
+            (ToLisp, Times<MathExpr>),
         ]
     }
 }
@@ -97,7 +101,7 @@ mod test {
     use alloc::vec;
     use cgp::extra::handler::{CanCompute, CanComputeRef};
 
-    use crate::contexts::add_mult::{Expr, Interpreter, LispExpr};
+    use crate::contexts::add_mult::{Interpreter, LispExpr, MathExpr};
     use crate::dsl::{Eval, ToLisp};
     use crate::types::{Ident, List, Literal, Plus, Times};
 
@@ -109,9 +113,9 @@ mod test {
         assert_eq!(
             interpreter.compute(
                 code,
-                Expr::Plus(Plus {
-                    left: Expr::Literal(Literal(2)).into(),
-                    right: Expr::Literal(Literal(3)).into()
+                MathExpr::Plus(Plus {
+                    left: MathExpr::Literal(Literal(2)).into(),
+                    right: MathExpr::Literal(Literal(3)).into()
                 })
             ),
             5,
@@ -120,9 +124,9 @@ mod test {
         assert_eq!(
             interpreter.compute(
                 code,
-                Expr::Times(Times {
-                    left: Expr::Literal(Literal(2)).into(),
-                    right: Expr::Literal(Literal(3)).into()
+                MathExpr::Times(Times {
+                    left: MathExpr::Literal(Literal(2)).into(),
+                    right: MathExpr::Literal(Literal(3)).into()
                 })
             ),
             6,
@@ -131,11 +135,11 @@ mod test {
         assert_eq!(
             interpreter.compute(
                 code,
-                Expr::Times(Times {
-                    left: Expr::Literal(Literal(2)).into(),
-                    right: Expr::Plus(Plus {
-                        left: Expr::Literal(Literal(3)).into(),
-                        right: Expr::Literal(Literal(4)).into()
+                MathExpr::Times(Times {
+                    left: MathExpr::Literal(Literal(2)).into(),
+                    right: MathExpr::Plus(Plus {
+                        left: MathExpr::Literal(Literal(3)).into(),
+                        right: MathExpr::Literal(Literal(4)).into()
                     })
                     .into(),
                 })
@@ -152,9 +156,9 @@ mod test {
         assert_eq!(
             interpreter.compute_ref(
                 code,
-                &Expr::Plus(Plus {
-                    left: Expr::Literal(Literal(2)).into(),
-                    right: Expr::Literal(Literal(3)).into()
+                &MathExpr::Plus(Plus {
+                    left: MathExpr::Literal(Literal(2)).into(),
+                    right: MathExpr::Literal(Literal(3)).into()
                 })
             ),
             LispExpr::List(List(vec![
@@ -167,9 +171,9 @@ mod test {
         assert_eq!(
             interpreter.compute_ref(
                 code,
-                &Expr::Times(Times {
-                    left: Expr::Literal(Literal(2)).into(),
-                    right: Expr::Literal(Literal(3)).into()
+                &MathExpr::Times(Times {
+                    left: MathExpr::Literal(Literal(2)).into(),
+                    right: MathExpr::Literal(Literal(3)).into()
                 })
             ),
             LispExpr::List(List(vec![
@@ -182,11 +186,11 @@ mod test {
         assert_eq!(
             interpreter.compute_ref(
                 code,
-                &Expr::Times(Times {
-                    left: Expr::Literal(Literal(2)).into(),
-                    right: Expr::Plus(Plus {
-                        left: Expr::Literal(Literal(3)).into(),
-                        right: Expr::Literal(Literal(4)).into()
+                &MathExpr::Times(Times {
+                    left: MathExpr::Literal(Literal(2)).into(),
+                    right: MathExpr::Plus(Plus {
+                        left: MathExpr::Literal(Literal(3)).into(),
+                        right: MathExpr::Literal(Literal(4)).into()
                     })
                     .into(),
                 })

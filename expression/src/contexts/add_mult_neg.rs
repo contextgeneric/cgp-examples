@@ -9,12 +9,12 @@ use crate::types::{Literal, Minus, Negate, Plus, Times};
 pub type Value = i64;
 
 #[derive(Debug, HasFields, FromVariant, ExtractField)]
-pub enum Expr {
-    Plus(Plus<Expr>),
-    Times(Times<Expr>),
+pub enum MathExpr {
+    Plus(Plus<MathExpr>),
+    Times(Times<MathExpr>),
     Literal(Literal<Value>),
-    Negate(Negate<Expr>),
-    Minus(Minus<Expr>),
+    Negate(Negate<MathExpr>),
+    Minus(Minus<MathExpr>),
 }
 
 #[cgp_context]
@@ -31,20 +31,20 @@ delegate_components! {
 
 delegate_components! {
     new EvalComponents {
-        Expr: DispatchExpr,
-        Plus<Expr>: EvalAdd,
-        Times<Expr>: EvalMultiply,
+        MathExpr: DispatchExpr,
+        Plus<MathExpr>: EvalAdd,
+        Times<MathExpr>: EvalMultiply,
         Literal<Value>: EvalLiteral,
-        Negate<Expr>: EvalNegate,
-        Minus<Expr>: EvalSubtractWithNegate,
+        Negate<MathExpr>: EvalNegate,
+        Minus<MathExpr>: EvalSubtractWithNegate,
     }
 }
 
 #[cgp_new_provider]
-impl Computer<Interpreter, Eval, Expr> for DispatchExpr {
+impl Computer<Interpreter, Eval, MathExpr> for DispatchExpr {
     type Output = Value;
 
-    fn compute(context: &Interpreter, code: PhantomData<Eval>, expr: Expr) -> Self::Output {
+    fn compute(context: &Interpreter, code: PhantomData<Eval>, expr: MathExpr) -> Self::Output {
         MatchWithValueHandlers::compute(context, code, expr)
     }
 }
@@ -52,11 +52,11 @@ impl Computer<Interpreter, Eval, Expr> for DispatchExpr {
 check_components! {
     CanUseInterpreter for Interpreter {
         ComputerComponent: [
-            (Eval, Expr),
+            (Eval, MathExpr),
             (Eval, Literal<Value>),
-            (Eval, Plus<Expr>),
-            (Eval, Negate<Expr>),
-            (Eval, Minus<Expr>),
+            (Eval, Plus<MathExpr>),
+            (Eval, Negate<MathExpr>),
+            (Eval, Minus<MathExpr>),
         ]
     }
 }
@@ -67,7 +67,7 @@ mod test {
 
     use cgp::extra::handler::CanCompute;
 
-    use crate::contexts::add_mult_neg::{Expr, Interpreter};
+    use crate::contexts::add_mult_neg::{Interpreter, MathExpr};
     use crate::dsl::Eval;
     use crate::types::{Literal, Minus, Negate, Plus, Times};
 
@@ -79,9 +79,9 @@ mod test {
         assert_eq!(
             interpreter.compute(
                 code,
-                Expr::Plus(Plus {
-                    left: Expr::Literal(Literal(2)).into(),
-                    right: Expr::Literal(Literal(3)).into(),
+                MathExpr::Plus(Plus {
+                    left: MathExpr::Literal(Literal(2)).into(),
+                    right: MathExpr::Literal(Literal(3)).into(),
                 })
             ),
             5,
@@ -90,9 +90,9 @@ mod test {
         assert_eq!(
             interpreter.compute(
                 code,
-                Expr::Times(Times {
-                    left: Expr::Literal(Literal(2)).into(),
-                    right: Expr::Literal(Literal(3)).into(),
+                MathExpr::Times(Times {
+                    left: MathExpr::Literal(Literal(2)).into(),
+                    right: MathExpr::Literal(Literal(3)).into(),
                 })
             ),
             6,
@@ -101,9 +101,9 @@ mod test {
         assert_eq!(
             interpreter.compute(
                 code,
-                Expr::Minus(Minus {
-                    left: Expr::Literal(Literal(2)).into(),
-                    right: Expr::Literal(Literal(3)).into(),
+                MathExpr::Minus(Minus {
+                    left: MathExpr::Literal(Literal(2)).into(),
+                    right: MathExpr::Literal(Literal(3)).into(),
                 })
             ),
             -1,
@@ -112,11 +112,11 @@ mod test {
         assert_eq!(
             interpreter.compute(
                 code,
-                Expr::Times(Times {
-                    left: Expr::Negate(Negate(Expr::Literal(Literal(2)).into())).into(),
-                    right: Expr::Plus(Plus {
-                        left: Expr::Literal(Literal(3)).into(),
-                        right: Expr::Literal(Literal(4)).into(),
+                MathExpr::Times(Times {
+                    left: MathExpr::Negate(Negate(MathExpr::Literal(Literal(2)).into())).into(),
+                    right: MathExpr::Plus(Plus {
+                        left: MathExpr::Literal(Literal(3)).into(),
+                        right: MathExpr::Literal(Literal(4)).into(),
                     })
                     .into(),
                 })

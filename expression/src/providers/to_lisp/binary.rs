@@ -7,7 +7,7 @@ use cgp::core::field::CanUpcast;
 use cgp::extra::handler::{CanComputeRef, ComputerRef, ComputerRefComponent};
 use cgp::prelude::*;
 
-use crate::components::{HasExprType, HasLispExprType};
+use crate::components::{HasLispExprType, HasMathExprType};
 use crate::types::{Ident, List};
 
 #[cgp_auto_getter]
@@ -23,19 +23,19 @@ enum LispSubExpr<Expr> {
 }
 
 #[cgp_new_provider]
-impl<Context, Code, Expr, SubExpr, LispExpr, Operator> ComputerRef<Context, Code, SubExpr>
-    for BinaryOpToLisp<Operator>
+impl<Context, Code, MathExpr, MathSubExpr, LispExpr, Operator>
+    ComputerRef<Context, Code, MathSubExpr> for BinaryOpToLisp<Operator>
 where
-    Context: HasExprType<Expr = Expr>
+    Context: HasMathExprType<Expr = MathExpr>
         + HasLispExprType<LispExpr = LispExpr>
-        + CanComputeRef<Code, Expr, Output = LispExpr>,
-    SubExpr: BinarySubExpression<Expr>,
+        + CanComputeRef<Code, MathExpr, Output = LispExpr>,
+    MathSubExpr: BinarySubExpression<MathExpr>,
     Operator: Default + Display,
     LispSubExpr<LispExpr>: CanUpcast<LispExpr>,
 {
     type Output = LispExpr;
 
-    fn compute_ref(context: &Context, code: PhantomData<Code>, expr: &SubExpr) -> Self::Output {
+    fn compute_ref(context: &Context, code: PhantomData<Code>, expr: &MathSubExpr) -> Self::Output {
         let expr_a = context.compute_ref(code, expr.left());
         let expr_b = context.compute_ref(code, expr.right());
 

@@ -4,9 +4,9 @@ use cgp::prelude::*;
 use crate::types::{Minus, Negate, Plus};
 
 #[cgp_new_provider]
-impl<Context, Code, Expr, Output> Computer<Context, Code, Minus<Expr>> for EvalSubtract
+impl<Context, Code, MathExpr, Output> Computer<Context, Code, Minus<MathExpr>> for EvalSubtract
 where
-    Context: CanCompute<Code, Expr, Output = Output>,
+    Context: CanCompute<Code, MathExpr, Output = Output>,
     Output: core::ops::Sub<Output = Output>,
 {
     type Output = Output;
@@ -14,7 +14,7 @@ where
     fn compute(
         context: &Context,
         code: PhantomData<Code>,
-        Minus { left, right }: Minus<Expr>,
+        Minus { left, right }: Minus<MathExpr>,
     ) -> Self::Output {
         let output_a = context.compute(code, *left);
         let output_b = context.compute(code, *right);

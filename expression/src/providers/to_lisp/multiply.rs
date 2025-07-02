@@ -14,9 +14,10 @@ enum LispSubExpr<Expr> {
 }
 
 #[cgp_new_provider]
-impl<Context, Code, Expr, LispExpr> ComputerRef<Context, Code, Times<Expr>> for TimesToLisp
+impl<Context, Code, MathExpr, LispExpr> ComputerRef<Context, Code, Times<MathExpr>> for TimesToLisp
 where
-    Context: HasLispExprType<LispExpr = LispExpr> + CanComputeRef<Code, Expr, Output = LispExpr>,
+    Context:
+        HasLispExprType<LispExpr = LispExpr> + CanComputeRef<Code, MathExpr, Output = LispExpr>,
     LispSubExpr<LispExpr>: CanUpcast<LispExpr>,
 {
     type Output = LispExpr;
@@ -24,7 +25,7 @@ where
     fn compute_ref(
         context: &Context,
         code: PhantomData<Code>,
-        Times { left, right }: &Times<Expr>,
+        Times { left, right }: &Times<MathExpr>,
     ) -> Self::Output {
         let expr_a = context.compute_ref(code, left);
         let expr_b = context.compute_ref(code, right);

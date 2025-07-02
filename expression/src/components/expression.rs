@@ -6,6 +6,6 @@ pub trait HasLispExprType {
 }
 
 #[cgp_type]
-pub trait HasExprType {
+pub trait HasMathExprType {
     type Expr;
 }

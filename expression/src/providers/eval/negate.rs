@@ -4,9 +4,9 @@ use cgp::prelude::*;
 use crate::types::Negate;
 
 #[cgp_new_provider]
-impl<Context, Code, Expr, Output> Computer<Context, Code, Negate<Expr>> for EvalNegate
+impl<Context, Code, MathExpr, Output> Computer<Context, Code, Negate<MathExpr>> for EvalNegate
 where
-    Context: CanCompute<Code, Expr, Output = Output>,
+    Context: CanCompute<Code, MathExpr, Output = Output>,
     Output: core::ops::Neg<Output = Output>,
 {
     type Output = Output;
@@ -14,7 +14,7 @@ where
     fn compute(
         context: &Context,
         code: PhantomData<Code>,
-        Negate(expr): Negate<Expr>,
+        Negate(expr): Negate<MathExpr>,
     ) -> Self::Output {
         let output = context.compute(code, *expr);
 
