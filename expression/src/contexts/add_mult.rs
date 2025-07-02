@@ -95,10 +95,10 @@ check_components! {
 
 #[cfg(test)]
 mod test {
-    use core::marker::PhantomData;
-
     use alloc::borrow::ToOwned;
     use alloc::vec;
+    use core::marker::PhantomData;
+
     use cgp::extra::handler::{CanCompute, CanComputeRef};
 
     use crate::contexts::add_mult::{Interpreter, LispExpr, MathExpr};
