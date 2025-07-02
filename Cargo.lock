@@ -283,7 +283,7 @@ dependencies = [
 [[package]]
 name = "cgp-dispatch"
 version = "0.4.1"
-source = "git+https://github.com/contextgeneric/cgp.git?branch=handler-ref#d77024b8623f62d9d3e2aa718a55774da7fc29b7"
+source = "git+https://github.com/contextgeneric/cgp.git?branch=handler-ref#574b057e3f6ae98dc6df3a18b3e31f8a6707ae8b"
 dependencies = [
  "cgp-core",
  "cgp-handler",
@@ -386,7 +386,7 @@ dependencies = [
 [[package]]
 name = "cgp-handler"
 version = "0.4.1"
-source = "git+https://github.com/contextgeneric/cgp.git?branch=handler-ref#d77024b8623f62d9d3e2aa718a55774da7fc29b7"
+source = "git+https://github.com/contextgeneric/cgp.git?branch=handler-ref#574b057e3f6ae98dc6df3a18b3e31f8a6707ae8b"
 dependencies = [
  "cgp-core",
 ]
@@ -412,7 +412,7 @@ dependencies = [
 [[package]]
 name = "cgp-macro-lib"
 version = "0.4.1"
-source = "git+https://github.com/contextgeneric/cgp.git?branch=handler-ref#d77024b8623f62d9d3e2aa718a55774da7fc29b7"
+source = "git+https://github.com/contextgeneric/cgp.git?branch=handler-ref#574b057e3f6ae98dc6df3a18b3e31f8a6707ae8b"
 dependencies = [
  "itertools",
  "prettyplease",

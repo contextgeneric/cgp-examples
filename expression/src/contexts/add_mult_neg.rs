@@ -45,7 +45,7 @@ impl Computer<Interpreter, Eval, MathExpr> for DispatchExpr {
     type Output = Value;
 
     fn compute(context: &Interpreter, code: PhantomData<Eval>, expr: MathExpr) -> Self::Output {
-        MatchWithValueHandlers::compute(context, code, expr)
+        <MatchWithValueHandlers>::compute(context, code, expr)
     }
 }
 

@@ -26,7 +26,7 @@ enum LispSubExpr<Expr> {
 impl<Context, Code, MathExpr, MathSubExpr, LispExpr, Operator>
     ComputerRef<Context, Code, MathSubExpr> for BinaryOpToLisp<Operator>
 where
-    Context: HasMathExprType<Expr = MathExpr>
+    Context: HasMathExprType<MathExpr = MathExpr>
         + HasLispExprType<LispExpr = LispExpr>
         + CanComputeRef<Code, MathExpr, Output = LispExpr>,
     MathSubExpr: BinarySubExpression<MathExpr>,

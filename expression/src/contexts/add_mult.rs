@@ -2,9 +2,11 @@ use cgp::extra::dispatch::{MatchWithValueHandlers, MatchWithValueHandlersRef};
 use cgp::extra::handler::{ComputerRef, ComputerRefComponent, UseInputDelegate};
 use cgp::prelude::*;
 
-use crate::components::{ExprTypeProviderComponent, LispExprTypeProviderComponent};
+use crate::components::{LispExprTypeProviderComponent, MathExprTypeProviderComponent};
 use crate::dsl::{Eval, ToLisp};
-use crate::providers::{BinaryOpToLisp, EvalAdd, EvalLiteral, EvalMultiply, LiteralToLisp};
+use crate::providers::{
+    EvalAdd, EvalLiteral, EvalMultiply, LiteralToLisp, PlusToLisp, TimesToLisp,
+};
 use crate::types::{Ident, List, Literal, Plus, Times};
 
 pub type Value = u64;
@@ -28,7 +30,7 @@ pub struct Interpreter;
 
 delegate_components! {
     InterpreterComponents {
-        ExprTypeProviderComponent:
+        MathExprTypeProviderComponent:
             UseType<MathExpr>,
         LispExprTypeProviderComponent:
             UseType<LispExpr>,
@@ -46,10 +48,8 @@ delegate_components! {
                 new ToLispComponents {
                     MathExpr: DispatchToLisp,
                     Literal<Value>: LiteralToLisp,
-                    Plus<MathExpr>: BinaryOpToLisp<symbol!("+")>,
-                    Times<MathExpr>: BinaryOpToLisp<symbol!("*")>,
-                    // Plus<Expr>: PlusToLisp,
-                    // Times<Expr>: TimesToLisp,
+                    Plus<MathExpr>: PlusToLisp,
+                    Times<MathExpr>: TimesToLisp,
                 }
             >,
     }
@@ -60,7 +60,7 @@ impl<Code> Computer<Interpreter, Code, MathExpr> for DispatchEval {
     type Output = Value;
 
     fn compute(context: &Interpreter, code: PhantomData<Code>, expr: MathExpr) -> Self::Output {
-        MatchWithValueHandlers::compute(context, code, expr)
+        <MatchWithValueHandlers>::compute(context, code, expr)
     }
 }
 

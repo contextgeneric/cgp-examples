@@ -7,5 +7,5 @@ pub trait HasLispExprType {
 
 #[cgp_type]
 pub trait HasMathExprType {
-    type Expr;
+    type MathExpr;
 }
