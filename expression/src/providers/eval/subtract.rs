@@ -14,10 +14,10 @@ where
     fn compute(
         context: &Context,
         code: PhantomData<Code>,
-        Minus(expr_a, expr_b): Minus<Expr>,
+        Minus { left, right }: Minus<Expr>,
     ) -> Self::Output {
-        let output_a = context.compute(code, *expr_a);
-        let output_b = context.compute(code, *expr_b);
+        let output_a = context.compute(code, *left);
+        let output_b = context.compute(code, *right);
 
         output_a - output_b
     }
@@ -34,10 +34,13 @@ where
     fn compute(
         context: &Context,
         code: PhantomData<Code>,
-        Minus(expr_a, expr_b): Minus<Expr>,
+        Minus { left, right }: Minus<Expr>,
     ) -> Self::Output {
-        let expr_c = Expr::from_variant(PhantomData::<symbol!("Negate")>, Negate(expr_b));
-        let add_expr = Plus(expr_a, expr_c.into());
+        let expr_c = Expr::from_variant(PhantomData::<symbol!("Negate")>, Negate(right));
+        let add_expr = Plus {
+            left,
+            right: expr_c.into(),
+        };
 
         context.compute(code, add_expr)
     }

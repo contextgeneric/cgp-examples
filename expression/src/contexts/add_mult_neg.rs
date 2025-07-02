@@ -79,10 +79,10 @@ mod test {
         assert_eq!(
             interpreter.compute(
                 code,
-                Expr::Plus(Plus(
-                    Expr::Literal(Literal(2)).into(),
-                    Expr::Literal(Literal(3)).into()
-                ))
+                Expr::Plus(Plus {
+                    left: Expr::Literal(Literal(2)).into(),
+                    right: Expr::Literal(Literal(3)).into(),
+                })
             ),
             5,
         );
@@ -90,10 +90,10 @@ mod test {
         assert_eq!(
             interpreter.compute(
                 code,
-                Expr::Times(Times(
-                    Expr::Literal(Literal(2)).into(),
-                    Expr::Literal(Literal(3)).into()
-                ))
+                Expr::Times(Times {
+                    left: Expr::Literal(Literal(2)).into(),
+                    right: Expr::Literal(Literal(3)).into(),
+                })
             ),
             6,
         );
@@ -101,10 +101,10 @@ mod test {
         assert_eq!(
             interpreter.compute(
                 code,
-                Expr::Minus(Minus(
-                    Expr::Literal(Literal(2)).into(),
-                    Expr::Literal(Literal(3)).into()
-                ))
+                Expr::Minus(Minus {
+                    left: Expr::Literal(Literal(2)).into(),
+                    right: Expr::Literal(Literal(3)).into(),
+                })
             ),
             -1,
         );
@@ -112,14 +112,14 @@ mod test {
         assert_eq!(
             interpreter.compute(
                 code,
-                Expr::Times(Times(
-                    Expr::Negate(Negate(Expr::Literal(Literal(2)).into())).into(),
-                    Expr::Plus(Plus(
-                        Expr::Literal(Literal(3)).into(),
-                        Expr::Literal(Literal(4)).into()
-                    ))
+                Expr::Times(Times {
+                    left: Expr::Negate(Negate(Expr::Literal(Literal(2)).into())).into(),
+                    right: Expr::Plus(Plus {
+                        left: Expr::Literal(Literal(3)).into(),
+                        right: Expr::Literal(Literal(4)).into(),
+                    })
                     .into(),
-                ))
+                })
             ),
             -14,
         );

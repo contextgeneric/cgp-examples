@@ -24,10 +24,10 @@ where
     fn compute_ref(
         context: &Context,
         code: PhantomData<Code>,
-        Plus(expr_a, expr_b): &Plus<Expr>,
+        Plus { left, right }: &Plus<Expr>,
     ) -> Self::Output {
-        let expr_a = context.compute_ref(code, expr_a);
-        let expr_b = context.compute_ref(code, expr_b);
+        let expr_a = context.compute_ref(code, left);
+        let expr_b = context.compute_ref(code, right);
         let ident = LispSubExpr::Ident(Ident("+".to_owned())).upcast(PhantomData);
 
         LispSubExpr::List(List(vec![ident.into(), expr_a.into(), expr_b.into()]))

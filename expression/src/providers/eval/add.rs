@@ -16,10 +16,10 @@ where
     fn compute(
         context: &Context,
         code: PhantomData<Code>,
-        Plus(expr_a, expr_b): Plus<Expr>,
+        Plus { left, right }: Plus<Expr>,
     ) -> Self::Output {
-        let output_a = context.compute(code, *expr_a);
-        let output_b = context.compute(code, *expr_b);
+        let output_a = context.compute(code, *left);
+        let output_b = context.compute(code, *right);
 
         output_a + output_b
     }
