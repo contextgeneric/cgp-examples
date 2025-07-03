@@ -1,9 +1,9 @@
-use cgp::extra::dispatch::MatchWithValueHandlers;
-use cgp::extra::handler::UseInputDelegate;
+use cgp::extra::dispatch::MatchWithValueHandlersRef;
+use cgp::extra::handler::{ComputerRef, ComputerRefComponent, UseInputDelegate};
 use cgp::prelude::*;
 
 use crate::dsl::Eval;
-use crate::providers::{EvalAdd, EvalLiteral, EvalMultiply, EvalNegate, EvalSubtractWithNegate};
+use crate::providers::{EvalAdd, EvalLiteral, EvalMultiply, EvalNegate, EvalSubtract};
 use crate::types::{Literal, Minus, Negate, Plus, Times};
 
 pub type Value = i64;
@@ -22,7 +22,7 @@ pub struct Interpreter;
 
 delegate_components! {
     InterpreterComponents {
-        ComputerComponent:
+        ComputerRefComponent:
             UseDelegate<new CodeComponents {
                 Eval: UseInputDelegate<EvalComponents>,
             }>
@@ -36,22 +36,26 @@ delegate_components! {
         Times<MathExpr>: EvalMultiply,
         Literal<Value>: EvalLiteral,
         Negate<MathExpr>: EvalNegate,
-        Minus<MathExpr>: EvalSubtractWithNegate,
+        Minus<MathExpr>: EvalSubtract,
     }
 }
 
 #[cgp_new_provider]
-impl Computer<Interpreter, Eval, MathExpr> for DispatchExpr {
+impl ComputerRef<Interpreter, Eval, MathExpr> for DispatchExpr {
     type Output = Value;
 
-    fn compute(context: &Interpreter, code: PhantomData<Eval>, expr: MathExpr) -> Self::Output {
-        <MatchWithValueHandlers>::compute(context, code, expr)
+    fn compute_ref(
+        context: &Interpreter,
+        code: PhantomData<Eval>,
+        expr: &MathExpr,
+    ) -> Self::Output {
+        <MatchWithValueHandlersRef>::compute_ref(context, code, expr)
     }
 }
 
 check_components! {
     CanUseInterpreter for Interpreter {
-        ComputerComponent: [
+        ComputerRefComponent: [
             (Eval, MathExpr),
             (Eval, Literal<Value>),
             (Eval, Plus<MathExpr>),
@@ -65,7 +69,7 @@ check_components! {
 mod test {
     use core::marker::PhantomData;
 
-    use cgp::extra::handler::CanCompute;
+    use cgp::extra::handler::CanComputeRef;
 
     use crate::contexts::add_mult_neg::{Interpreter, MathExpr};
     use crate::dsl::Eval;
@@ -77,9 +81,9 @@ mod test {
         let code = PhantomData::<Eval>;
 
         assert_eq!(
-            interpreter.compute(
+            interpreter.compute_ref(
                 code,
-                MathExpr::Plus(Plus {
+                &MathExpr::Plus(Plus {
                     left: MathExpr::Literal(Literal(2)).into(),
                     right: MathExpr::Literal(Literal(3)).into(),
                 })
@@ -88,9 +92,9 @@ mod test {
         );
 
         assert_eq!(
-            interpreter.compute(
+            interpreter.compute_ref(
                 code,
-                MathExpr::Times(Times {
+                &MathExpr::Times(Times {
                     left: MathExpr::Literal(Literal(2)).into(),
                     right: MathExpr::Literal(Literal(3)).into(),
                 })
@@ -99,9 +103,9 @@ mod test {
         );
 
         assert_eq!(
-            interpreter.compute(
+            interpreter.compute_ref(
                 code,
-                MathExpr::Minus(Minus {
+                &MathExpr::Minus(Minus {
                     left: MathExpr::Literal(Literal(2)).into(),
                     right: MathExpr::Literal(Literal(3)).into(),
                 })
@@ -110,9 +114,9 @@ mod test {
         );
 
         assert_eq!(
-            interpreter.compute(
+            interpreter.compute_ref(
                 code,
-                MathExpr::Times(Times {
+                &MathExpr::Times(Times {
                     left: MathExpr::Negate(Negate(MathExpr::Literal(Literal(2)).into())).into(),
                     right: MathExpr::Plus(Plus {
                         left: MathExpr::Literal(Literal(3)).into(),

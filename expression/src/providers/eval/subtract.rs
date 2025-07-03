@@ -1,23 +1,23 @@
-use cgp::extra::handler::CanCompute;
+use cgp::extra::handler::{CanCompute, CanComputeRef, ComputerRef, ComputerRefComponent};
 use cgp::prelude::*;
 
 use crate::types::{Minus, Negate, Plus};
 
 #[cgp_new_provider]
-impl<Context, Code, MathExpr, Output> Computer<Context, Code, Minus<MathExpr>> for EvalSubtract
+impl<Context, Code, MathExpr, Output> ComputerRef<Context, Code, Minus<MathExpr>> for EvalSubtract
 where
-    Context: CanCompute<Code, MathExpr, Output = Output>,
+    Context: CanComputeRef<Code, MathExpr, Output = Output>,
     Output: core::ops::Sub<Output = Output>,
 {
     type Output = Output;
 
-    fn compute(
+    fn compute_ref(
         context: &Context,
         code: PhantomData<Code>,
-        Minus { left, right }: Minus<MathExpr>,
+        Minus { left, right }: &Minus<MathExpr>,
     ) -> Self::Output {
-        let output_a = context.compute(code, *left);
-        let output_b = context.compute(code, *right);
+        let output_a = context.compute_ref(code, left);
+        let output_b = context.compute_ref(code, right);
 
         output_a - output_b
     }
