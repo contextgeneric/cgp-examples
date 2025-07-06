@@ -9,58 +9,54 @@ use crate::types::{Literal, Minus, Negate, Plus, Times};
 pub type Value = i64;
 
 #[derive(Debug, HasFields, FromVariant, ExtractField)]
-pub enum MathExpr {
-    Plus(Plus<MathExpr>),
-    Times(Times<MathExpr>),
+pub enum MathPlusExpr {
+    Plus(Plus<MathPlusExpr>),
+    Times(Times<MathPlusExpr>),
     Literal(Literal<Value>),
-    Negate(Negate<MathExpr>),
-    Minus(Minus<MathExpr>),
+    Negate(Negate<MathPlusExpr>),
+    Minus(Minus<MathPlusExpr>),
 }
 
 #[cgp_context]
-pub struct Interpreter;
+pub struct InterpreterPlus;
 
 delegate_components! {
-    InterpreterComponents {
+    InterpreterPlusComponents {
         ComputerRefComponent:
             UseDelegate<new CodeComponents {
-                Eval: UseInputDelegate<EvalComponents>,
+                Eval: UseInputDelegate<new EvalComponents {
+                    MathPlusExpr: DispatchEval,
+                    Plus<MathPlusExpr>: EvalAdd,
+                    Times<MathPlusExpr>: EvalMultiply,
+                    Literal<Value>: EvalLiteral,
+                    Minus<MathPlusExpr>: EvalSubtract,
+                    Negate<MathPlusExpr>: EvalNegate,
+                }>,
             }>
     }
 }
 
-delegate_components! {
-    new EvalComponents {
-        MathExpr: DispatchExpr,
-        Plus<MathExpr>: EvalAdd,
-        Times<MathExpr>: EvalMultiply,
-        Literal<Value>: EvalLiteral,
-        Negate<MathExpr>: EvalNegate,
-        Minus<MathExpr>: EvalSubtract,
-    }
-}
-
 #[cgp_new_provider]
-impl ComputerRef<Interpreter, Eval, MathExpr> for DispatchExpr {
+impl ComputerRef<InterpreterPlus, Eval, MathPlusExpr> for DispatchEval {
     type Output = Value;
 
     fn compute_ref(
-        context: &Interpreter,
+        context: &InterpreterPlus,
         code: PhantomData<Eval>,
-        expr: &MathExpr,
+        expr: &MathPlusExpr,
     ) -> Self::Output {
         <MatchWithValueHandlersRef>::compute_ref(context, code, expr)
     }
 }
 
 check_components! {
-    CanUseInterpreter for Interpreter {
+    CanUseInterpreter for InterpreterPlus {
         ComputerRefComponent: [
-            (Eval, MathExpr),
+            (Eval, MathPlusExpr),
             (Eval, Literal<Value>),
-            (Eval, Plus<MathExpr>),
-            (Eval, Negate<MathExpr>),
-            (Eval, Minus<MathExpr>),
+            (Eval, Plus<MathPlusExpr>),
+            (Eval, Negate<MathPlusExpr>),
+            (Eval, Minus<MathPlusExpr>),
         ]
     }
 }
@@ -71,21 +67,21 @@ mod test {
 
     use cgp::extra::handler::CanComputeRef;
 
-    use crate::contexts::add_mult_neg::{Interpreter, MathExpr};
+    use crate::contexts::add_mult_neg::{InterpreterPlus, MathPlusExpr};
     use crate::dsl::Eval;
     use crate::types::{Literal, Minus, Negate, Plus, Times};
 
     #[test]
     fn test_add_mult_neg() {
-        let interpreter = Interpreter;
+        let interpreter = InterpreterPlus;
         let code = PhantomData::<Eval>;
 
         assert_eq!(
             interpreter.compute_ref(
                 code,
-                &MathExpr::Plus(Plus {
-                    left: MathExpr::Literal(Literal(2)).into(),
-                    right: MathExpr::Literal(Literal(3)).into(),
+                &MathPlusExpr::Plus(Plus {
+                    left: MathPlusExpr::Literal(Literal(2)).into(),
+                    right: MathPlusExpr::Literal(Literal(3)).into(),
                 })
             ),
             5,
@@ -94,9 +90,9 @@ mod test {
         assert_eq!(
             interpreter.compute_ref(
                 code,
-                &MathExpr::Times(Times {
-                    left: MathExpr::Literal(Literal(2)).into(),
-                    right: MathExpr::Literal(Literal(3)).into(),
+                &MathPlusExpr::Times(Times {
+                    left: MathPlusExpr::Literal(Literal(2)).into(),
+                    right: MathPlusExpr::Literal(Literal(3)).into(),
                 })
             ),
             6,
@@ -105,9 +101,9 @@ mod test {
         assert_eq!(
             interpreter.compute_ref(
                 code,
-                &MathExpr::Minus(Minus {
-                    left: MathExpr::Literal(Literal(2)).into(),
-                    right: MathExpr::Literal(Literal(3)).into(),
+                &MathPlusExpr::Minus(Minus {
+                    left: MathPlusExpr::Literal(Literal(2)).into(),
+                    right: MathPlusExpr::Literal(Literal(3)).into(),
                 })
             ),
             -1,
@@ -116,11 +112,12 @@ mod test {
         assert_eq!(
             interpreter.compute_ref(
                 code,
-                &MathExpr::Times(Times {
-                    left: MathExpr::Negate(Negate(MathExpr::Literal(Literal(2)).into())).into(),
-                    right: MathExpr::Plus(Plus {
-                        left: MathExpr::Literal(Literal(3)).into(),
-                        right: MathExpr::Literal(Literal(4)).into(),
+                &MathPlusExpr::Times(Times {
+                    left: MathPlusExpr::Negate(Negate(MathPlusExpr::Literal(Literal(2)).into()))
+                        .into(),
+                    right: MathPlusExpr::Plus(Plus {
+                        left: MathPlusExpr::Literal(Literal(3)).into(),
+                        right: MathPlusExpr::Literal(Literal(4)).into(),
                     })
                     .into(),
                 })

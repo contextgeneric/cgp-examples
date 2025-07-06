@@ -1,5 +1,5 @@
 [package]
-name = "cgp-example-greet"
+name    = "cgp-example-greet"
 version = "0.1.0"
 edition = "2024"
 
@@ -8,4 +8,4 @@ name = "greet"
 path = "bin/greet_name.rs"
 
 [dependencies]
-cgp                 = { version = "0.4.1" }
+cgp = { version = "0.4.1" }
