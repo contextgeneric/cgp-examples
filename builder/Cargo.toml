@@ -1,12 +1,12 @@
 [package]
-name    = "cgp-example-builder"
+name = "cgp-example-builder"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-cgp              = { version = "0.4.1" }
-cgp-error-anyhow = { version = "0.4.1" }
-sqlx             = { version = "0.8.6", features = [ "sqlite", "postgres" ] }
-rig-core         = { version = "0.13.0" }
-reqwest          = { version = "0.12.20" }
-serde            = { version = "1.0.219", features = [ "derive" ] }
+cgp = { version = "0.4.2-alpha" }
+cgp-error-anyhow = { version = "0.4.2-alpha" }
+sqlx = { version = "0.8.6", features = ["sqlite", "postgres"] }
+rig-core = { version = "0.13.0" }
+reqwest = { version = "0.12.20" }
+serde = { version = "1.0.219", features = ["derive"] }
