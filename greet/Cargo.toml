@@ -8,4 +8,4 @@ name = "greet"
 path = "bin/greet_name.rs"
 
 [dependencies]
-cgp = { version = "0.4.2-alpha" }
+cgp = { version = "0.4.2" }
