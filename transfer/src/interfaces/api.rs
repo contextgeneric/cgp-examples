@@ -1,32 +1,33 @@
 use cgp::core::component::UseDelegate;
 use cgp::prelude::*;
 
-#[cgp_component(ApiHandler)]
+#[cgp_component{
+    provider: ApiHandler,
+    derive_delegate: UseDelegate<Api>,
+}]
 #[async_trait]
-pub trait CanHandleApi<Api>: HasAsyncErrorType {
-    type Request: Send + Sync;
+pub trait CanHandleApi<Api>: HasErrorType {
+    type Request;
 
-    type Response: Send + Sync;
+    type Response;
 
-    async fn handle_api(&self, request: Self::Request) -> Result<Self::Response, Self::Error>;
+    async fn handle_api(
+        &self,
+        _api: PhantomData<Api>,
+        request: Self::Request,
+    ) -> Result<Self::Response, Self::Error>;
+}
+
+pub trait CanHandleApiSend<Api>:
+    CanHandleApi<Api, Request: Send, Response: Send> + Send + Sync
+{
+    fn handle_api_send(
+        &self,
+        _api: PhantomData<Api>,
+        request: Self::Request,
+    ) -> impl Future<Output = Result<Self::Response, Self::Error>> + Send;
 }
 
 pub struct TransferApi;
 
 pub struct QueryBalanceApi;
-
-#[cgp_provider]
-impl<App, Api, Components, Delegate> ApiHandler<App, Api> for UseDelegate<Components>
-where
-    App: HasAsyncErrorType,
-    Components: DelegateComponent<Api, Delegate = Delegate>,
-    Delegate: ApiHandler<App, Api>,
-{
-    type Request = Delegate::Request;
-
-    type Response = Delegate::Response;
-
-    async fn handle_api(app: &App, request: Self::Request) -> Result<Self::Response, App::Error> {
-        Delegate::handle_api(app, request).await
-    }
-}

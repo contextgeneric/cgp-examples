@@ -8,7 +8,7 @@ use axum::response::IntoResponse;
 use axum::routing::{get, post};
 use cgp::prelude::HasErrorType;
 
-use crate::interfaces::{CanHandleApi, QueryBalanceApi, TransferApi};
+use crate::interfaces::{CanHandleApiSend, QueryBalanceApi, TransferApi};
 use crate::types::AppError;
 
 pub struct GetMethod;
@@ -29,7 +29,7 @@ pub fn handle_api_error(err: AppError) -> (StatusCode, String) {
 
 impl<App, Api> CanAddRoute<App, Api, GetMethod> for Router<Arc<App>>
 where
-    App: 'static + HasErrorType<Error = AppError> + CanHandleApi<Api>,
+    App: 'static + HasErrorType<Error = AppError> + CanHandleApiSend<Api>,
     App::Request: 'static + FromRequestParts<Arc<App>>,
     App::Response: 'static + IntoResponse,
 {
@@ -38,7 +38,9 @@ where
             path,
             get(
                 |(State(app), request): (State<Arc<App>>, App::Request)| async move {
-                    app.handle_api(request).await.map_err(handle_api_error)
+                    app.handle_api_send(PhantomData, request)
+                        .await
+                        .map_err(handle_api_error)
                 },
             ),
         )
@@ -47,7 +49,7 @@ where
 
 impl<App, Api> CanAddRoute<App, Api, PostMethod> for Router<Arc<App>>
 where
-    App: 'static + HasErrorType<Error = AppError> + CanHandleApi<Api>,
+    App: 'static + HasErrorType<Error = AppError> + CanHandleApiSend<Api>,
     App::Request: 'static + FromRequestParts<Arc<App>>,
     App::Response: 'static + IntoResponse,
 {
@@ -56,7 +58,9 @@ where
             path,
             post(
                 |(State(app), request): (State<Arc<App>>, App::Request)| async move {
-                    app.handle_api(request).await.map_err(handle_api_error)
+                    app.handle_api_send(PhantomData, request)
+                        .await
+                        .map_err(handle_api_error)
                 },
             ),
         )

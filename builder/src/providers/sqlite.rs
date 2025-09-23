@@ -24,7 +24,7 @@ pub struct SqliteClient {
 #[cgp_new_provider]
 impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildSqliteClient
 where
-    Build: HasSqliteOptions + CanRaiseAsyncError<sqlx::Error>,
+    Build: HasSqliteOptions + CanRaiseError<sqlx::Error>,
 {
     type Output = SqliteClient;
 
@@ -51,7 +51,7 @@ where
 #[cgp_new_provider]
 impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildDefaultSqliteClient
 where
-    Build: HasSqlitePath + CanRaiseAsyncError<sqlx::Error>,
+    Build: HasSqlitePath + CanRaiseError<sqlx::Error>,
 {
     type Output = SqliteClient;
 

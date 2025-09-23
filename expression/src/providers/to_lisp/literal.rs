@@ -1,4 +1,4 @@
-use cgp::core::field::CanUpcast;
+use cgp::core::field::impls::CanUpcast;
 use cgp::extra::handler::{ComputerRef, ComputerRefComponent};
 use cgp::prelude::*;
 

@@ -16,7 +16,7 @@ pub struct HttpClient {
 #[cgp_new_provider]
 impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildHttpClient
 where
-    Build: HasHttpClientConfig + CanRaiseAsyncError<reqwest::Error>,
+    Build: HasHttpClientConfig + CanRaiseError<reqwest::Error>,
 {
     type Output = HttpClient;
 
@@ -38,7 +38,7 @@ where
 #[cgp_new_provider]
 impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildDefaultHttpClient
 where
-    Build: HasAsyncErrorType,
+    Build: HasErrorType,
 {
     type Output = HttpClient;
 

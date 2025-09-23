@@ -1,5 +1,5 @@
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
-use cgp::core::field::CanBuildFrom;
+use cgp::core::field::impls::CanBuildFrom;
 use cgp::extra::dispatch::BuildAndMergeOutputs;
 use cgp::extra::handler::CanHandle;
 use cgp::prelude::*;

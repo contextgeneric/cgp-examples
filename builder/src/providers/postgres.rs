@@ -14,7 +14,7 @@ pub struct PostgresClient {
 #[cgp_new_provider]
 impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildPostgresClient
 where
-    Build: HasPostgresUrl + CanRaiseAsyncError<sqlx::Error>,
+    Build: HasPostgresUrl + CanRaiseError<sqlx::Error>,
 {
     type Output = PostgresClient;
 

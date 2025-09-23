@@ -21,7 +21,7 @@ pub struct OpenAiClient {
 #[cgp_new_provider]
 impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildOpenAiClient
 where
-    Build: HasOpenAiConfig + HasAsyncErrorType,
+    Build: HasOpenAiConfig + HasErrorType,
 {
     type Output = OpenAiClient;
 
@@ -46,7 +46,7 @@ where
 #[cgp_new_provider]
 impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildDefaultOpenAiClient
 where
-    Build: HasAsyncErrorType,
+    Build: HasErrorType,
 {
     type Output = OpenAiClient;
 

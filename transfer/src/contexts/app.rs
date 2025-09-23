@@ -112,6 +112,26 @@ check_components! {
     }
 }
 
+impl CanHandleApiSend<QueryBalanceApi> for MockApp {
+    async fn handle_api_send(
+        &self,
+        api: PhantomData<QueryBalanceApi>,
+        request: Self::Request,
+    ) -> Result<Self::Response, Self::Error> {
+        self.handle_api(api, request).await
+    }
+}
+
+impl CanHandleApiSend<TransferApi> for MockApp {
+    async fn handle_api_send(
+        &self,
+        api: PhantomData<TransferApi>,
+        request: Self::Request,
+    ) -> Result<Self::Response, Self::Error> {
+        self.handle_api(api, request).await
+    }
+}
+
 pub trait CanAddApiRoutes: CanAddMainApiRoutes<MockApp> {}
 
 impl CanAddApiRoutes for Router<Arc<MockApp>> {}

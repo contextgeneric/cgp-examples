@@ -18,13 +18,17 @@ where
 impl<App, Api, Request> ApiHandler<App, Api> for HandleTransfer<Request>
 where
     App: CanTransferMoney + CanRaiseHttpError<ErrUnauthorized, String>,
-    Request: Async + HasLoggedInUser<App> + HasTransferMoneyFields<App>,
+    Request: HasLoggedInUser<App> + HasTransferMoneyFields<App>,
 {
     type Request = Request;
 
     type Response = ();
 
-    async fn handle_api(app: &App, request: Request) -> Result<(), App::Error> {
+    async fn handle_api(
+        app: &App,
+        _api: PhantomData<Api>,
+        request: Request,
+    ) -> Result<(), App::Error> {
         let sender = request.logged_in_user().as_ref().ok_or_else(|| {
             App::raise_http_error(
                 ErrUnauthorized,

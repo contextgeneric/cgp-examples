@@ -1,7 +1,12 @@
 [package]
 name = "cgp-example-expression"
 version = "0.1.0"
-edition = "2024"
+edition      = { workspace = true }
+license      = { workspace = true }
+repository   = { workspace = true }
+authors      = { workspace = true }
+rust-version = { workspace = true }
+keywords     = { workspace = true }
 
 [dependencies]
-cgp = { version = "0.4.2" }
+cgp = { workspace = true }

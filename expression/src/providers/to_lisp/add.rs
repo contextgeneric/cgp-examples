@@ -1,7 +1,7 @@
 use alloc::borrow::ToOwned;
 use alloc::vec;
 
-use cgp::core::field::CanUpcast;
+use cgp::core::field::impls::CanUpcast;
 use cgp::extra::handler::{CanComputeRef, ComputerRef, ComputerRefComponent};
 use cgp::prelude::*;
 

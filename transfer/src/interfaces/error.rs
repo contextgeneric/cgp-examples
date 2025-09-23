@@ -2,7 +2,7 @@ use cgp::core::component::UseDelegate;
 use cgp::prelude::*;
 
 #[cgp_component(HttpErrorRaiser)]
-pub trait CanRaiseHttpError<Code, Detail>: HasAsyncErrorType {
+pub trait CanRaiseHttpError<Code, Detail>: HasErrorType {
     fn raise_http_error(_code: Code, detail: Detail) -> Self::Error;
 }
 
@@ -18,7 +18,7 @@ pub struct ErrInternal;
 impl<Context, Components, Code, Detail> HttpErrorRaiser<Context, Code, Detail>
     for UseDelegate<Components>
 where
-    Context: HasAsyncErrorType,
+    Context: HasErrorType,
     Components: DelegateComponent<(Code, Detail)>,
     Components::Delegate: HttpErrorRaiser<Context, Code, Detail>,
 {

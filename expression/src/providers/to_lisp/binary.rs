@@ -3,7 +3,7 @@ use alloc::string::ToString;
 use alloc::vec;
 use core::fmt::Display;
 
-use cgp::core::field::CanUpcast;
+use cgp::core::field::impls::CanUpcast;
 use cgp::extra::handler::{CanComputeRef, ComputerRef, ComputerRefComponent};
 use cgp::prelude::*;
 

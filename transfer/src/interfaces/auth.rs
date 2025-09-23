@@ -25,9 +25,7 @@ pub trait CanCheckPassword: HasPasswordType + HasHashedPasswordType {
 
 #[cgp_component(UserHashedPasswordQuerier)]
 #[async_trait]
-pub trait CanQueryUserHashedPassword:
-    HasUserIdType + HasHashedPasswordType + HasAsyncErrorType
-{
+pub trait CanQueryUserHashedPassword: HasUserIdType + HasHashedPasswordType + HasErrorType {
     async fn query_user_hashed_password(
         &self,
         user_id: &Self::UserId,

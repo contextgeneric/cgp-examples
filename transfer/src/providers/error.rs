@@ -43,7 +43,7 @@ pub struct DisplayHttpError;
 #[cgp_provider(HttpErrorRaiserComponent)]
 impl<Context, Code, Detail> HttpErrorRaiser<Context, Code, Detail> for DisplayHttpError
 where
-    Context: HasAsyncErrorType<Error = AppError>,
+    Context: HasErrorType<Error = AppError>,
     Code: IsStatusCode,
     Detail: Display,
 {
@@ -60,7 +60,7 @@ pub struct HandleHttpErrorWithAnyhow;
 #[cgp_provider(HttpErrorRaiserComponent)]
 impl<Context, Code, Detail> HttpErrorRaiser<Context, Code, Detail> for HandleHttpErrorWithAnyhow
 where
-    Context: HasAsyncErrorType<Error = AppError>,
+    Context: HasErrorType<Error = AppError>,
     Code: IsStatusCode,
     anyhow::Error: From<Detail>,
 {

@@ -4,22 +4,22 @@ use cgp::prelude::*;
 
 #[cgp_type]
 pub trait HasUserIdType {
-    type UserId: Async + Display;
+    type UserId: Display;
 }
 
 #[cgp_type]
 pub trait HasQuantityType {
-    type Quantity: Async + Display;
+    type Quantity: Display;
 }
 
 #[cgp_type]
 pub trait HasCurrencyType {
-    type Currency: Async + Display;
+    type Currency: Display;
 }
 
 #[cgp_type]
 pub trait HasPasswordType {
-    type Password: Async;
+    type Password;
 }
 
 #[cgp_type]

@@ -14,7 +14,7 @@ pub struct SqliteAndHttpClient {
 #[cgp_new_provider]
 impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildDefaultSqliteAndHttpClient
 where
-    Build: HasSqlitePath + CanRaiseAsyncError<sqlx::Error>,
+    Build: HasSqlitePath + CanRaiseError<sqlx::Error>,
 {
     type Output = SqliteAndHttpClient;
 

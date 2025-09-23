@@ -24,6 +24,7 @@ where
 
     async fn handle_api(
         app: &App,
+        api: PhantomData<Api>,
         mut request: Self::Request,
     ) -> Result<Self::Response, App::Error> {
         if request.logged_in_user().is_none() {
@@ -38,6 +39,6 @@ where
             }
         }
 
-        InHandler::handle_api(app, request).await
+        InHandler::handle_api(app, api, request).await
     }
 }

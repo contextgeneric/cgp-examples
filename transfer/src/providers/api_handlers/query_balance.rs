@@ -23,7 +23,7 @@ where
 impl<App, Api, Request> ApiHandler<App, Api> for HandleQueryBalance<Request>
 where
     App: CanQueryUserBalance + CanRaiseHttpError<ErrUnauthorized, String>,
-    Request: Async + HasLoggedInUser<App> + HasQueryBalanceFields<App>,
+    Request: HasLoggedInUser<App> + HasQueryBalanceFields<App>,
 {
     type Request = Request;
 
@@ -31,6 +31,7 @@ where
 
     async fn handle_api(
         app: &App,
+        _api: PhantomData<Api>,
         request: Request,
     ) -> Result<QueryBalanceResponse<App>, App::Error> {
         let user = request

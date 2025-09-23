@@ -24,7 +24,7 @@ pub trait HasMockedPasswords: HasUserIdType + HasHashedPasswordType {
 #[cgp_provider]
 impl<App> UserHashedPasswordQuerier<App> for UseMockedApp
 where
-    App: HasMockedPasswords + HasAsyncErrorType,
+    App: HasMockedPasswords + HasErrorType,
     App::UserId: Ord,
     App::HashedPassword: Clone,
 {
