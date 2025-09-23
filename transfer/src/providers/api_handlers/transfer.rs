@@ -37,7 +37,7 @@ where
         })?;
 
         app.transfer_money(
-            &sender,
+            sender,
             request.recipient(),
             request.currency(),
             request.quantity(),

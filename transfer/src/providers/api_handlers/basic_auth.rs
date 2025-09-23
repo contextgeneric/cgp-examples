@@ -27,15 +27,15 @@ where
         api: PhantomData<Api>,
         mut request: Self::Request,
     ) -> Result<Self::Response, App::Error> {
-        if request.logged_in_user().is_none() {
-            if let Some((user_id, password)) = request.basic_auth_header() {
-                let m_hashed_password = app.query_user_hashed_password(&user_id).await?;
+        if request.logged_in_user().is_none()
+            && let Some((user_id, password)) = request.basic_auth_header()
+        {
+            let m_hashed_password = app.query_user_hashed_password(user_id).await?;
 
-                if let Some(hashed_password) = m_hashed_password {
-                    if App::check_password(&password, &hashed_password) {
-                        *request.logged_in_user() = Some(user_id.clone());
-                    }
-                }
+            if let Some(hashed_password) = m_hashed_password
+                && App::check_password(password, &hashed_password)
+            {
+                *request.logged_in_user() = Some(user_id.clone());
             }
         }
 

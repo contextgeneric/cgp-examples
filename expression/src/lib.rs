@@ -1,4 +1,5 @@
 #![no_std]
+#![allow(clippy::borrowed_box)]
 
 extern crate alloc;
 

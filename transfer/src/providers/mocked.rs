@@ -120,7 +120,7 @@ where
             old_recipient_balance.checked_add(quantity).ok_or_else(|| {
                 App::raise_http_error(
                     ErrBadRequest,
-                    format!("recipient already has too much money!"),
+                    "recipient already has too much money!".to_string(),
                 )
             })?;
 
