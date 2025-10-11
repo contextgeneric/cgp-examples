@@ -49,7 +49,7 @@ delegate_components! {
         ComputerRefComponent: UseDelegate<
             new PlusHandlers {
                 Eval: EvalAdd,
-                ToLisp: BinaryOpToLisp<symbol!("+")>,
+                ToLisp: BinaryOpToLisp<Symbol!("+")>,
             }>
     }
 }
@@ -59,7 +59,7 @@ delegate_components! {
         ComputerRefComponent: UseDelegate<
             new TimesHandlers {
                 Eval: EvalMultiply,
-                ToLisp: BinaryOpToLisp<symbol!("*")>,
+                ToLisp: BinaryOpToLisp<Symbol!("*")>,
             }>
     }
 }

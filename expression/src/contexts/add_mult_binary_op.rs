@@ -46,8 +46,8 @@ delegate_components! {
                 new ToLispComponents {
                     MathExpr: DispatchToLisp,
                     Literal<Value>: LiteralToLisp,
-                    Plus<MathExpr>: BinaryOpToLisp<symbol!("+")>,
-                    Times<MathExpr>: BinaryOpToLisp<symbol!("*")>,
+                    Plus<MathExpr>: BinaryOpToLisp<Symbol!("+")>,
+                    Times<MathExpr>: BinaryOpToLisp<Symbol!("*")>,
                 }
             >,
     }

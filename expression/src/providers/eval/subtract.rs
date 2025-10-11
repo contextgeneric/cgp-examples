@@ -29,7 +29,7 @@ where
 impl<Context, Code, Expr, Output> Computer<Context, Code, Minus<Expr>> for EvalSubtractWithNegate
 where
     Context: CanCompute<Code, Plus<Expr>, Output = Output>,
-    Expr: FromVariant<symbol!("Negate"), Value = Negate<Expr>>,
+    Expr: FromVariant<Symbol!("Negate"), Value = Negate<Expr>>,
 {
     type Output = Output;
 
@@ -38,7 +38,7 @@ where
         code: PhantomData<Code>,
         Minus { left, right }: Minus<Expr>,
     ) -> Self::Output {
-        let expr_c = Expr::from_variant(PhantomData::<symbol!("Negate")>, Negate(right));
+        let expr_c = Expr::from_variant(PhantomData::<Symbol!("Negate")>, Negate(right));
         let add_expr = Plus {
             left,
             right: expr_c.into(),
