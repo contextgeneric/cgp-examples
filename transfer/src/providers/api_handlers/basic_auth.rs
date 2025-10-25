@@ -10,8 +10,8 @@ where
     fn basic_auth_header(&self) -> &Option<(App::UserId, App::Password)>;
 }
 
-#[cgp_new_provider]
-impl<App, Api, InHandler> ApiHandler<App, Api> for UseBasicAuth<InHandler>
+#[cgp_impl(new UseBasicAuth<InHandler>)]
+impl<App, Api, InHandler> ApiHandler<Api> for App
 where
     App: CanQueryUserHashedPassword + CanCheckPassword,
     InHandler::Request: HasLoggedInUserMut<App> + HasBasicAuthHeader<App>,

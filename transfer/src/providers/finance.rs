@@ -2,8 +2,8 @@ use cgp::prelude::*;
 
 use crate::interfaces::*;
 
-#[cgp_new_provider]
-impl<App, InHandler> MoneyTransferrer<App> for NoTransferToSelf<InHandler>
+#[cgp_impl(new NoTransferToSelf<InHandler>)]
+impl<App, InHandler> MoneyTransferrer for App
 where
     App: HasUserIdType
         + HasCurrencyType

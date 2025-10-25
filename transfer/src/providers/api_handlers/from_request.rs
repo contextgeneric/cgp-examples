@@ -2,8 +2,8 @@ use cgp::prelude::*;
 
 use crate::interfaces::{ApiHandler, ApiHandlerComponent};
 
-#[cgp_new_provider]
-impl<App, Api, Request, InHandler> ApiHandler<App, Api> for HandleFromRequest<Request, InHandler>
+#[cgp_impl(new HandleFromRequest<Request, InHandler>)]
+impl<App, Api, Request, InHandler> ApiHandler<Api> for App
 where
     App: HasErrorType,
     InHandler: ApiHandler<App, Api>,
@@ -22,8 +22,8 @@ where
     }
 }
 
-#[cgp_new_provider]
-impl<App, Api, Response, InHandler> ApiHandler<App, Api> for HandleFromResponse<Response, InHandler>
+#[cgp_impl(new HandleFromResponse<Response, InHandler>)]
+impl<App, Api, Response, InHandler> ApiHandler<Api> for App
 where
     App: HasErrorType,
     InHandler: ApiHandler<App, Api>,

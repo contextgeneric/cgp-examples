@@ -22,9 +22,9 @@ enum LispSubExpr<Expr> {
     Ident(Ident),
 }
 
-#[cgp_new_provider]
-impl<Context, Code, MathExpr, MathSubExpr, LispExpr, Operator>
-    ComputerRef<Context, Code, MathSubExpr> for BinaryOpToLisp<Operator>
+#[cgp_impl(new BinaryOpToLisp<Operator>)]
+impl<Context, Code, MathExpr, MathSubExpr, LispExpr, Operator> ComputerRef<Code, MathSubExpr>
+    for Context
 where
     Context: HasMathExprType<MathExpr = MathExpr>
         + HasLispExprType<LispExpr = LispExpr>

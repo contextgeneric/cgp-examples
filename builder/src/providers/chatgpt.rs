@@ -18,8 +18,8 @@ pub struct OpenAiClient {
     pub open_ai_agent: Agent<openai::CompletionModel>,
 }
 
-#[cgp_new_provider]
-impl<Build, Code, Input> Handler<Build, Code, Input> for BuildOpenAiClient
+#[cgp_impl(new BuildOpenAiClient)]
+impl<Build, Code, Input> Handler<Code, Input> for Build
 where
     Build: HasOpenAiConfig + HasErrorType,
 {
@@ -43,8 +43,8 @@ where
     }
 }
 
-#[cgp_new_provider]
-impl<Build, Code, Input> Handler<Build, Code, Input> for BuildDefaultOpenAiClient
+#[cgp_impl(new BuildDefaultOpenAiClient)]
+impl<Build, Code, Input> Handler<Code, Input> for Build
 where
     Build: HasErrorType,
 {

@@ -17,8 +17,8 @@ pub trait HasName: HasNameType {
     fn name(&self) -> &Self::Name;
 }
 
-#[cgp_new_provider]
-impl<Context> Greeter<Context> for GreetHello
+#[cgp_impl(new GreetHello)]
+impl<Context> Greeter for Context
 where
     Context: HasName,
     Context::Name: Display,

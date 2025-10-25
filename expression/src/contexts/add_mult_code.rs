@@ -83,8 +83,8 @@ delegate_components! {
     }
 }
 
-#[cgp_new_provider]
-impl ComputerRef<Interpreter, Eval, MathExpr> for DispatchEval {
+#[cgp_impl(new DispatchEval)]
+impl ComputerRef<Eval, MathExpr> for Interpreter {
     type Output = Value;
 
     fn compute_ref(
@@ -96,8 +96,8 @@ impl ComputerRef<Interpreter, Eval, MathExpr> for DispatchEval {
     }
 }
 
-#[cgp_new_provider]
-impl ComputerRef<Interpreter, ToLisp, MathExpr> for DispatchToLisp {
+#[cgp_impl(new DispatchToLisp)]
+impl ComputerRef<ToLisp, MathExpr> for Interpreter {
     type Output = LispExpr;
 
     fn compute_ref(

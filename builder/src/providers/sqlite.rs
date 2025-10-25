@@ -21,8 +21,8 @@ pub struct SqliteClient {
     pub sqlite_pool: SqlitePool,
 }
 
-#[cgp_new_provider]
-impl<Build, Code, Input> Handler<Build, Code, Input> for BuildSqliteClient
+#[cgp_impl(new BuildSqliteClient)]
+impl<Build, Code, Input> Handler<Code, Input> for Build
 where
     Build: HasSqliteOptions + CanRaiseError<sqlx::Error>,
 {
@@ -48,8 +48,8 @@ where
     }
 }
 
-#[cgp_new_provider]
-impl<Build, Code, Input> Handler<Build, Code, Input> for BuildDefaultSqliteClient
+#[cgp_impl(new BuildDefaultSqliteClient)]
+impl<Build, Code, Input> Handler<Code, Input> for Build
 where
     Build: HasSqlitePath + CanRaiseError<sqlx::Error>,
 {

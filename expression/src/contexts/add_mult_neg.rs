@@ -35,8 +35,8 @@ delegate_components! {
     }
 }
 
-#[cgp_new_provider]
-impl ComputerRef<InterpreterPlus, Eval, MathPlusExpr> for DispatchEval {
+#[cgp_impl(new DispatchEval)]
+impl ComputerRef<Eval, MathPlusExpr> for InterpreterPlus {
     type Output = Value;
 
     fn compute_ref(

@@ -52,8 +52,8 @@ delegate_components! {
     }
 }
 
-#[cgp_new_provider]
-impl<Code> Computer<Interpreter, Code, MathExpr> for DispatchEval {
+#[cgp_impl(new DispatchEval )]
+impl<Code> Computer<Code, MathExpr> for Interpreter {
     type Output = Value;
 
     fn compute(context: &Interpreter, code: PhantomData<Code>, expr: MathExpr) -> Self::Output {
@@ -61,8 +61,8 @@ impl<Code> Computer<Interpreter, Code, MathExpr> for DispatchEval {
     }
 }
 
-#[cgp_new_provider]
-impl<Code> ComputerRef<Interpreter, Code, MathExpr> for DispatchToLisp {
+#[cgp_impl(new DispatchToLisp )]
+impl<Code> ComputerRef<Code, MathExpr> for Interpreter {
     type Output = LispExpr;
 
     fn compute_ref(

@@ -17,8 +17,8 @@ pub struct AnthropicClient {
     pub anthropic_agent: Agent<CompletionModel>,
 }
 
-#[cgp_new_provider]
-impl<Build, Code, Input> Handler<Build, Code, Input> for BuildDefaultAnthropicClient
+#[cgp_impl(new BuildDefaultAnthropicClient)]
+impl<Build, Code, Input> Handler<Code, Input> for Build
 where
     Build: HasAnthropicConfig + HasErrorType,
 {

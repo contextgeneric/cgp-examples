@@ -11,8 +11,8 @@ pub struct SqliteAndHttpClient {
     pub http_client: Client,
 }
 
-#[cgp_new_provider]
-impl<Build, Code, Input> Handler<Build, Code, Input> for BuildDefaultSqliteAndHttpClient
+#[cgp_impl(new BuildDefaultSqliteAndHttpClient)]
+impl<Build, Code, Input> Handler<Code, Input> for Build
 where
     Build: HasSqlitePath + CanRaiseError<sqlx::Error>,
 {

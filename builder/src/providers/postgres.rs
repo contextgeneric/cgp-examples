@@ -11,8 +11,8 @@ pub struct PostgresClient {
     pub postgres_pool: PgPool,
 }
 
-#[cgp_new_provider]
-impl<Build, Code, Input> Handler<Build, Code, Input> for BuildPostgresClient
+#[cgp_impl(new BuildPostgresClient)]
+impl<Build, Code, Input> Handler<Code, Input> for Build
 where
     Build: HasPostgresUrl + CanRaiseError<sqlx::Error>,
 {

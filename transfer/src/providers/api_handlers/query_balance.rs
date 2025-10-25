@@ -19,8 +19,8 @@ where
     pub balance: App::Quantity,
 }
 
-#[cgp_new_provider]
-impl<App, Api, Request> ApiHandler<App, Api> for HandleQueryBalance<Request>
+#[cgp_impl(new HandleQueryBalance<Request>)]
+impl<App, Api, Request> ApiHandler<Api> for App
 where
     App: CanQueryUserBalance + CanRaiseHttpError<ErrUnauthorized, String>,
     Request: HasLoggedInUser<App> + HasQueryBalanceFields<App>,

@@ -14,8 +14,8 @@ where
     fn quantity(&self) -> &App::Quantity;
 }
 
-#[cgp_new_provider]
-impl<App, Api, Request> ApiHandler<App, Api> for HandleTransfer<Request>
+#[cgp_impl(new HandleTransfer<Request>)]
+impl<App, Api, Request> ApiHandler<Api> for App
 where
     App: CanTransferMoney + CanRaiseHttpError<ErrUnauthorized, String>,
     Request: HasLoggedInUser<App> + HasTransferMoneyFields<App>,
