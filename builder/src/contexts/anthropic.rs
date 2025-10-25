@@ -10,7 +10,6 @@ use sqlx::SqlitePool;
 
 use crate::providers::{BuildDefaultAnthropicClient, BuildHttpClient, BuildSqliteClient};
 
-#[cgp_context]
 #[derive(HasField, HasFields, BuildField)]
 pub struct AnthropicApp {
     pub sqlite_pool: SqlitePool,
@@ -19,7 +18,6 @@ pub struct AnthropicApp {
     pub anthropic_agent: Agent<anthropic::completion::CompletionModel>,
 }
 
-#[cgp_context]
 #[derive(HasField, Deserialize)]
 pub struct AppBuilder {
     pub db_options: String,
@@ -30,7 +28,7 @@ pub struct AppBuilder {
 }
 
 delegate_components! {
-    AppBuilderComponents {
+    AppBuilder {
         ErrorTypeProviderComponent:
             UseAnyhowError,
         ErrorRaiserComponent:

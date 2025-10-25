@@ -17,11 +17,10 @@ pub enum MathPlusExpr {
     Minus(Minus<MathPlusExpr>),
 }
 
-#[cgp_context]
 pub struct InterpreterPlus;
 
 delegate_components! {
-    InterpreterPlusComponents {
+    InterpreterPlus {
         ComputerRefComponent:
             UseDelegate<new CodeComponents {
                 Eval: UseInputDelegate<new EvalComponents {

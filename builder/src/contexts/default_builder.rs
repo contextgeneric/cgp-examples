@@ -9,14 +9,13 @@ use crate::providers::{
     BuildDefaultHttpClient, BuildDefaultOpenAiClient, BuildDefaultSqliteClient,
 };
 
-#[cgp_context]
 #[derive(HasField, Deserialize)]
 pub struct DefaultAppBuilder {
     pub db_path: String,
 }
 
 delegate_components! {
-    DefaultAppBuilderComponents {
+    DefaultAppBuilder {
         ErrorTypeProviderComponent:
             UseAnyhowError,
         ErrorRaiserComponent:

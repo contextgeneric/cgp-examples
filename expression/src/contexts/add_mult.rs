@@ -25,11 +25,10 @@ pub enum LispExpr {
     Ident(Ident),
 }
 
-#[cgp_context]
 pub struct Interpreter;
 
 delegate_components! {
-    InterpreterComponents {
+    Interpreter {
         MathExprTypeProviderComponent:
             UseType<MathExpr>,
         LispExprTypeProviderComponent:

@@ -9,7 +9,6 @@ use serde::Deserialize;
 use crate::contexts::app::App;
 use crate::providers::{BuildHttpClient, BuildOpenAiClient, BuildSqliteClient};
 
-#[cgp_context]
 #[derive(HasField, Deserialize)]
 pub struct FullAppBuilder {
     pub db_options: String,
@@ -21,7 +20,7 @@ pub struct FullAppBuilder {
 }
 
 delegate_components! {
-    FullAppBuilderComponents {
+    FullAppBuilder {
         ErrorTypeProviderComponent:
             UseAnyhowError,
         ErrorRaiserComponent:

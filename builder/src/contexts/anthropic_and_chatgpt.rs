@@ -15,7 +15,6 @@ use crate::providers::{
     BuildDefaultAnthropicClient, BuildHttpClient, BuildOpenAiClient, BuildSqliteClient,
 };
 
-#[cgp_context]
 #[derive(HasField, HasFields, BuildField)]
 pub struct AnthropicAndChatGptApp {
     pub sqlite_pool: SqlitePool,
@@ -26,7 +25,6 @@ pub struct AnthropicAndChatGptApp {
     pub open_ai_agent: Agent<openai::CompletionModel>,
 }
 
-#[cgp_context]
 #[derive(HasField, Deserialize)]
 pub struct AnthropicAndChatGptAppBuilder {
     pub db_options: String,
@@ -45,7 +43,7 @@ pub struct BuildChatGptApp;
 pub struct BuildAnthropicApp;
 
 delegate_components! {
-    AnthropicAndChatGptAppBuilderComponents {
+    AnthropicAndChatGptAppBuilder {
         ErrorTypeProviderComponent:
             UseAnyhowError,
         ErrorRaiserComponent:

@@ -28,14 +28,13 @@ where
     }
 }
 
-#[cgp_context]
 #[derive(HasField)]
 pub struct Person {
     pub name: String,
 }
 
 delegate_components! {
-    PersonComponents {
+    Person {
         NameTypeProviderComponent: UseType<String>,
         GreeterComponent: GreetHello,
     }

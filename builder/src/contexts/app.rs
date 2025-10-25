@@ -10,7 +10,6 @@ use rig::providers::openai;
 use sqlx::SqlitePool;
 use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode};
 
-#[cgp_context]
 #[derive(HasField, HasFields, BuildField)]
 pub struct App {
     pub sqlite_pool: SqlitePool,

@@ -10,7 +10,6 @@ use sqlx::PgPool;
 
 use crate::providers::{BuildHttpClient, BuildOpenAiClient, BuildPostgresClient};
 
-#[cgp_context]
 #[derive(HasField, HasFields, BuildField)]
 pub struct App {
     pub postgres_pool: PgPool,
@@ -19,7 +18,6 @@ pub struct App {
     pub open_ai_agent: Agent<openai::CompletionModel>,
 }
 
-#[cgp_context]
 #[derive(HasField, Deserialize)]
 pub struct AppBuilder {
     pub postgres_url: String,
@@ -30,7 +28,7 @@ pub struct AppBuilder {
 }
 
 delegate_components! {
-    AppBuilderComponents {
+    AppBuilder {
         ErrorTypeProviderComponent:
             UseAnyhowError,
         ErrorRaiserComponent:
