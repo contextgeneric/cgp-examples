@@ -5,8 +5,8 @@ use cgp::prelude::*;
 
 use crate::types::{Minus, Negate, Plus};
 
-#[cgp_new_provider]
-impl<Context, Code, MathExpr, Output> ComputerRef<Context, Code, Minus<MathExpr>> for EvalSubtract
+#[cgp_impl(new EvalSubtract)]
+impl<Context, Code, MathExpr, Output> ComputerRef<Code, Minus<MathExpr>> for Context
 where
     Context: CanComputeRef<Code, MathExpr, Output = Output>,
     Output: Sub<Output = Output>,
@@ -25,8 +25,8 @@ where
     }
 }
 
-#[cgp_new_provider]
-impl<Context, Code, Expr, Output> Computer<Context, Code, Minus<Expr>> for EvalSubtractWithNegate
+#[cgp_impl(new EvalSubtractWithNegate)]
+impl<Context, Code, Expr, Output> Computer<Code, Minus<Expr>> for Context
 where
     Context: CanCompute<Code, Plus<Expr>, Output = Output>,
     Expr: FromVariant<Symbol!("Negate"), Value = Negate<Expr>>,

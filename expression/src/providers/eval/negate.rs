@@ -5,8 +5,8 @@ use cgp::prelude::*;
 
 use crate::types::Negate;
 
-#[cgp_new_provider]
-impl<Context, Code, MathExpr, Output> ComputerRef<Context, Code, Negate<MathExpr>> for EvalNegate
+#[cgp_impl(new EvalNegate)]
+impl<Context, Code, MathExpr, Output> ComputerRef<Code, Negate<MathExpr>> for Context
 where
     Context: CanComputeRef<Code, MathExpr, Output = Output>,
     Output: Neg<Output = Output>,

@@ -10,8 +10,8 @@ enum LispSubExpr<T> {
     Literal(Literal<T>),
 }
 
-#[cgp_new_provider]
-impl<Context, Code, T, LispExpr> ComputerRef<Context, Code, Literal<T>> for LiteralToLisp
+#[cgp_impl(new LiteralToLisp)]
+impl<Context, Code, T, LispExpr> ComputerRef<Code, Literal<T>> for Context
 where
     Context: HasLispExprType<LispExpr = LispExpr>,
     LispSubExpr<T>: CanUpcast<LispExpr>,

@@ -18,7 +18,7 @@ pub struct AnthropicClient {
 }
 
 #[cgp_new_provider]
-impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildDefaultAnthropicClient
+impl<Build, Code, Input> Handler<Build, Code, Input> for BuildDefaultAnthropicClient
 where
     Build: HasAnthropicConfig + HasErrorType,
 {

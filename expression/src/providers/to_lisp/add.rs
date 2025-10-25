@@ -14,8 +14,8 @@ enum LispSubExpr<Expr> {
     Ident(Ident),
 }
 
-#[cgp_new_provider]
-impl<Context, Code, MathExpr, LispExpr> ComputerRef<Context, Code, Plus<MathExpr>> for PlusToLisp
+#[cgp_impl(new PlusToLisp)]
+impl<Context, Code, MathExpr, LispExpr> ComputerRef<Code, Plus<MathExpr>> for Context
 where
     Context:
         HasLispExprType<LispExpr = LispExpr> + CanComputeRef<Code, MathExpr, Output = LispExpr>,

@@ -43,7 +43,7 @@ check_components! {
 }
 
 #[cgp_new_provider]
-impl<Code: Send, Input: Send> Handler<FullAppBuilder, Code, Input> for BuildApp {
+impl<Code, Input> Handler<FullAppBuilder, Code, Input> for BuildApp {
     type Output = App;
 
     async fn handle(

@@ -14,9 +14,8 @@ pub struct ErrNotFound;
 
 pub struct ErrInternal;
 
-#[cgp_provider(HttpErrorRaiserComponent)]
-impl<Context, Components, Code, Detail> HttpErrorRaiser<Context, Code, Detail>
-    for UseDelegate<Components>
+#[cgp_impl(UseDelegate<Components>)]
+impl<Context, Components, Code, Detail> HttpErrorRaiser<Code, Detail> for Context
 where
     Context: HasErrorType,
     Components: DelegateComponent<(Code, Detail)>,

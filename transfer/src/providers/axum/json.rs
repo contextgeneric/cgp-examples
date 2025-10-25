@@ -7,8 +7,8 @@ use crate::interfaces::{ApiHandler, ApiHandlerComponent};
 
 pub struct ResponseToJson<InHandler>(pub PhantomData<InHandler>);
 
-#[cgp_provider]
-impl<App, Api, InHandler> ApiHandler<App, Api> for ResponseToJson<InHandler>
+#[cgp_impl(ResponseToJson<InHandler>)]
+impl<App, Api, InHandler> ApiHandler<Api> for App
 where
     App: HasErrorType,
     InHandler: ApiHandler<App, Api>,

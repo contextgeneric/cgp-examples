@@ -7,8 +7,8 @@ use cgp::prelude::*;
 
 use crate::types::Plus;
 
-#[cgp_new_provider]
-impl<Context, Code, MathExpr, Output> Computer<Context, Code, Plus<MathExpr>> for EvalAdd
+#[cgp_impl(new EvalAdd)]
+impl<Context, Code, MathExpr, Output> Computer<Code, Plus<MathExpr>> for Context
 where
     Context: CanCompute<Code, MathExpr, Output = Output>,
     Output: Add<Output = Output>,
@@ -27,8 +27,8 @@ where
     }
 }
 
-#[cgp_provider]
-impl<Context, Code, MathExpr, Output> ComputerRef<Context, Code, Plus<MathExpr>> for EvalAdd
+#[cgp_impl(EvalAdd)]
+impl<Context, Code, MathExpr, Output> ComputerRef<Code, Plus<MathExpr>> for Context
 where
     Context: CanComputeRef<Code, MathExpr, Output = Output>,
     Output: Add<Output = Output>,

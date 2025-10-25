@@ -40,8 +40,8 @@ impl IsStatusCode for ErrInternal {
 
 pub struct DisplayHttpError;
 
-#[cgp_provider(HttpErrorRaiserComponent)]
-impl<Context, Code, Detail> HttpErrorRaiser<Context, Code, Detail> for DisplayHttpError
+#[cgp_impl(DisplayHttpError)]
+impl<Context, Code, Detail> HttpErrorRaiser<Code, Detail> for Context
 where
     Context: HasErrorType<Error = AppError>,
     Code: IsStatusCode,
@@ -57,8 +57,8 @@ where
 
 pub struct HandleHttpErrorWithAnyhow;
 
-#[cgp_provider(HttpErrorRaiserComponent)]
-impl<Context, Code, Detail> HttpErrorRaiser<Context, Code, Detail> for HandleHttpErrorWithAnyhow
+#[cgp_impl(HandleHttpErrorWithAnyhow)]
+impl<Context, Code, Detail> HttpErrorRaiser<Code, Detail> for Context
 where
     Context: HasErrorType<Error = AppError>,
     Code: IsStatusCode,

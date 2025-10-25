@@ -21,8 +21,8 @@ pub trait HasMockedPasswords: HasUserIdType + HasHashedPasswordType {
     fn user_passwords(&self) -> &BTreeMap<Self::UserId, Self::HashedPassword>;
 }
 
-#[cgp_provider]
-impl<App> UserHashedPasswordQuerier<App> for UseMockedApp
+#[cgp_impl(UseMockedApp)]
+impl<App> UserHashedPasswordQuerier for App
 where
     App: HasMockedPasswords + HasErrorType,
     App::UserId: Ord,
@@ -38,8 +38,8 @@ where
     }
 }
 
-#[cgp_provider]
-impl<App> PasswordChecker<App> for UseMockedApp
+#[cgp_impl(UseMockedApp)]
+impl<App> PasswordChecker for App
 where
     App: HasPasswordType + HasHashedPasswordType<HashedPassword = App::Password>,
     App::Password: Eq,
@@ -49,8 +49,8 @@ where
     }
 }
 
-#[cgp_provider]
-impl<App> UserBalanceQuerier<App> for UseMockedApp
+#[cgp_impl(UseMockedApp)]
+impl<App> UserBalanceQuerier for App
 where
     App: HasMockedUserBalances + CanRaiseHttpError<ErrNotFound, String>,
     App::UserId: Ord + Clone,
@@ -77,8 +77,8 @@ where
     }
 }
 
-#[cgp_provider]
-impl<App> MoneyTransferrer<App> for UseMockedApp
+#[cgp_impl(UseMockedApp)]
+impl<App> MoneyTransferrer for App
 where
     App: HasMockedUserBalances
         + CanRaiseHttpError<ErrNotFound, String>

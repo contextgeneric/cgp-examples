@@ -14,7 +14,7 @@ pub struct HttpClient {
 }
 
 #[cgp_new_provider]
-impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildHttpClient
+impl<Build, Code, Input> Handler<Build, Code, Input> for BuildHttpClient
 where
     Build: HasHttpClientConfig + CanRaiseError<reqwest::Error>,
 {
@@ -36,7 +36,7 @@ where
 }
 
 #[cgp_new_provider]
-impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildDefaultHttpClient
+impl<Build, Code, Input> Handler<Build, Code, Input> for BuildDefaultHttpClient
 where
     Build: HasErrorType,
 {

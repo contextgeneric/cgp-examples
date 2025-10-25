@@ -5,8 +5,8 @@ use cgp::prelude::*;
 
 use crate::types::Times;
 
-#[cgp_new_provider]
-impl<Context, Code, MathExpr, Output> Computer<Context, Code, Times<MathExpr>> for EvalMultiply
+#[cgp_impl(new EvalMultiply)]
+impl<Context, Code, MathExpr, Output> Computer<Code, Times<MathExpr>> for Context
 where
     Context: CanCompute<Code, MathExpr, Output = Output>,
     Output: Mul<Output = Output>,
@@ -25,8 +25,8 @@ where
     }
 }
 
-#[cgp_provider]
-impl<Context, Code, MathExpr, Output> ComputerRef<Context, Code, Times<MathExpr>> for EvalMultiply
+#[cgp_impl(EvalMultiply)]
+impl<Context, Code, MathExpr, Output> ComputerRef<Code, Times<MathExpr>> for Context
 where
     Context: CanComputeRef<Code, MathExpr, Output = Output>,
     Output: Mul<Output = Output>,

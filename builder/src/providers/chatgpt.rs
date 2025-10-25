@@ -19,7 +19,7 @@ pub struct OpenAiClient {
 }
 
 #[cgp_new_provider]
-impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildOpenAiClient
+impl<Build, Code, Input> Handler<Build, Code, Input> for BuildOpenAiClient
 where
     Build: HasOpenAiConfig + HasErrorType,
 {
@@ -44,7 +44,7 @@ where
 }
 
 #[cgp_new_provider]
-impl<Build, Code: Send, Input: Send> Handler<Build, Code, Input> for BuildDefaultOpenAiClient
+impl<Build, Code, Input> Handler<Build, Code, Input> for BuildDefaultOpenAiClient
 where
     Build: HasErrorType,
 {
