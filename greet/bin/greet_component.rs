@@ -1,5 +1,3 @@
-use core::fmt::Display;
-
 use cgp::prelude::*;
 
 #[cgp_component(Greeter)]
@@ -12,19 +10,17 @@ pub trait HasNameType {
     type Name;
 }
 
-#[cgp_auto_getter]
-pub trait HasName: HasNameType {
-    fn name(&self) -> &Self::Name;
+#[cgp_impl(new GreetHello)]
+impl Greeter {
+    fn greet(&self, #[implicit] name: &str) {
+        println!("Hello, {name}!");
+    }
 }
 
-#[cgp_impl(new GreetHello)]
-impl Greeter
-where
-    Self: HasName,
-    Self::Name: Display,
-{
-    fn greet(&self) {
-        println!("Hello, {}!", self.name());
+#[cgp_impl(new GreetHi)]
+impl Greeter {
+    fn greet(&self, #[implicit] name: &str) {
+        println!("Hi, {name}!");
     }
 }
 
@@ -35,7 +31,6 @@ pub struct Person {
 
 delegate_components! {
     Person {
-        NameTypeProviderComponent: UseType<String>,
         GreeterComponent: GreetHello,
     }
 }

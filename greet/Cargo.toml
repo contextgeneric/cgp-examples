@@ -9,8 +9,16 @@ rust-version = { workspace = true }
 keywords     = { workspace = true }
 
 [[bin]]
-name = "greet"
-path = "bin/greet_name.rs"
+name = "greet-simple"
+path = "bin/greet_simple.rs"
+
+[[bin]]
+name = "greet-component"
+path = "bin/greet_component.rs"
+
+[[bin]]
+name = "greet-abstract-type"
+path = "bin/greet_abstract_type.rs"
 
 [dependencies]
 cgp = { workspace = true }
