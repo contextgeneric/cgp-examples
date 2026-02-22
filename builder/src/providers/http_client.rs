@@ -14,39 +14,40 @@ pub struct HttpClient {
 }
 
 #[cgp_impl(new BuildHttpClient)]
-impl<Build, Code, Input> Handler<Code, Input> for Build
+impl<Code, Input> Handler<Code, Input>
 where
-    Build: HasHttpClientConfig + CanRaiseError<reqwest::Error>,
+    Self: HasHttpClientConfig + CanRaiseError<reqwest::Error>,
 {
     type Output = HttpClient;
 
     async fn handle(
-        build: &Build,
+        &self,
+
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Build::Error> {
+    ) -> Result<Self::Output, Self::Error> {
         let http_client = Client::builder()
-            .user_agent(build.http_user_agent())
+            .user_agent(self.http_user_agent())
             .connect_timeout(Duration::from_secs(5))
             .build()
-            .map_err(Build::raise_error)?;
+            .map_err(Self::raise_error)?;
 
         Ok(HttpClient { http_client })
     }
 }
 
 #[cgp_impl(new BuildDefaultHttpClient)]
-impl<Build, Code, Input> Handler<Code, Input> for Build
+impl<Code, Input> Handler<Code, Input>
 where
-    Build: HasErrorType,
+    Self: HasErrorType,
 {
     type Output = HttpClient;
 
     async fn handle(
-        _build: &Build,
+        &self,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Build::Error> {
+    ) -> Result<Self::Output, Self::Error> {
         let http_client = Client::new();
         Ok(HttpClient { http_client })
     }

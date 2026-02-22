@@ -18,24 +18,24 @@ pub struct AnthropicClient {
 }
 
 #[cgp_impl(new BuildDefaultAnthropicClient)]
-impl<Build, Code, Input> Handler<Code, Input> for Build
+impl<Code, Input> Handler<Code, Input>
 where
-    Build: HasAnthropicConfig + HasErrorType,
+    Self: HasAnthropicConfig + HasErrorType,
 {
     type Output = AnthropicClient;
 
     async fn handle(
-        build: &Build,
+        &self,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Build::Error> {
-        let anthropic_client = ClientBuilder::new(build.anthropic_key())
+    ) -> Result<Self::Output, Self::Error> {
+        let anthropic_client = ClientBuilder::new(self.anthropic_key())
             .anthropic_version(ANTHROPIC_VERSION_LATEST)
             .build();
 
         let anthropic_agent = anthropic_client
             .agent(anthropic::CLAUDE_3_7_SONNET)
-            .preamble(build.llm_preamble())
+            .preamble(self.llm_preamble())
             .build();
 
         Ok(AnthropicClient {

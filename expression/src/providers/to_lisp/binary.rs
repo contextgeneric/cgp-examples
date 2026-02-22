@@ -23,10 +23,9 @@ enum LispSubExpr<Expr> {
 }
 
 #[cgp_impl(new BinaryOpToLisp<Operator>)]
-impl<Context, Code, MathExpr, MathSubExpr, LispExpr, Operator> ComputerRef<Code, MathSubExpr>
-    for Context
+impl<Code, MathExpr, MathSubExpr, LispExpr, Operator> ComputerRef<Code, MathSubExpr>
 where
-    Context: HasMathExprType<MathExpr = MathExpr>
+    Self: HasMathExprType<MathExpr = MathExpr>
         + HasLispExprType<LispExpr = LispExpr>
         + CanComputeRef<Code, MathExpr, Output = LispExpr>,
     MathSubExpr: BinarySubExpression<MathExpr>,
@@ -35,9 +34,9 @@ where
 {
     type Output = LispExpr;
 
-    fn compute_ref(context: &Context, code: PhantomData<Code>, expr: &MathSubExpr) -> Self::Output {
-        let expr_a = context.compute_ref(code, expr.left());
-        let expr_b = context.compute_ref(code, expr.right());
+    fn compute_ref(&self, code: PhantomData<Code>, expr: &MathSubExpr) -> Self::Output {
+        let expr_a = self.compute_ref(code, expr.left());
+        let expr_b = self.compute_ref(code, expr.right());
 
         let ident = LispSubExpr::Ident(Ident(Operator::default().to_string())).upcast(PhantomData);
 

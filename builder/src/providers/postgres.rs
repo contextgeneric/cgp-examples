@@ -12,20 +12,20 @@ pub struct PostgresClient {
 }
 
 #[cgp_impl(new BuildPostgresClient)]
-impl<Build, Code, Input> Handler<Code, Input> for Build
+impl<Code, Input> Handler<Code, Input>
 where
-    Build: HasPostgresUrl + CanRaiseError<sqlx::Error>,
+    Self: HasPostgresUrl + CanRaiseError<sqlx::Error>,
 {
     type Output = PostgresClient;
 
     async fn handle(
-        build: &Build,
+        &self,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Build::Error> {
-        let postgres_pool = PgPool::connect(build.postgres_url())
+    ) -> Result<Self::Output, Self::Error> {
+        let postgres_pool = PgPool::connect(self.postgres_url())
             .await
-            .map_err(Build::raise_error)?;
+            .map_err(Self::raise_error)?;
 
         Ok(PostgresClient { postgres_pool })
     }

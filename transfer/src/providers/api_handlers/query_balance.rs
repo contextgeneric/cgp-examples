@@ -20,26 +20,25 @@ where
 }
 
 #[cgp_impl(new HandleQueryBalance<Request>)]
-impl<App, Api, Request> ApiHandler<Api> for App
+impl<Api, Request> ApiHandler<Api>
 where
-    App: CanQueryUserBalance + CanRaiseHttpError<ErrUnauthorized, String>,
-    Request: HasLoggedInUser<App> + HasQueryBalanceFields<App>,
+    Self: CanQueryUserBalance + CanRaiseHttpError<ErrUnauthorized, String>,
+    Request: HasLoggedInUser<Self> + HasQueryBalanceFields<Self>,
 {
     type Request = Request;
 
-    type Response = QueryBalanceResponse<App>;
+    type Response = QueryBalanceResponse<Self>;
 
     async fn handle_api(
-        app: &App,
+        &self,
         _api: PhantomData<Api>,
         request: Request,
-    ) -> Result<QueryBalanceResponse<App>, App::Error> {
-        let user = request
-            .logged_in_user()
-            .as_ref()
-            .ok_or_else(|| App::raise_http_error(ErrUnauthorized, "you must first login".into()))?;
+    ) -> Result<QueryBalanceResponse<Self>, Self::Error> {
+        let user = request.logged_in_user().as_ref().ok_or_else(|| {
+            Self::raise_http_error(ErrUnauthorized, "you must first login".into())
+        })?;
 
-        let balance = app.query_user_balance(user, request.currency()).await?;
+        let balance = self.query_user_balance(user, request.currency()).await?;
 
         Ok(QueryBalanceResponse { balance })
     }

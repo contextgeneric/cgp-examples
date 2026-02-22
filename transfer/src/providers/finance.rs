@@ -3,26 +3,26 @@ use cgp::prelude::*;
 use crate::interfaces::*;
 
 #[cgp_impl(new NoTransferToSelf<InHandler>)]
-impl<App, InHandler> MoneyTransferrer for App
+impl<InHandler> MoneyTransferrer
 where
-    App: HasUserIdType
+    Self: HasUserIdType
         + HasCurrencyType
         + HasQuantityType
         + CanRaiseHttpError<ErrBadRequest, String>,
-    InHandler: MoneyTransferrer<App>,
-    App::UserId: Eq,
+    InHandler: MoneyTransferrer<Self>,
+    Self::UserId: Eq,
 {
     async fn transfer_money(
-        app: &App,
-        sender: &App::UserId,
-        recipient: &App::UserId,
-        currency: &App::Currency,
-        quantity: &App::Quantity,
-    ) -> Result<(), App::Error> {
+        &self,
+        sender: &Self::UserId,
+        recipient: &Self::UserId,
+        currency: &Self::Currency,
+        quantity: &Self::Quantity,
+    ) -> Result<(), Self::Error> {
         if sender != recipient {
-            InHandler::transfer_money(app, sender, recipient, currency, quantity).await
+            InHandler::transfer_money(self, sender, recipient, currency, quantity).await
         } else {
-            Err(App::raise_http_error(
+            Err(Self::raise_http_error(
                 ErrBadRequest,
                 format!("cannot transfer with the same sender and recipient: {sender}"),
             ))

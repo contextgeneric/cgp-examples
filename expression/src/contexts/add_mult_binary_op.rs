@@ -52,7 +52,7 @@ delegate_components! {
     }
 }
 
-#[cgp_impl(new DispatchEval )]
+#[cgp_impl(new DispatchEval)]
 impl<Code> Computer<Code, MathExpr> for Interpreter {
     type Output = Value;
 
@@ -61,7 +61,7 @@ impl<Code> Computer<Code, MathExpr> for Interpreter {
     }
 }
 
-#[cgp_impl(new DispatchToLisp )]
+#[cgp_impl(new DispatchToLisp)]
 impl<Code> ComputerRef<Code, MathExpr> for Interpreter {
     type Output = LispExpr;
 

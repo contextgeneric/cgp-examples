@@ -15,13 +15,13 @@ pub struct ErrNotFound;
 pub struct ErrInternal;
 
 #[cgp_impl(UseDelegate<Components>)]
-impl<Context, Components, Code, Detail> HttpErrorRaiser<Code, Detail> for Context
+impl<Components, Code, Detail> HttpErrorRaiser<Code, Detail>
 where
-    Context: HasErrorType,
+    Self: HasErrorType,
     Components: DelegateComponent<(Code, Detail)>,
-    Components::Delegate: HttpErrorRaiser<Context, Code, Detail>,
+    Components::Delegate: HttpErrorRaiser<Self, Code, Detail>,
 {
-    fn raise_http_error(code: Code, detail: Detail) -> Context::Error {
+    fn raise_http_error(code: Code, detail: Detail) -> Self::Error {
         Components::Delegate::raise_http_error(code, detail)
     }
 }

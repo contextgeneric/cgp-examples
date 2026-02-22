@@ -22,52 +22,52 @@ pub trait HasMockedPasswords: HasUserIdType + HasHashedPasswordType {
 }
 
 #[cgp_impl(UseMockedApp)]
-impl<App> UserHashedPasswordQuerier for App
+impl UserHashedPasswordQuerier
 where
-    App: HasMockedPasswords + HasErrorType,
-    App::UserId: Ord,
-    App::HashedPassword: Clone,
+    Self: HasMockedPasswords + HasErrorType,
+    Self::UserId: Ord,
+    Self::HashedPassword: Clone,
 {
     async fn query_user_hashed_password(
-        app: &App,
-        user_id: &App::UserId,
-    ) -> Result<Option<App::HashedPassword>, App::Error> {
-        let hashed_password = app.user_passwords().get(user_id).cloned();
+        &self,
+        user_id: &Self::UserId,
+    ) -> Result<Option<Self::HashedPassword>, Self::Error> {
+        let hashed_password = self.user_passwords().get(user_id).cloned();
 
         Ok(hashed_password)
     }
 }
 
 #[cgp_impl(UseMockedApp)]
-impl<App> PasswordChecker for App
+impl PasswordChecker
 where
-    App: HasPasswordType + HasHashedPasswordType<HashedPassword = App::Password>,
-    App::Password: Eq,
+    Self: HasPasswordType + HasHashedPasswordType<HashedPassword = Self::Password>,
+    Self::Password: Eq,
 {
-    fn check_password(password: &App::Password, hashed_password: &App::HashedPassword) -> bool {
+    fn check_password(password: &Self::Password, hashed_password: &Self::HashedPassword) -> bool {
         password == hashed_password
     }
 }
 
 #[cgp_impl(UseMockedApp)]
-impl<App> UserBalanceQuerier for App
+impl UserBalanceQuerier
 where
-    App: HasMockedUserBalances + CanRaiseHttpError<ErrNotFound, String>,
-    App::UserId: Ord + Clone,
-    App::Currency: Ord + Clone,
-    App::Quantity: Clone,
+    Self: HasMockedUserBalances + CanRaiseHttpError<ErrNotFound, String>,
+    Self::UserId: Ord + Clone,
+    Self::Currency: Ord + Clone,
+    Self::Quantity: Clone,
 {
     async fn query_user_balance(
-        app: &App,
-        user: &App::UserId,
-        currency: &App::Currency,
-    ) -> Result<App::Quantity, App::Error> {
-        let user_balances = app.user_balances().lock().await;
+        &self,
+        user: &Self::UserId,
+        currency: &Self::Currency,
+    ) -> Result<Self::Quantity, Self::Error> {
+        let user_balances = self.user_balances().lock().await;
 
         let user_balance = user_balances
             .get(&(user.clone(), currency.clone()))
             .ok_or_else(|| {
-                App::raise_http_error(
+                Self::raise_http_error(
                     ErrNotFound,
                     format!("user not found in mocked database: {user}"),
                 )
@@ -78,47 +78,47 @@ where
 }
 
 #[cgp_impl(UseMockedApp)]
-impl<App> MoneyTransferrer for App
+impl MoneyTransferrer
 where
-    App: HasMockedUserBalances
+    Self: HasMockedUserBalances
         + CanRaiseHttpError<ErrNotFound, String>
         + CanRaiseHttpError<ErrBadRequest, String>,
-    App::Quantity: CheckedAdd + CheckedSub,
-    App::UserId: Ord + Clone,
-    App::Currency: Ord + Clone,
+    Self::Quantity: CheckedAdd + CheckedSub,
+    Self::UserId: Ord + Clone,
+    Self::Currency: Ord + Clone,
 {
     async fn transfer_money(
-        app: &App,
-        sender: &App::UserId,
-        recipient: &App::UserId,
-        currency: &App::Currency,
-        quantity: &App::Quantity,
-    ) -> Result<(), App::Error> {
-        let mut user_balances = app.user_balances().lock().await;
+        &self,
+        sender: &Self::UserId,
+        recipient: &Self::UserId,
+        currency: &Self::Currency,
+        quantity: &Self::Quantity,
+    ) -> Result<(), Self::Error> {
+        let mut user_balances = self.user_balances().lock().await;
 
         let sender_key = (sender.clone(), currency.clone());
         let recipient_key = (recipient.clone(), currency.clone());
 
         let old_sender_balance = user_balances.get(&sender_key).ok_or_else(|| {
-            App::raise_http_error(
+            Self::raise_http_error(
                 ErrNotFound,
                 format!("sender not found in mocked database: {sender}"),
             )
         })?;
 
         let old_recipient_balance = user_balances.get(&recipient_key).ok_or_else(|| {
-            App::raise_http_error(
+            Self::raise_http_error(
                 ErrNotFound,
                 format!("recipient not found in mocked database: {recipient}"),
             )
         })?;
 
         let new_sender_balance = old_sender_balance.checked_sub(quantity)
-            .ok_or_else(|| App::raise_http_error(ErrBadRequest, format!("sender {sender} has insufficient balance {old_sender_balance} to transfer {quantity}")))?;
+            .ok_or_else(|| Self::raise_http_error(ErrBadRequest, format!("sender {sender} has insufficient balance {old_sender_balance} to transfer {quantity}")))?;
 
         let new_recipient_balance =
             old_recipient_balance.checked_add(quantity).ok_or_else(|| {
-                App::raise_http_error(
+                Self::raise_http_error(
                     ErrBadRequest,
                     "recipient already has too much money!".to_string(),
                 )

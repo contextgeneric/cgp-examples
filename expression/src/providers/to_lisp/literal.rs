@@ -11,19 +11,15 @@ enum LispSubExpr<T> {
 }
 
 #[cgp_impl(new LiteralToLisp)]
-impl<Context, Code, T, LispExpr> ComputerRef<Code, Literal<T>> for Context
+impl<Code, T, LispExpr> ComputerRef<Code, Literal<T>>
 where
-    Context: HasLispExprType<LispExpr = LispExpr>,
+    Self: HasLispExprType<LispExpr = LispExpr>,
     LispSubExpr<T>: CanUpcast<LispExpr>,
     T: Clone,
 {
     type Output = LispExpr;
 
-    fn compute_ref(
-        _context: &Context,
-        _code: PhantomData<Code>,
-        Literal(value): &Literal<T>,
-    ) -> Self::Output {
+    fn compute_ref(&self, _code: PhantomData<Code>, Literal(value): &Literal<T>) -> Self::Output {
         LispSubExpr::Literal(Literal(value.clone())).upcast(PhantomData)
     }
 }

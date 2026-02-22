@@ -19,21 +19,21 @@ pub struct OpenAiClient {
 }
 
 #[cgp_impl(new BuildOpenAiClient)]
-impl<Build, Code, Input> Handler<Code, Input> for Build
+impl<Code, Input> Handler<Code, Input>
 where
-    Build: HasOpenAiConfig + HasErrorType,
+    Self: HasOpenAiConfig + HasErrorType,
 {
     type Output = OpenAiClient;
 
     async fn handle(
-        build: &Build,
+        &self,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Build::Error> {
-        let open_ai_client = openai::Client::new(build.open_ai_key());
+    ) -> Result<Self::Output, Self::Error> {
+        let open_ai_client = openai::Client::new(self.open_ai_key());
         let open_ai_agent = open_ai_client
-            .agent(build.open_ai_model())
-            .preamble(build.llm_preamble())
+            .agent(self.open_ai_model())
+            .preamble(self.llm_preamble())
             .build();
 
         Ok(OpenAiClient {
@@ -44,17 +44,17 @@ where
 }
 
 #[cgp_impl(new BuildDefaultOpenAiClient)]
-impl<Build, Code, Input> Handler<Code, Input> for Build
+impl<Code, Input> Handler<Code, Input>
 where
-    Build: HasErrorType,
+    Self: HasErrorType,
 {
     type Output = OpenAiClient;
 
     async fn handle(
-        _build: &Build,
+        &self,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Build::Error> {
+    ) -> Result<Self::Output, Self::Error> {
         let open_ai_client = openai::Client::from_env();
         let open_ai_agent = open_ai_client.agent("gpt-4o").build();
 

@@ -18,13 +18,13 @@ pub trait HasName: HasNameType {
 }
 
 #[cgp_impl(new GreetHello)]
-impl<Context> Greeter for Context
+impl Greeter
 where
-    Context: HasName,
-    Context::Name: Display,
+    Self: HasName,
+    Self::Name: Display,
 {
-    fn greet(context: &Context) {
-        println!("Hello, {}!", context.name());
+    fn greet(&self) {
+        println!("Hello, {}!", self.name());
     }
 }
 

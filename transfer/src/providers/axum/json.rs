@@ -8,21 +8,21 @@ use crate::interfaces::{ApiHandler, ApiHandlerComponent};
 pub struct ResponseToJson<InHandler>(pub PhantomData<InHandler>);
 
 #[cgp_impl(ResponseToJson<InHandler>)]
-impl<App, Api, InHandler> ApiHandler<Api> for App
+impl<Api, InHandler> ApiHandler<Api>
 where
-    App: HasErrorType,
-    InHandler: ApiHandler<App, Api>,
+    Self: HasErrorType,
+    InHandler: ApiHandler<Self, Api>,
 {
     type Request = InHandler::Request;
 
     type Response = Json<InHandler::Response>;
 
     async fn handle_api(
-        app: &App,
+        &self,
         api: PhantomData<Api>,
         request: Self::Request,
-    ) -> Result<Self::Response, App::Error> {
-        let response = InHandler::handle_api(app, api, request).await?;
+    ) -> Result<Self::Response, Self::Error> {
+        let response = InHandler::handle_api(self, api, request).await?;
         Ok(Json(response))
     }
 }

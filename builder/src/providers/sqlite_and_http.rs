@@ -12,20 +12,20 @@ pub struct SqliteAndHttpClient {
 }
 
 #[cgp_impl(new BuildDefaultSqliteAndHttpClient)]
-impl<Build, Code, Input> Handler<Code, Input> for Build
+impl<Code, Input> Handler<Code, Input>
 where
-    Build: HasSqlitePath + CanRaiseError<sqlx::Error>,
+    Self: HasSqlitePath + CanRaiseError<sqlx::Error>,
 {
     type Output = SqliteAndHttpClient;
 
     async fn handle(
-        build: &Build,
+        &self,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Build::Error> {
-        let sqlite_pool = SqlitePool::connect(build.db_path())
+    ) -> Result<Self::Output, Self::Error> {
+        let sqlite_pool = SqlitePool::connect(self.db_path())
             .await
-            .map_err(Build::raise_error)?;
+            .map_err(Self::raise_error)?;
 
         let http_client = Client::new();
 

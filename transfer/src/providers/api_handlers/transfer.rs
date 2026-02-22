@@ -15,28 +15,28 @@ where
 }
 
 #[cgp_impl(new HandleTransfer<Request>)]
-impl<App, Api, Request> ApiHandler<Api> for App
+impl<Api, Request> ApiHandler<Api>
 where
-    App: CanTransferMoney + CanRaiseHttpError<ErrUnauthorized, String>,
-    Request: HasLoggedInUser<App> + HasTransferMoneyFields<App>,
+    Self: CanTransferMoney + CanRaiseHttpError<ErrUnauthorized, String>,
+    Request: HasLoggedInUser<Self> + HasTransferMoneyFields<Self>,
 {
     type Request = Request;
 
     type Response = ();
 
     async fn handle_api(
-        app: &App,
+        &self,
         _api: PhantomData<Api>,
         request: Request,
-    ) -> Result<(), App::Error> {
+    ) -> Result<(), Self::Error> {
         let sender = request.logged_in_user().as_ref().ok_or_else(|| {
-            App::raise_http_error(
+            Self::raise_http_error(
                 ErrUnauthorized,
                 "you must first login to perform transfer".into(),
             )
         })?;
 
-        app.transfer_money(
+        self.transfer_money(
             sender,
             request.recipient(),
             request.currency(),
