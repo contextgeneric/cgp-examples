@@ -9,8 +9,8 @@ rust-version = { workspace = true }
 keywords     = { workspace = true }
 
 [[bin]]
-name = "greet-simple"
-path = "bin/greet_simple.rs"
+name = "greet-function"
+path = "bin/greet_function.rs"
 
 [[bin]]
 name = "greet-component"

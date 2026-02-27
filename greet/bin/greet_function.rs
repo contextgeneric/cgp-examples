@@ -12,7 +12,7 @@ pub struct Person {
 
 fn main() {
     let person = Person {
-        name: "Alice".into(),
+        name: "Alice".to_owned(),
     };
 
     person.greet();
