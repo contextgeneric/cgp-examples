@@ -110,7 +110,7 @@ impl ComputerRef<ToLisp, MathExpr> for Interpreter {
 }
 
 check_components! {
-    CanUseInterpreter for Interpreter {
+    Interpreter {
         ComputerRefComponent: [
             (Eval, MathExpr),
             (Eval, Literal<Value>),

@@ -99,7 +99,7 @@ delegate_components! {
 }
 
 check_components! {
-    CanUseMockApp for MockApp
+    MockApp
     {
         QuantityTypeProviderComponent,
         UserBalanceQuerierComponent,

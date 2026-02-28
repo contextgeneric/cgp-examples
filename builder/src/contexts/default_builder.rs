@@ -32,7 +32,7 @@ delegate_components! {
 }
 
 check_components! {
-    CanUseMinAppBuilder for DefaultAppBuilder {
+    DefaultAppBuilder {
         HandlerComponent: ((), ()),
     }
 }

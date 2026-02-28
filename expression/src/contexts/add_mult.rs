@@ -77,7 +77,7 @@ impl<Code> ComputerRef<Code, MathExpr> for Interpreter {
 }
 
 check_components! {
-    CanUseInterpreter for Interpreter {
+    Interpreter {
         ComputerComponent: [
             (Eval, MathExpr),
             (Eval, Literal<Value>),

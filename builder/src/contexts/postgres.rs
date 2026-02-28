@@ -45,7 +45,7 @@ delegate_components! {
 }
 
 check_components! {
-    CanUseAppBuilder for AppBuilder {
+    AppBuilder {
         HandlerComponent: ((), ()),
     }
 }

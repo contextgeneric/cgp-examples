@@ -49,7 +49,7 @@ impl ComputerRef<Eval, MathPlusExpr> for InterpreterPlus {
 }
 
 check_components! {
-    CanUseInterpreter for InterpreterPlus {
+    InterpreterPlus {
         ComputerRefComponent: [
             (Eval, MathPlusExpr),
             (Eval, Literal<Value>),

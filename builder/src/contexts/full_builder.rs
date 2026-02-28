@@ -36,7 +36,7 @@ delegate_components! {
 }
 
 check_components! {
-    CanUseFullAppBuilder for FullAppBuilder {
+    FullAppBuilder {
         HandlerComponent: ((), ()),
     }
 }

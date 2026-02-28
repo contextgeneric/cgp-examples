@@ -80,7 +80,7 @@ delegate_components! {
 }
 
 check_components! {
-    CanUseAnthropicAndChatGptAppBuilder for AnthropicAndChatGptAppBuilder {
+    AnthropicAndChatGptAppBuilder {
         HandlerComponent: [
             (BuildAnthroicAndChatGptApp, ()),
             (BuildChatGptApp, ()),
