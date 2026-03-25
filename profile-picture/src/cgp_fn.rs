@@ -7,6 +7,7 @@ use sqlx::PgPool;
 
 pub struct UserId(pub u64);
 
+#[derive(sqlx::FromRow)]
 pub struct User {
     pub name: String,
     pub email: String,
@@ -19,18 +20,25 @@ pub async fn get_user(
     #[implicit] database: &PgPool,
     user_id: &UserId,
 ) -> anyhow::Result<User> {
-    todo!()
+    let user = sqlx::query_as::<_, User>(
+        "SELECT name, email, profile_picture_object_id FROM users WHERE id = $1",
+    )
+    .bind(user_id.0 as i64)
+    .fetch_one(database)
+    .await?;
+    Ok(user)
 }
 
 #[cgp_fn]
 pub async fn fetch_storage_object(
     &self,
     #[implicit] storage_client: &Client,
+    #[implicit] profile_pictures_bucket_id: &str,
     object_id: &str,
 ) -> anyhow::Result<Vec<u8>> {
     let output = storage_client
         .get_object()
-        .bucket("my-bucket")
+        .bucket(profile_pictures_bucket_id)
         .key(object_id)
         .send()
         .await?;
