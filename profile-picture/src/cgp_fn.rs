@@ -3,7 +3,7 @@
 use aws_sdk_s3::Client;
 use cgp::prelude::*;
 use image::RgbImage;
-use sqlx::PgPool;
+use sqlx::{Database, Decode, Executor, PgPool, Pool};
 
 pub struct UserId(pub u64);
 
@@ -20,6 +20,28 @@ pub async fn get_user(
     #[implicit] database: &PgPool,
     user_id: &UserId,
 ) -> anyhow::Result<User> {
+    let user = sqlx::query_as::<_, User>(
+        "SELECT name, email, profile_picture_object_id FROM users WHERE id = $1",
+    )
+    .bind(user_id.0 as i64)
+    .fetch_one(database)
+    .await?;
+    Ok(user)
+}
+
+#[cgp_fn]
+pub async fn generic_get_user<Db: Database>(
+    &self,
+    #[implicit] database: &Pool<Db>,
+    user_id: &UserId,
+) -> anyhow::Result<User>
+where
+    i64: sqlx::Type<Db>,
+    for<'a> User: sqlx::FromRow<'a, Db::Row>,
+    for<'a> i64: sqlx::Encode<'a, Db>,
+    for<'a> <Db as sqlx::Database>::Arguments<'a>: sqlx::IntoArguments<'a, Db>,
+    for<'a> &'a mut <Db as sqlx::Database>::Connection: sqlx::Executor<'a, Database = Db>,
+{
     let user = sqlx::query_as::<_, User>(
         "SELECT name, email, profile_picture_object_id FROM users WHERE id = $1",
     )
