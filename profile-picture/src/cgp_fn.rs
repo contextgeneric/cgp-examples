@@ -1,9 +1,7 @@
-#![allow(async_fn_in_trait)]
-
 use aws_sdk_s3::Client;
 use cgp::prelude::*;
 use image::RgbImage;
-use sqlx::{Database, Decode, Executor, PgPool, Pool};
+use sqlx::{Database, PgPool, Pool};
 
 pub struct UserId(pub u64);
 
@@ -15,6 +13,7 @@ pub struct User {
 }
 
 #[cgp_fn]
+#[async_trait]
 pub async fn get_user(
     &self,
     #[implicit] database: &PgPool,
@@ -30,7 +29,9 @@ pub async fn get_user(
 }
 
 #[cgp_fn]
-pub async fn generic_get_user<Db: Database>(
+#[async_trait]
+#[impl_generics(Db: Database)]
+pub async fn generic_get_user(
     &self,
     #[implicit] database: &Pool<Db>,
     user_id: &UserId,
@@ -52,6 +53,7 @@ where
 }
 
 #[cgp_fn]
+#[async_trait]
 pub async fn fetch_storage_object(
     &self,
     #[implicit] storage_client: &Client,
@@ -69,6 +71,7 @@ pub async fn fetch_storage_object(
 }
 
 #[cgp_fn]
+#[async_trait]
 #[uses(GetUser, FetchStorageObject)]
 pub async fn get_user_profile_picture(&self, user_id: &UserId) -> anyhow::Result<Option<RgbImage>> {
     let user = self.get_user(user_id).await?;
