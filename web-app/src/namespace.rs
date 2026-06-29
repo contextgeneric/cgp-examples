@@ -3,55 +3,55 @@ use cgp::prelude::*;
 use crate::types::*;
 
 #[cgp_component(UserCreator)]
-#[namespace(@app.core.user)]
+#[prefix(@app.core.user in DefaultNamespace)]
 pub trait CanCreateUser {
     fn create_user(&self, username: &str, email: &Email) -> Result<User, Error>;
 }
 
 #[cgp_component(UserGetter)]
-#[namespace(@app.core.user)]
+#[prefix(@app.core.user in DefaultNamespace)]
 pub trait CanGetUser {
     fn get_user(&self, user_id: &UserId) -> Result<User, Error>;
 }
 
 #[cgp_component(UserUpdater)]
-#[namespace(@app.core.user)]
+#[prefix(@app.core.user in DefaultNamespace)]
 pub trait CanUpdateUser {
     fn update_user_data(&self, user_id: &UserId, user_data: &UserData) -> Result<(), Error>;
 }
 
 #[cgp_component(PostCreator)]
-#[namespace(@app.core.post)]
+#[prefix(@app.core.post in DefaultNamespace)]
 pub trait CanCreatePost {
     fn create_post(&self, title: &str, content: &str) -> Result<Post, Error>;
 }
 
 #[cgp_component(PostGetter)]
-#[namespace(@app.core.post)]
+#[prefix(@app.core.post in DefaultNamespace)]
 pub trait CanGetPost {
     fn get_post(&self, post_id: &PostId) -> Result<Post, Error>;
 }
 
 #[cgp_component(PostUpdater)]
-#[namespace(@app.core.post)]
+#[prefix(@app.core.post in DefaultNamespace)]
 pub trait CanUpdatePost {
     fn update_post(&self, post_id: &PostId, content: &str) -> Result<(), Error>;
 }
 
 #[cgp_component(PostDeleter)]
-#[namespace(@app.core.post)]
+#[prefix(@app.core.post in DefaultNamespace)]
 pub trait CanDeletePost {
     fn delete_post(&self, post_id: &PostId) -> Result<(), Error>;
 }
 
 #[cgp_component(UsernameCensor)]
-#[namespace(@app.extra.content_filter)]
+#[prefix(@app.extra.content_filter in DefaultNamespace)]
 pub trait CanCensorUsername {
     fn username_is_censored(&self, username: &str) -> Probability;
 }
 
 #[cgp_component(SpamMessageDetector)]
-#[namespace(@app.extra.content_filter)]
+#[prefix(@app.extra.content_filter in DefaultNamespace)]
 pub trait CanDetectSpamMessage {
     fn message_is_spam(&self, message: &str) -> Probability;
 }
@@ -251,7 +251,7 @@ delegate_components! {
 
 delegate_components! {
     ProductionApp {
-        namespace default;
+        namespace DefaultNamespace;
 
         @app.core: PostgresCoreComponents,
         @app.extra.content_filter: ContentFilterComponents,
@@ -264,20 +264,18 @@ check_components! {
     }
 }
 
-
 delegate_components! {
     new PostgresCoreComponents {
-        namespace default;
+        namespace DefaultNamespace;
 
         @app.core.user: PostgresUserComponents,
         @app.core.post: PostgresPostComponents,
     }
 }
 
-
 delegate_components! {
     new ProductionExtraComponents {
-        namespace default;
+        namespace DefaultNamespace;
 
         @app.extra.content_filter: ContentFilterComponents,
     }

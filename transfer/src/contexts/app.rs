@@ -2,7 +2,6 @@ use std::collections::BTreeMap;
 use std::sync::Arc;
 
 use axum::Router;
-use cgp::core::component::UseDelegate;
 use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::prelude::*;
 use futures::lock::Mutex;
@@ -43,8 +42,19 @@ impl MockApp {
 
 delegate_components! {
     MockApp {
+        open {
+            HttpErrorRaiserComponent,
+            ApiHandlerComponent,
+        };
+
         ErrorTypeProviderComponent: UseType<AppError>,
-        HttpErrorRaiserComponent: UseDelegate<HandleAppErrors>,
+
+        @HttpErrorRaiserComponent.<Code> Code.String:
+            DisplayHttpError,
+
+        @HttpErrorRaiserComponent.<Code> Code.anyhow::Error:
+            HandleHttpErrorWithAnyhow,
+
         [
             UserIdTypeProviderComponent,
             PasswordTypeProviderComponent,
@@ -63,32 +73,16 @@ delegate_components! {
             UseMockedApp,
         MoneyTransferrerComponent:
             NoTransferToSelf<UseMockedApp>,
-        ApiHandlerComponent:
-            UseDelegate<ApiHandlers>,
-    }
-}
 
-pub struct HandleAppErrors;
-
-delegate_components! {
-    HandleAppErrors {
-        <Code> (Code, String): DisplayHttpError,
-        <Code> (Code, anyhow::Error): HandleHttpErrorWithAnyhow,
-    }
-}
-
-pub struct ApiHandlers;
-
-delegate_components! {
-    ApiHandlers {
-        QueryBalanceApi:
+        @ApiHandlerComponent.QueryBalanceApi:
             HandleFromRequest<
                 AxumQueryBalanceRequest,
                 ResponseToJson<
                     UseBasicAuth<
                         HandleQueryBalance<QueryBalanceRequest>
                     >>>,
-        TransferApi:
+
+        @ApiHandlerComponent.TransferApi:
             HandleFromRequest<
                 AxumTransferRequest,
                 UseBasicAuth<

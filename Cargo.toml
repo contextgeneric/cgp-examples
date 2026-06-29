@@ -23,5 +23,8 @@ cgp                 = { version = "0.7.0" }
 cgp-error-anyhow    = { version = "0.7.0" }
 
 [patch.crates-io]
-cgp                 = { git = "https://github.com/contextgeneric/cgp.git" }
-cgp-error-anyhow    = { git = "https://github.com/contextgeneric/cgp.git" }
+
+cgp                           = { path = "../cgp/crates/main/cgp" }
+cgp-error-anyhow              = { path = "../cgp/crates/standalone/error/cgp-error-anyhow" }
+# cgp                 = { git = "https://github.com/contextgeneric/cgp.git" }
+# cgp-error-anyhow    = { git = "https://github.com/contextgeneric/cgp.git" }

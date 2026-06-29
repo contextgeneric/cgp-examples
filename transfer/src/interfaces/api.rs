@@ -1,11 +1,9 @@
 use cgp::core::component::UseDelegate;
 use cgp::prelude::*;
 
-#[cgp_component{
-    provider: ApiHandler,
-    derive_delegate: UseDelegate<Api>,
-}]
+#[cgp_component(ApiHandler)]
 #[async_trait]
+#[derive_delegate(UseDelegate<Api>)]
 pub trait CanHandleApi<Api>: HasErrorType {
     type Request;
 
