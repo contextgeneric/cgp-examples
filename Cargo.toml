@@ -19,11 +19,10 @@ authors         = ["Soares Chen <soares.chen@maybevoid.com>"]
 keywords        = ["cgp"]
 
 [workspace.dependencies]
-cgp                 = { version = "0.7.0" }
-cgp-error-anyhow    = { version = "0.7.0" }
+cgp                 = { version = "0.8.0-alpha" }
+cgp-error-anyhow    = { version = "0.8.0-alpha" }
 
 [patch.crates-io]
-
 cgp                           = { path = "../cgp/crates/main/cgp" }
 cgp-error-anyhow              = { path = "../cgp/crates/standalone/error/cgp-error-anyhow" }
 # cgp                 = { git = "https://github.com/contextgeneric/cgp.git" }
