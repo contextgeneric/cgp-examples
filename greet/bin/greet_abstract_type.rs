@@ -13,7 +13,7 @@ pub trait HasNameType {
 }
 
 #[cgp_impl(new GreetHello)]
-#[use_type(HasNameType::Name)]
+#[use_type(HasNameType.Name)]
 impl Greeter
 where
     Name: Display,
