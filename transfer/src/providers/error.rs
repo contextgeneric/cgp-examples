@@ -39,9 +39,9 @@ impl IsStatusCode for ErrInternal {
 }
 
 #[cgp_impl(new DisplayHttpError)]
+#[use_type(HasErrorType.{Error = AppError})]
 impl<Code, Detail> HttpErrorRaiser<Code, Detail>
 where
-    Self: HasErrorType<Error = AppError>,
     Code: IsStatusCode,
     Detail: Display,
 {
@@ -54,9 +54,9 @@ where
 }
 
 #[cgp_impl(new HandleHttpErrorWithAnyhow)]
+#[use_type(HasErrorType.{Error = AppError})]
 impl<Code, Detail> HttpErrorRaiser<Code, Detail>
 where
-    Self: HasErrorType<Error = AppError>,
     Code: IsStatusCode,
     anyhow::Error: From<Detail>,
 {

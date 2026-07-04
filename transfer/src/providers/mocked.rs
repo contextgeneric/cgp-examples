@@ -28,10 +28,9 @@ where
 }
 
 #[cgp_impl(UseMockedApp)]
-#[use_type(HasPasswordType.Password, HasHashedPasswordType.HashedPassword)]
+#[use_type(HasPasswordType.Password, HasHashedPasswordType.{HashedPassword = Password})]
 impl PasswordChecker
 where
-    Self: HasHashedPasswordType<HashedPassword = Password>,
     Password: Eq,
 {
     fn check_password(password: &Password, hashed_password: &HashedPassword) -> bool {
