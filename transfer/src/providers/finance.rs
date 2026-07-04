@@ -3,22 +3,23 @@ use cgp::prelude::*;
 use crate::interfaces::*;
 
 #[cgp_impl(new NoTransferToSelf<InHandler>)]
+#[use_type(HasUserIdType.UserId)]
+#[use_type(HasCurrencyType.Currency)]
+#[use_type(HasQuantityType.Quantity)]
+#[use_type(HasErrorType.Error)]
+#[uses(CanRaiseHttpError<ErrBadRequest, String>)]
+#[use_provider(InHandler: MoneyTransferrer)]
 impl<InHandler> MoneyTransferrer
 where
-    Self: HasUserIdType
-        + HasCurrencyType
-        + HasQuantityType
-        + CanRaiseHttpError<ErrBadRequest, String>,
-    InHandler: MoneyTransferrer<Self>,
-    Self::UserId: Eq,
+    UserId: Eq,
 {
     async fn transfer_money(
         &self,
-        sender: &Self::UserId,
-        recipient: &Self::UserId,
-        currency: &Self::Currency,
-        quantity: &Self::Quantity,
-    ) -> Result<(), Self::Error> {
+        sender: &UserId,
+        recipient: &UserId,
+        currency: &Currency,
+        quantity: &Quantity,
+    ) -> Result<(), Error> {
         if sender != recipient {
             InHandler::transfer_money(self, sender, recipient, currency, quantity).await
         } else {

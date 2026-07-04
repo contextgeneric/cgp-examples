@@ -15,9 +15,10 @@ where
 }
 
 #[cgp_impl(new HandleTransfer<Request>)]
+#[uses(CanTransferMoney, CanRaiseHttpError<ErrUnauthorized, String>)]
+#[use_type(HasErrorType.Error)]
 impl<Api, Request> ApiHandler<Api>
 where
-    Self: CanTransferMoney + CanRaiseHttpError<ErrUnauthorized, String>,
     Request: HasLoggedInUser<Self> + HasTransferMoneyFields<Self>,
 {
     type Request = Request;
@@ -28,7 +29,7 @@ where
         &self,
         _api: PhantomData<Api>,
         request: Request,
-    ) -> Result<(), Self::Error> {
+    ) -> Result<(), Error> {
         let sender = request.logged_in_user().as_ref().ok_or_else(|| {
             Self::raise_http_error(
                 ErrUnauthorized,

@@ -20,9 +20,10 @@ where
 }
 
 #[cgp_impl(new HandleQueryBalance<Request>)]
+#[uses(CanQueryUserBalance, CanRaiseHttpError<ErrUnauthorized, String>)]
+#[use_type(HasErrorType.Error)]
 impl<Api, Request> ApiHandler<Api>
 where
-    Self: CanQueryUserBalance + CanRaiseHttpError<ErrUnauthorized, String>,
     Request: HasLoggedInUser<Self> + HasQueryBalanceFields<Self>,
 {
     type Request = Request;
@@ -33,7 +34,7 @@ where
         &self,
         _api: PhantomData<Api>,
         request: Request,
-    ) -> Result<QueryBalanceResponse<Self>, Self::Error> {
+    ) -> Result<QueryBalanceResponse<Self>, Error> {
         let user = request.logged_in_user().as_ref().ok_or_else(|| {
             Self::raise_http_error(ErrUnauthorized, "you must first login".into())
         })?;

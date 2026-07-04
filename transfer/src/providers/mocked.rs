@@ -22,16 +22,19 @@ pub trait HasMockedPasswords: HasUserIdType + HasHashedPasswordType {
 }
 
 #[cgp_impl(UseMockedApp)]
+#[uses(HasMockedPasswords)]
+#[use_type(HasUserIdType.UserId)]
+#[use_type(HasHashedPasswordType.HashedPassword)]
+#[use_type(HasErrorType.Error)]
 impl UserHashedPasswordQuerier
 where
-    Self: HasMockedPasswords + HasErrorType,
-    Self::UserId: Ord,
-    Self::HashedPassword: Clone,
+    UserId: Ord,
+    HashedPassword: Clone,
 {
     async fn query_user_hashed_password(
         &self,
-        user_id: &Self::UserId,
-    ) -> Result<Option<Self::HashedPassword>, Self::Error> {
+        user_id: &UserId,
+    ) -> Result<Option<HashedPassword>, Error> {
         let hashed_password = self.user_passwords().get(user_id).cloned();
 
         Ok(hashed_password)
@@ -39,29 +42,35 @@ where
 }
 
 #[cgp_impl(UseMockedApp)]
+#[use_type(HasPasswordType.Password)]
+#[use_type(HasHashedPasswordType.HashedPassword)]
 impl PasswordChecker
 where
-    Self: HasPasswordType + HasHashedPasswordType<HashedPassword = Self::Password>,
-    Self::Password: Eq,
+    Self: HasHashedPasswordType<HashedPassword = Password>,
+    Password: Eq,
 {
-    fn check_password(password: &Self::Password, hashed_password: &Self::HashedPassword) -> bool {
+    fn check_password(password: &Password, hashed_password: &HashedPassword) -> bool {
         password == hashed_password
     }
 }
 
 #[cgp_impl(UseMockedApp)]
+#[uses(HasMockedUserBalances, CanRaiseHttpError<ErrNotFound, String>)]
+#[use_type(HasUserIdType.UserId)]
+#[use_type(HasCurrencyType.Currency)]
+#[use_type(HasQuantityType.Quantity)]
+#[use_type(HasErrorType.Error)]
 impl UserBalanceQuerier
 where
-    Self: HasMockedUserBalances + CanRaiseHttpError<ErrNotFound, String>,
-    Self::UserId: Ord + Clone,
-    Self::Currency: Ord + Clone,
-    Self::Quantity: Clone,
+    UserId: Ord + Clone,
+    Currency: Ord + Clone,
+    Quantity: Clone,
 {
     async fn query_user_balance(
         &self,
-        user: &Self::UserId,
-        currency: &Self::Currency,
-    ) -> Result<Self::Quantity, Self::Error> {
+        user: &UserId,
+        currency: &Currency,
+    ) -> Result<Quantity, Error> {
         let user_balances = self.user_balances().lock().await;
 
         let user_balance = user_balances
@@ -78,22 +87,28 @@ where
 }
 
 #[cgp_impl(UseMockedApp)]
+#[uses(
+    HasMockedUserBalances,
+    CanRaiseHttpError<ErrNotFound, String>,
+    CanRaiseHttpError<ErrBadRequest, String>,
+)]
+#[use_type(HasUserIdType.UserId)]
+#[use_type(HasCurrencyType.Currency)]
+#[use_type(HasQuantityType.Quantity)]
+#[use_type(HasErrorType.Error)]
 impl MoneyTransferrer
 where
-    Self: HasMockedUserBalances
-        + CanRaiseHttpError<ErrNotFound, String>
-        + CanRaiseHttpError<ErrBadRequest, String>,
-    Self::Quantity: CheckedAdd + CheckedSub,
-    Self::UserId: Ord + Clone,
-    Self::Currency: Ord + Clone,
+    Quantity: CheckedAdd + CheckedSub,
+    UserId: Ord + Clone,
+    Currency: Ord + Clone,
 {
     async fn transfer_money(
         &self,
-        sender: &Self::UserId,
-        recipient: &Self::UserId,
-        currency: &Self::Currency,
-        quantity: &Self::Quantity,
-    ) -> Result<(), Self::Error> {
+        sender: &UserId,
+        recipient: &UserId,
+        currency: &Currency,
+        quantity: &Quantity,
+    ) -> Result<(), Error> {
         let mut user_balances = self.user_balances().lock().await;
 
         let sender_key = (sender.clone(), currency.clone());

@@ -1,18 +1,12 @@
-use core::marker::PhantomData;
-
 use axum::Json;
 use cgp::prelude::*;
 
 use crate::interfaces::{ApiHandler, ApiHandlerComponent};
 
-pub struct ResponseToJson<InHandler>(pub PhantomData<InHandler>);
-
-#[cgp_impl(ResponseToJson<InHandler>)]
-impl<Api, InHandler> ApiHandler<Api>
-where
-    Self: HasErrorType,
-    InHandler: ApiHandler<Self, Api>,
-{
+#[cgp_impl(new ResponseToJson<InHandler>)]
+#[use_type(HasErrorType.Error)]
+#[use_provider(InHandler: ApiHandler<Api>)]
+impl<Api, InHandler> ApiHandler<Api> {
     type Request = InHandler::Request;
 
     type Response = Json<InHandler::Response>;
@@ -21,7 +15,7 @@ where
         &self,
         api: PhantomData<Api>,
         request: Self::Request,
-    ) -> Result<Self::Response, Self::Error> {
+    ) -> Result<Self::Response, Error> {
         let response = InHandler::handle_api(self, api, request).await?;
         Ok(Json(response))
     }

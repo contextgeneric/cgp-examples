@@ -11,11 +11,12 @@ where
 }
 
 #[cgp_impl(new UseBasicAuth<InHandler>)]
+#[uses(CanQueryUserHashedPassword, CanCheckPassword)]
+#[use_type(HasErrorType.Error)]
+#[use_provider(InHandler: ApiHandler<Api>)]
 impl<Api, InHandler> ApiHandler<Api>
 where
-    Self: CanQueryUserHashedPassword + CanCheckPassword,
     InHandler::Request: HasLoggedInUserMut<Self> + HasBasicAuthHeader<Self>,
-    InHandler: ApiHandler<Self, Api>,
     Self::UserId: Clone,
 {
     type Request = InHandler::Request;
@@ -26,7 +27,7 @@ where
         &self,
         api: PhantomData<Api>,
         mut request: Self::Request,
-    ) -> Result<Self::Response, Self::Error> {
+    ) -> Result<Self::Response, Error> {
         if request.logged_in_user().is_none()
             && let Some((user_id, password)) = request.basic_auth_header()
         {

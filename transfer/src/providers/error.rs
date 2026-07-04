@@ -38,9 +38,7 @@ impl IsStatusCode for ErrInternal {
     }
 }
 
-pub struct DisplayHttpError;
-
-#[cgp_impl(DisplayHttpError)]
+#[cgp_impl(new DisplayHttpError)]
 impl<Code, Detail> HttpErrorRaiser<Code, Detail>
 where
     Self: HasErrorType<Error = AppError>,
@@ -55,9 +53,7 @@ where
     }
 }
 
-pub struct HandleHttpErrorWithAnyhow;
-
-#[cgp_impl(HandleHttpErrorWithAnyhow)]
+#[cgp_impl(new HandleHttpErrorWithAnyhow)]
 impl<Code, Detail> HttpErrorRaiser<Code, Detail>
 where
     Self: HasErrorType<Error = AppError>,

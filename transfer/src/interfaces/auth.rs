@@ -19,15 +19,20 @@ where
 }
 
 #[cgp_component(PasswordChecker)]
-pub trait CanCheckPassword: HasPasswordType + HasHashedPasswordType {
-    fn check_password(password: &Self::Password, hashed_password: &Self::HashedPassword) -> bool;
+#[use_type(HasPasswordType.Password)]
+#[use_type(HasHashedPasswordType.HashedPassword)]
+pub trait CanCheckPassword {
+    fn check_password(password: &Password, hashed_password: &HashedPassword) -> bool;
 }
 
 #[cgp_component(UserHashedPasswordQuerier)]
 #[async_trait]
-pub trait CanQueryUserHashedPassword: HasUserIdType + HasHashedPasswordType + HasErrorType {
+#[use_type(HasUserIdType.UserId)]
+#[use_type(HasHashedPasswordType.HashedPassword)]
+#[use_type(HasErrorType.Error)]
+pub trait CanQueryUserHashedPassword {
     async fn query_user_hashed_password(
         &self,
-        user_id: &Self::UserId,
-    ) -> Result<Option<Self::HashedPassword>, Self::Error>;
+        user_id: &UserId,
+    ) -> Result<Option<HashedPassword>, Error>;
 }
