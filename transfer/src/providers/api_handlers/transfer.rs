@@ -25,11 +25,7 @@ where
 
     type Response = ();
 
-    async fn handle_api(
-        &self,
-        _api: PhantomData<Api>,
-        request: Request,
-    ) -> Result<(), Error> {
+    async fn handle_api(&self, _api: PhantomData<Api>, request: Request) -> Result<(), Error> {
         let sender = request.logged_in_user().as_ref().ok_or_else(|| {
             Self::raise_http_error(
                 ErrUnauthorized,

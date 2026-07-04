@@ -3,10 +3,12 @@ use cgp::prelude::*;
 use crate::interfaces::*;
 
 #[cgp_impl(new NoTransferToSelf<InHandler>)]
-#[use_type(HasUserIdType.UserId)]
-#[use_type(HasCurrencyType.Currency)]
-#[use_type(HasQuantityType.Quantity)]
-#[use_type(HasErrorType.Error)]
+#[use_type(
+    HasUserIdType.UserId,
+    HasCurrencyType.Currency,
+    HasQuantityType.Quantity,
+    HasErrorType.Error,
+)]
 #[uses(CanRaiseHttpError<ErrBadRequest, String>)]
 #[use_provider(InHandler: MoneyTransferrer)]
 impl<InHandler> MoneyTransferrer

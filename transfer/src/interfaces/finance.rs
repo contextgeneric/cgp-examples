@@ -4,10 +4,7 @@ use crate::interfaces::{HasCurrencyType, HasQuantityType, HasUserIdType};
 
 #[cgp_component(UserBalanceQuerier)]
 #[async_trait]
-#[use_type(HasUserIdType.UserId)]
-#[use_type(HasCurrencyType.Currency)]
-#[use_type(HasQuantityType.Quantity)]
-#[use_type(HasErrorType.Error)]
+#[use_type(HasUserIdType.UserId, HasCurrencyType.Currency, HasQuantityType.Quantity, HasErrorType.Error)]
 pub trait CanQueryUserBalance {
     async fn query_user_balance(
         &self,
@@ -18,10 +15,7 @@ pub trait CanQueryUserBalance {
 
 #[cgp_component(MoneyTransferrer)]
 #[async_trait]
-#[use_type(HasUserIdType.UserId)]
-#[use_type(HasCurrencyType.Currency)]
-#[use_type(HasQuantityType.Quantity)]
-#[use_type(HasErrorType.Error)]
+#[use_type(HasUserIdType.UserId, HasCurrencyType.Currency, HasQuantityType.Quantity, HasErrorType.Error)]
 pub trait CanTransferMoney {
     async fn transfer_money(
         &self,
