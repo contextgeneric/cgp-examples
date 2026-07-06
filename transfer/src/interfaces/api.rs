@@ -1,6 +1,7 @@
 use cgp::prelude::*;
 
 #[cgp_component(ApiHandler)]
+#[prefix(@app.api in DefaultNamespace)]
 #[async_trait]
 #[use_type(HasErrorType.Error)]
 pub trait CanHandleApi<Api> {

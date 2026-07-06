@@ -6,10 +6,12 @@ use futures::lock::Mutex;
 use num_traits::{CheckedAdd, CheckedSub};
 
 use crate::interfaces::*;
+use crate::namespaces::MockNamespace;
 
 pub struct UseMockedApp;
 
 #[cgp_impl(UseMockedApp)]
+#[default_impl(@app.auth.UserHashedPasswordQuerierComponent in MockNamespace)]
 #[use_type(HasUserIdType.UserId, HasHashedPasswordType.HashedPassword, HasErrorType.Error)]
 impl UserHashedPasswordQuerier
 where
@@ -28,6 +30,7 @@ where
 }
 
 #[cgp_impl(UseMockedApp)]
+#[default_impl(@app.auth.PasswordCheckerComponent in MockNamespace)]
 #[use_type(HasPasswordType.Password, HasHashedPasswordType.{HashedPassword = Password})]
 impl PasswordChecker
 where
@@ -39,6 +42,7 @@ where
 }
 
 #[cgp_impl(UseMockedApp)]
+#[default_impl(@app.finance.UserBalanceQuerierComponent in MockNamespace)]
 #[uses(CanRaiseHttpError<ErrNotFound, String>)]
 #[use_type(HasUserIdType.UserId, HasCurrencyType.Currency, HasQuantityType.Quantity, HasErrorType.Error)]
 impl UserBalanceQuerier
@@ -68,6 +72,11 @@ where
     }
 }
 
+// Note: `MoneyTransferrer` is deliberately *not* registered into `MockNamespace`.
+// `MockApp` overrides it directly with `NoTransferToSelf<UseMockedApp>` on the
+// `@app.finance.MoneyTransferrerComponent` path, and a context can only wire a
+// path the joined namespace does not itself claim — registering it here too would
+// make the context entry conflict with the namespace's blanket forwarding impl.
 #[cgp_impl(UseMockedApp)]
 #[uses(CanRaiseHttpError<ErrNotFound, String>, CanRaiseHttpError<ErrBadRequest, String>)]
 #[use_type(HasUserIdType.UserId, HasCurrencyType.Currency, HasQuantityType.Quantity, HasErrorType.Error)]

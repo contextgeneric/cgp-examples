@@ -2,16 +2,13 @@ use std::collections::BTreeMap;
 use std::sync::Arc;
 
 use axum::Router;
-use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::prelude::*;
 use futures::lock::Mutex;
 
 use crate::interfaces::*;
+use crate::namespaces::{DefaultApiHandlers, MockNamespace};
 use crate::providers::*;
-use crate::types::{
-    AppError, AxumQueryBalanceRequest, AxumTransferRequest, DemoCurrency, QueryBalanceRequest,
-    TransferRequest,
-};
+use crate::types::DemoCurrency;
 
 #[derive(HasField, Default)]
 pub struct MockApp {
@@ -42,53 +39,14 @@ impl MockApp {
 
 delegate_components! {
     MockApp {
-        open {
-            HttpErrorRaiserComponent,
-            ApiHandlerComponent,
-        };
+        namespace MockNamespace;
 
-        ErrorTypeProviderComponent: UseType<AppError>,
+        for <Key, Value> in DefaultApiHandlers {
+            @app.api.ApiHandlerComponent.Key: Value,
+        }
 
-        @HttpErrorRaiserComponent.<Code> Code.String:
-            DisplayHttpError,
-
-        @HttpErrorRaiserComponent.<Code> Code.anyhow::Error:
-            HandleHttpErrorWithAnyhow,
-
-        [
-            UserIdTypeProviderComponent,
-            PasswordTypeProviderComponent,
-            HashedPasswordTypeProviderComponent,
-        ]:
-            UseType<String>,
-        QuantityTypeProviderComponent:
-            UseType<u64>,
-        CurrencyTypeProviderComponent:
-            UseType<DemoCurrency>,
-        [
-            PasswordCheckerComponent,
-            UserHashedPasswordQuerierComponent,
-            UserBalanceQuerierComponent,
-        ]:
-            UseMockedApp,
-        MoneyTransferrerComponent:
+        @app.finance.MoneyTransferrerComponent:
             NoTransferToSelf<UseMockedApp>,
-
-        @ApiHandlerComponent.QueryBalanceApi:
-            HandleFromRequest<
-                AxumQueryBalanceRequest,
-                ResponseToJson<
-                    UseBasicAuth<
-                        HandleQueryBalance<QueryBalanceRequest>
-                    >>>,
-
-        @ApiHandlerComponent.TransferApi:
-            HandleFromRequest<
-                AxumTransferRequest,
-                UseBasicAuth<
-                    HandleTransfer<TransferRequest>
-                >
-            >,
     }
 }
 

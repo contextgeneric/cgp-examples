@@ -19,12 +19,14 @@ where
 }
 
 #[cgp_component(PasswordChecker)]
+#[prefix(@app.auth in DefaultNamespace)]
 #[use_type(HasPasswordType.Password, HasHashedPasswordType.HashedPassword)]
 pub trait CanCheckPassword {
     fn check_password(password: &Password, hashed_password: &HashedPassword) -> bool;
 }
 
 #[cgp_component(UserHashedPasswordQuerier)]
+#[prefix(@app.auth in DefaultNamespace)]
 #[async_trait]
 #[use_type(HasUserIdType.UserId, HasHashedPasswordType.HashedPassword, HasErrorType.Error)]
 pub trait CanQueryUserHashedPassword {
