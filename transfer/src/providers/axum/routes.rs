@@ -11,14 +11,18 @@ use cgp::prelude::HasErrorType;
 use crate::interfaces::{CanHandleApiSend, QueryBalanceApi, TransferApi};
 use crate::types::AppError;
 
+/// HTTP-method markers used as type-level tags when mounting a route.
 pub struct GetMethod;
 
 pub struct PostMethod;
 
+/// Adds one Axum route to a router for a given API and HTTP method. Implemented once per
+/// method below; the impls read the request from the HTTP layer and call `handle_api_send`.
 pub trait CanAddRoute<App, Api, Method> {
     fn add_route(self, _tag: PhantomData<(Api, Method)>, path: &str) -> Self;
 }
 
+/// Turns a raised `AppError` into the `(status, body)` pair Axum returns to the client.
 pub fn handle_api_error(err: AppError) -> (StatusCode, String) {
     let status_code = err.status_code;
 
@@ -67,6 +71,8 @@ where
     }
 }
 
+/// Mounts the whole service: adds every endpoint route in one call. The `where` clause lists
+/// the routes it composes, so the router must be able to add each API/method pair.
 pub trait CanAddMainApiRoutes<App> {
     fn add_main_api_routes(self) -> Self;
 }

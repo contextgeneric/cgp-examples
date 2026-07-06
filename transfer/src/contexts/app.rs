@@ -10,6 +10,9 @@ use crate::namespaces::{DefaultApiHandlers, MockNamespace};
 use crate::providers::*;
 use crate::types::DemoCurrency;
 
+/// The concrete application context — the type all the abstract capabilities are wired onto.
+/// Its fields hold the in-memory data the mock backend reads; `#[derive(HasField)]` exposes
+/// them by name so `UseMockedApp`'s `#[implicit]` arguments can pull them in.
 #[derive(HasField, Default)]
 pub struct MockApp {
     pub user_balances: Arc<Mutex<BTreeMap<(String, DemoCurrency), u64>>>,
@@ -37,6 +40,11 @@ impl MockApp {
     }
 }
 
+// The whole application specified as a wiring table. Three decisions: join `MockNamespace`
+// to inherit every default backend and abstract type; pull each `DefaultApiHandlers` entry
+// onto the `ApiHandler` dispatch path (one entry per endpoint) with the `for` loop; and
+// override the money-transfer path to wrap the mock backend in `NoTransferToSelf`. The
+// override is legal only because `MockNamespace` does not itself claim that path.
 delegate_components! {
     MockApp {
         namespace MockNamespace;
@@ -50,6 +58,9 @@ delegate_components! {
     }
 }
 
+// Compile-time proof that the wiring above is complete: because CGP resolves wiring lazily,
+// this block forces the compiler to check each listed component (and each API marker for the
+// generic `ApiHandler`) is fully satisfied, reporting any missing dependency at this site.
 check_components! {
     MockApp
     {
@@ -63,6 +74,10 @@ check_components! {
     }
 }
 
+// Recover the `Send` bound Axum needs. `CanHandleApiSend` cannot be implemented generically
+// on stable Rust, so it is implemented per concrete (context, API) pair: at a fixed type the
+// awaited future is concrete and the compiler can confirm it is `Send`. Each impl just
+// forwards to `handle_api`.
 impl CanHandleApiSend<QueryBalanceApi> for MockApp {
     async fn handle_api_send(
         &self,
@@ -83,6 +98,8 @@ impl CanHandleApiSend<TransferApi> for MockApp {
     }
 }
 
+/// Convenience alias binding the generic routing capability to `MockApp`, so `bin/server.rs`
+/// can mount the service on a `Router<Arc<MockApp>>`.
 pub trait CanAddApiRoutes: CanAddMainApiRoutes<MockApp> {}
 
 impl CanAddApiRoutes for Router<Arc<MockApp>> {}

@@ -2,6 +2,10 @@ use cgp::prelude::*;
 
 use crate::interfaces::*;
 
+// A higher-order provider for `MoneyTransferrer`: it wraps an inner transfer provider,
+// rejecting a self-transfer up front and otherwise delegating. `#[use_provider(InHandler:
+// MoneyTransferrer)]` declares the inner-provider dependency and fills in the hidden context
+// argument, so the body calls it as the associated function `InHandler::transfer_money(self, ...)`.
 #[cgp_impl(new NoTransferToSelf<InHandler>)]
 #[use_type(
     HasUserIdType.UserId,
