@@ -20,7 +20,7 @@ where
 // context argument, so the body calls it as `InHandler::handle_api(self, ...)`.
 #[cgp_impl(new UseBasicAuth<InHandler>)]
 #[uses(CanQueryUserHashedPassword, CanCheckPassword)]
-#[use_type(HasErrorType.Error)]
+#[use_type(HasUserIdType.UserId, HasErrorType.Error)]
 #[use_provider(InHandler: ApiHandler<Api>)]
 impl<Api, InHandler> ApiHandler<Api>
 where

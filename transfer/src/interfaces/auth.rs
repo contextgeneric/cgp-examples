@@ -7,11 +7,9 @@ use crate::interfaces::{HasHashedPasswordType, HasPasswordType, HasUserIdType};
 // so it is implemented on the request struct, not the app context — which is why it is a
 // getter trait rather than an implicit argument (those read only from `self`).
 #[cgp_auto_getter]
-pub trait HasLoggedInUser<App>
-where
-    App: HasUserIdType,
-{
-    fn logged_in_user(&self) -> &Option<App::UserId>;
+#[use_type(HasUserIdType.UserId in App)]
+pub trait HasLoggedInUser<App> {
+    fn logged_in_user(&self) -> &Option<UserId>;
 }
 
 // The mutable counterpart, used by the auth wrapper to record the user it just logged in.
