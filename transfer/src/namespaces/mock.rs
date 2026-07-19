@@ -2,7 +2,7 @@ use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::prelude::*;
 
 use crate::interfaces::*;
-use crate::providers::{DisplayHttpError, HandleHttpErrorWithAnyhow};
+use crate::providers::DisplayHttpError;
 use crate::types::{AppError, DemoCurrency};
 
 // The mock application's namespace. It inherits every default `DefaultNamespace`
@@ -18,8 +18,6 @@ cgp_namespace! {
 
         @app.error.HttpErrorRaiserComponent.<Code> Code.String:
             DisplayHttpError,
-        @app.error.HttpErrorRaiserComponent.<Code> Code.anyhow::Error:
-            HandleHttpErrorWithAnyhow,
 
         @app.auth.types.{
             UserIdTypeProviderComponent,

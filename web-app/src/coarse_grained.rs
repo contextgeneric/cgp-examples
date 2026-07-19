@@ -119,7 +119,7 @@ pub struct ProductionApp {
     pub database: PostgresDb,
 }
 
-delegate_components! {
+delegate_and_check_components! {
     ProductionApp {
         UserManagerComponent: PostgresUserManager,
         PostManagerComponent: PostgresPostManager,
