@@ -56,6 +56,16 @@ pub trait CanDetectSpamMessage {
     fn message_is_spam(&self, message: &str) -> Probability;
 }
 
+cgp_namespace! {
+    new DefaultAppComponents: DefaultNamespace {
+        @app.core.user.UserCreatorComponent:
+            FilterCensoredUsername<CreateUserWithPostgres>,
+
+        @app.core.post.PostCreatorComponent:
+            FilterSpamMessage<CreatePostWithPostgres>,
+    }
+}
+
 #[cgp_impl(new FilterCensoredUsername<InnerCreator>)]
 #[uses(CanCensorUsername)]
 #[use_provider(InnerCreator: UserCreator)]
@@ -82,6 +92,7 @@ impl UserCreator {
 }
 
 #[cgp_impl(new GetUserWithPostgres)]
+#[default_impl(@app.core.user.UserGetterComponent in DefaultAppComponents)]
 impl UserGetter {
     fn get_user(&self, #[implicit] database: &PostgresDb, user_id: &UserId) -> Result<User, Error> {
         todo!()
@@ -89,6 +100,7 @@ impl UserGetter {
 }
 
 #[cgp_impl(new UpdateUserWithPostgres)]
+#[default_impl(@app.core.user.UserUpdaterComponent in DefaultAppComponents)]
 impl UserUpdater {
     fn update_user_data(
         &self,
@@ -131,6 +143,7 @@ impl PostCreator {
 }
 
 #[cgp_impl(new GetPostWithPostgres)]
+#[default_impl(@app.core.post.PostGetterComponent in DefaultAppComponents)]
 impl PostGetter {
     fn get_post(&self, #[implicit] database: &PostgresDb, post_id: &PostId) -> Result<Post, Error> {
         todo!()
@@ -138,6 +151,7 @@ impl PostGetter {
 }
 
 #[cgp_impl(new UpdatePostWithPostgres)]
+#[default_impl(@app.core.post.PostUpdaterComponent in DefaultAppComponents)]
 impl PostUpdater {
     fn update_post(
         &self,
@@ -150,6 +164,7 @@ impl PostUpdater {
 }
 
 #[cgp_impl(new DeletePostWithPostgres)]
+#[default_impl(@app.core.post.PostDeleterComponent in DefaultAppComponents)]
 impl PostDeleter {
     fn delete_post(
         &self,
@@ -194,30 +209,6 @@ pub struct ProductionApp {
 }
 
 delegate_components! {
-    new PostgresUserComponents {
-        UserCreatorComponent:
-            FilterCensoredUsername<CreateUserWithPostgres>,
-        UserGetterComponent:
-            GetUserWithPostgres,
-        UserUpdaterComponent:
-            UpdateUserWithPostgres,
-    }
-}
-
-delegate_components! {
-    new PostgresPostComponents {
-        PostCreatorComponent:
-            FilterSpamMessage<CreatePostWithPostgres>,
-        PostGetterComponent:
-            GetPostWithPostgres,
-        PostUpdaterComponent:
-            UpdatePostWithPostgres,
-        PostDeleterComponent:
-            DeletePostWithPostgres,
-    }
-}
-
-delegate_components! {
     new ContentFilterComponents {
         UsernameCensorComponent:
             AiUserCensor,
@@ -228,9 +219,8 @@ delegate_components! {
 
 delegate_components! {
     ProductionApp {
-        namespace DefaultNamespace;
+        namespace DefaultAppComponents;
 
-        @app.core: PostgresCoreComponents,
         @app.extra.content_filter: ContentFilterComponents,
     }
 }
@@ -238,14 +228,5 @@ delegate_components! {
 check_components! {
     ProductionApp {
         UserCreatorComponent,
-    }
-}
-
-delegate_components! {
-    new PostgresCoreComponents {
-        namespace DefaultNamespace;
-
-        @app.core.user: PostgresUserComponents,
-        @app.core.post: PostgresPostComponents,
     }
 }
