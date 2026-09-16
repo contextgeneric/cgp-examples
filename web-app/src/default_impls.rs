@@ -57,7 +57,11 @@ pub trait CanDetectSpamMessage {
 }
 
 cgp_namespace! {
-    new DefaultAppComponents: DefaultNamespace {
+    new DefaultAppComponents: DefaultNamespace
+}
+
+cgp_namespace! {
+    DefaultAppComponents {
         @app.core.user.UserCreatorComponent:
             FilterCensoredUsername<CreateUserWithPostgres>,
 
