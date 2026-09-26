@@ -3,31 +3,25 @@ use core::time::Duration;
 use cgp::prelude::*;
 use reqwest::Client;
 
-#[cgp_auto_getter]
-pub trait HasHttpClientConfig {
-    fn http_user_agent(&self) -> &str;
-}
-
-#[derive(HasField, HasFields, BuildField)]
+#[derive(CgpData)]
 pub struct HttpClient {
     pub http_client: Client,
 }
 
 #[cgp_impl(new BuildHttpClient)]
-impl<Code, Input> Handler<Code, Input>
-where
-    Self: HasHttpClientConfig + CanRaiseError<reqwest::Error>,
-{
+#[uses(CanRaiseError<reqwest::Error>)]
+#[use_type(HasErrorType.Error)]
+impl<Code, Input> Handler<Code, Input> {
     type Output = HttpClient;
 
     async fn handle(
         &self,
-
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Self::Error> {
+        #[implicit] http_user_agent: &str,
+    ) -> Result<Self::Output, Error> {
         let http_client = Client::builder()
-            .user_agent(self.http_user_agent())
+            .user_agent(http_user_agent)
             .connect_timeout(Duration::from_secs(5))
             .build()
             .map_err(Self::raise_error)?;
@@ -37,17 +31,11 @@ where
 }
 
 #[cgp_impl(new BuildDefaultHttpClient)]
-impl<Code, Input> Handler<Code, Input>
-where
-    Self: HasErrorType,
-{
+#[use_type(HasErrorType.Error)]
+impl<Code, Input> Handler<Code, Input> {
     type Output = HttpClient;
 
-    async fn handle(
-        &self,
-        _code: PhantomData<Code>,
-        _input: Input,
-    ) -> Result<Self::Output, Self::Error> {
+    async fn handle(&self, _code: PhantomData<Code>, _input: Input) -> Result<Self::Output, Error> {
         let http_client = Client::new();
         Ok(HttpClient { http_client })
     }

@@ -6,9 +6,9 @@ use cgp::prelude::*;
 use crate::types::{Minus, Negate, Plus};
 
 #[cgp_impl(new EvalSubtract)]
+#[uses(CanComputeRef<Code, MathExpr, Output = Output>)]
 impl<Code, MathExpr, Output> ComputerRef<Code, Minus<MathExpr>>
 where
-    Self: CanComputeRef<Code, MathExpr, Output = Output>,
     Output: Sub<Output = Output>,
 {
     type Output = Output;
@@ -26,9 +26,9 @@ where
 }
 
 #[cgp_impl(new EvalSubtractWithNegate)]
+#[uses(CanCompute<Code, Plus<Expr>, Output = Output>)]
 impl<Code, Expr, Output> Computer<Code, Minus<Expr>>
 where
-    Self: CanCompute<Code, Plus<Expr>, Output = Output>,
     Expr: FromVariant<Symbol!("Negate"), Value = Negate<Expr>>,
 {
     type Output = Output;

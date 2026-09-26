@@ -8,9 +8,9 @@ use cgp::prelude::*;
 use crate::types::Plus;
 
 #[cgp_impl(new EvalAdd)]
+#[uses(CanCompute<Code, MathExpr, Output = Output>)]
 impl<Code, MathExpr, Output> Computer<Code, Plus<MathExpr>>
 where
-    Self: CanCompute<Code, MathExpr, Output = Output>,
     Output: Add<Output = Output>,
 {
     type Output = Output;
@@ -28,9 +28,9 @@ where
 }
 
 #[cgp_impl(EvalAdd)]
+#[uses(CanComputeRef<Code, MathExpr, Output = Output>)]
 impl<Code, MathExpr, Output> ComputerRef<Code, Plus<MathExpr>>
 where
-    Self: CanComputeRef<Code, MathExpr, Output = Output>,
     Output: Add<Output = Output>,
 {
     type Output = Output;

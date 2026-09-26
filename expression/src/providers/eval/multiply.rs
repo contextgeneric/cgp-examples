@@ -6,9 +6,9 @@ use cgp::prelude::*;
 use crate::types::Times;
 
 #[cgp_impl(new EvalMultiply)]
+#[uses(CanCompute<Code, MathExpr, Output = Output>)]
 impl<Code, MathExpr, Output> Computer<Code, Times<MathExpr>>
 where
-    Self: CanCompute<Code, MathExpr, Output = Output>,
     Output: Mul<Output = Output>,
 {
     type Output = Output;
@@ -22,9 +22,9 @@ where
 }
 
 #[cgp_impl(EvalMultiply)]
+#[uses(CanComputeRef<Code, MathExpr, Output = Output>)]
 impl<Code, MathExpr, Output> ComputerRef<Code, Times<MathExpr>>
 where
-    Self: CanComputeRef<Code, MathExpr, Output = Output>,
     Output: Mul<Output = Output>,
 {
     type Output = Output;

@@ -14,11 +14,9 @@ pub trait HasLoggedInUser<App> {
 
 // The mutable counterpart, used by the auth wrapper to record the user it just logged in.
 #[cgp_auto_getter]
-pub trait HasLoggedInUserMut<App>
-where
-    App: HasUserIdType,
-{
-    fn logged_in_user(&mut self) -> &mut Option<App::UserId>;
+#[use_type(HasUserIdType.UserId in App)]
+pub trait HasLoggedInUserMut<App> {
+    fn logged_in_user(&mut self) -> &mut Option<UserId>;
 }
 
 // Capability to compare a cleartext password against a stored one. A component so a

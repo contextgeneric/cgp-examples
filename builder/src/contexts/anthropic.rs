@@ -10,7 +10,7 @@ use sqlx::SqlitePool;
 
 use crate::providers::{BuildDefaultAnthropicClient, BuildHttpClient, BuildSqliteClient};
 
-#[derive(HasField, HasFields, BuildField)]
+#[derive(CgpData)]
 pub struct AnthropicApp {
     pub sqlite_pool: SqlitePool,
     pub http_client: Client,

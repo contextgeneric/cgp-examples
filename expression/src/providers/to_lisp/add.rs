@@ -8,16 +8,17 @@ use cgp::prelude::*;
 use crate::components::HasLispExprType;
 use crate::types::{Ident, List, Plus};
 
-#[derive(HasFields, ExtractField, FromVariant)]
+#[derive(CgpData)]
 enum LispSubExpr<Expr> {
     List(List<Expr>),
     Ident(Ident),
 }
 
 #[cgp_impl(new PlusToLisp)]
-impl<Code, MathExpr, LispExpr> ComputerRef<Code, Plus<MathExpr>>
+#[use_type(HasLispExprType.LispExpr)]
+#[uses(CanComputeRef<Code, MathExpr, Output = LispExpr>)]
+impl<Code, MathExpr> ComputerRef<Code, Plus<MathExpr>>
 where
-    Self: HasLispExprType<LispExpr = LispExpr> + CanComputeRef<Code, MathExpr, Output = LispExpr>,
     LispSubExpr<LispExpr>: CanUpcast<LispExpr>,
 {
     type Output = LispExpr;

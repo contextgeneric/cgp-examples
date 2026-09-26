@@ -4,15 +4,17 @@ use crate::interfaces::*;
 
 // Getter for the fields a transfer needs off its request struct.
 #[cgp_auto_getter]
-pub trait HasTransferMoneyFields<App>
-where
-    App: HasUserIdType + HasCurrencyType + HasQuantityType,
-{
-    fn currency(&self) -> &App::Currency;
+#[use_type(
+    HasUserIdType.UserId in App,
+    HasCurrencyType.Currency in App,
+    HasQuantityType.Quantity in App,
+)]
+pub trait HasTransferMoneyFields<App> {
+    fn currency(&self) -> &Currency;
 
-    fn recipient(&self) -> &App::UserId;
+    fn recipient(&self) -> &UserId;
 
-    fn quantity(&self) -> &App::Quantity;
+    fn quantity(&self) -> &Quantity;
 }
 
 // The transfer endpoint: an `ApiHandler` provider that requires a logged-in sender, then

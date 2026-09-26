@@ -5,11 +5,9 @@ use crate::interfaces::*;
 
 // Getter for the fields a balance query needs off its request struct.
 #[cgp_auto_getter]
-pub trait HasQueryBalanceFields<App>
-where
-    App: HasCurrencyType,
-{
-    fn currency(&self) -> &App::Currency;
+#[use_type(HasCurrencyType.Currency in App)]
+pub trait HasQueryBalanceFields<App> {
+    fn currency(&self) -> &Currency;
 }
 
 /// The balance-query response, generic over the context's abstract `Quantity` so it stays

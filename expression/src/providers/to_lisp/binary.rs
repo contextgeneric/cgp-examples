@@ -16,18 +16,17 @@ pub trait BinarySubExpression<Expr> {
     fn right(&self) -> &Box<Expr>;
 }
 
-#[derive(HasFields, ExtractField, FromVariant)]
+#[derive(CgpData)]
 enum LispSubExpr<Expr> {
     List(List<Expr>),
     Ident(Ident),
 }
 
 #[cgp_impl(new BinaryOpToLisp<Operator>)]
-impl<Code, MathExpr, MathSubExpr, LispExpr, Operator> ComputerRef<Code, MathSubExpr>
+#[use_type(HasMathExprType.MathExpr, HasLispExprType.LispExpr)]
+#[uses(CanComputeRef<Code, MathExpr, Output = LispExpr>)]
+impl<Code, MathSubExpr, Operator> ComputerRef<Code, MathSubExpr>
 where
-    Self: HasMathExprType<MathExpr = MathExpr>
-        + HasLispExprType<LispExpr = LispExpr>
-        + CanComputeRef<Code, MathExpr, Output = LispExpr>,
     MathSubExpr: BinarySubExpression<MathExpr>,
     Operator: Default + Display,
     LispSubExpr<LispExpr>: CanUpcast<LispExpr>,

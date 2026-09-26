@@ -6,11 +6,9 @@ use crate::interfaces::*;
 // struct (not the app), so it is a getter trait: the auth wrapper requires it as
 // `InHandler::Request: HasBasicAuthHeader<Self>`.
 #[cgp_auto_getter]
-pub trait HasBasicAuthHeader<App>
-where
-    App: HasUserIdType + HasPasswordType,
-{
-    fn basic_auth_header(&self) -> &Option<(App::UserId, App::Password)>;
+#[use_type(HasUserIdType.UserId in App, HasPasswordType.Password in App)]
+pub trait HasBasicAuthHeader<App> {
+    fn basic_auth_header(&self) -> &Option<(UserId, Password)>;
 }
 
 // A higher-order `ApiHandler` provider that authenticates, then delegates. If no user is
