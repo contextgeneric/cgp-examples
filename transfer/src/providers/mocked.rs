@@ -86,7 +86,8 @@ where
 }
 
 // Move funds between two users in the in-memory map, checking both accounts exist and that
-// the sender has enough balance, raising a 404 or 400 otherwise.
+// the sender has enough balance, raising a 404 or 400 otherwise. A transfer to oneself
+// succeeds and leaves the balance unchanged.
 //
 // Note: `MoneyTransferrer` is deliberately *not* registered into `MockNamespace`.
 // `MockApp` overrides it directly with `NoTransferToSelf<UseMockedApp>` on the
@@ -131,6 +132,12 @@ where
 
         let new_sender_balance = old_sender_balance.checked_sub(quantity)
             .ok_or_else(|| Self::raise_http_error(ErrBadRequest, format!("sender {sender} has insufficient balance {old_sender_balance} to transfer {quantity}")))?;
+
+        // A transfer to oneself moves nothing. Returning here, once the sender is known to
+        // cover the amount, keeps the credit below from overwriting the debit on the same key.
+        if sender == recipient {
+            return Ok(());
+        }
 
         let new_recipient_balance =
             old_recipient_balance.checked_add(quantity).ok_or_else(|| {

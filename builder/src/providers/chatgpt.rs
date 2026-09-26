@@ -1,6 +1,8 @@
+use std::env::{self, VarError};
+
 use cgp::prelude::*;
 use rig::agent::Agent;
-use rig::client::{CompletionClient, ProviderClient};
+use rig::client::CompletionClient;
 use rig::providers::openai;
 
 #[derive(CgpData)]
@@ -36,12 +38,14 @@ impl<Code, Input> Handler<Code, Input> {
 }
 
 #[cgp_impl(new BuildDefaultOpenAiClient)]
+#[uses(CanRaiseError<VarError>)]
 #[use_type(HasErrorType.Error)]
 impl<Code, Input> Handler<Code, Input> {
     type Output = OpenAiClient;
 
     async fn handle(&self, _code: PhantomData<Code>, _input: Input) -> Result<Self::Output, Error> {
-        let open_ai_client = openai::Client::from_env();
+        let open_ai_key = env::var("OPENAI_API_KEY").map_err(Self::raise_error)?;
+        let open_ai_client = openai::Client::new(&open_ai_key);
         let open_ai_agent = open_ai_client.agent("gpt-4o").build();
 
         Ok(OpenAiClient {

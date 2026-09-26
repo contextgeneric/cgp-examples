@@ -1,11 +1,12 @@
 use core::str::FromStr;
 use core::time::Duration;
+use std::env;
 
 use cgp::prelude::*;
 use cgp_error_anyhow::Error;
 use reqwest::Client;
 use rig::agent::Agent;
-use rig::client::{CompletionClient, ProviderClient};
+use rig::client::CompletionClient;
 use rig::providers::openai;
 use sqlx::SqlitePool;
 use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode};
@@ -55,7 +56,7 @@ impl App {
     pub async fn new_with_default(db_path: &str) -> Result<Self, Error> {
         let http_client = Client::new();
         let sqlite_pool = SqlitePool::connect(db_path).await?;
-        let open_ai_client = openai::Client::from_env();
+        let open_ai_client = openai::Client::new(&env::var("OPENAI_API_KEY")?);
         let open_ai_agent = open_ai_client.agent("gpt-4o").build();
 
         Ok(Self {

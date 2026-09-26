@@ -130,7 +130,6 @@ impl<InnerCreator> PostCreator {
 }
 
 #[cgp_impl(new CreatePostWithPostgres)]
-#[uses(CanDetectSpamMessage)]
 impl PostCreator {
     fn create_post(
         &self,
@@ -138,10 +137,6 @@ impl PostCreator {
         title: &str,
         content: &str,
     ) -> Result<Post, Error> {
-        if self.message_is_spam(content) > Probability::new(0.8) {
-            return Err(Error::InvalidMessage);
-        }
-
         todo!()
     }
 }
