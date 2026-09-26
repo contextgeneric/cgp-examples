@@ -188,6 +188,11 @@ pub struct ProductionApp {
     pub database: PostgresDb,
 }
 
+#[derive(HasField)]
+pub struct TestApp {
+    pub database: PostgresDb,
+}
+
 delegate_components! {
     new PostgresUserComponents {
         UserCreatorComponent:
@@ -213,7 +218,7 @@ delegate_components! {
 }
 
 delegate_components! {
-    new ContentFilterComponents {
+    new AiContentFilterComponents {
         UsernameCensorComponent:
             AiUserCensor,
         SpamMessageDetectorComponent:
@@ -222,19 +227,23 @@ delegate_components! {
 }
 
 delegate_components! {
-    ProductionApp {
-        namespace DefaultNamespace;
-
-        @app.core: PostgresCoreComponents,
-        @app.extra.content_filter: ContentFilterComponents,
+    new DummyContentFilterComponents {
+        UsernameCensorComponent:
+            DummyUserCensor,
+        SpamMessageDetectorComponent:
+            DummySpamMessageDetector,
     }
 }
 
-check_components! {
-    ProductionApp {
-        UserCreatorComponent,
-    }
-}
+// delegate_components! {
+//     ProductionApp {
+//         namespace DefaultNamespace;
+//
+//         @app.core.user: PostgresUserComponents,
+//         @app.core.post: PostgresPostComponents,
+//         @app.extra.content_filter: AiContentFilterComponents,
+//     }
+// }
 
 delegate_components! {
     new PostgresCoreComponents {
@@ -242,5 +251,65 @@ delegate_components! {
 
         @app.core.user: PostgresUserComponents,
         @app.core.post: PostgresPostComponents,
+    }
+}
+
+delegate_components! {
+    new ProductionExtraComponents {
+        namespace DefaultNamespace;
+
+        @app.extra.content_filter: AiContentFilterComponents,
+    }
+}
+
+delegate_components! {
+    new DummyExtraComponents {
+        namespace DefaultNamespace;
+
+        @app.extra.content_filter: DummyContentFilterComponents,
+    }
+}
+
+delegate_components! {
+    ProductionApp {
+        namespace DefaultNamespace;
+
+        @app.core: PostgresCoreComponents,
+        @app.extra: ProductionExtraComponents,
+    }
+}
+
+delegate_components! {
+    TestApp {
+        namespace DefaultNamespace;
+
+        @app.core: PostgresCoreComponents,
+        @app.extra: DummyExtraComponents,
+    }
+}
+
+check_components! {
+    ProductionApp {
+        UserCreatorComponent,
+        UserGetterComponent,
+        UserUpdaterComponent,
+        PostCreatorComponent,
+        PostGetterComponent,
+        PostUpdaterComponent,
+        PostDeleterComponent,
+        UsernameCensorComponent,
+        SpamMessageDetectorComponent,
+    }
+
+    TestApp {
+        UserCreatorComponent,
+        UserGetterComponent,
+        UserUpdaterComponent,
+        PostCreatorComponent,
+        PostGetterComponent,
+        PostUpdaterComponent,
+        PostDeleterComponent,
+        UsernameCensorComponent,
+        SpamMessageDetectorComponent,
     }
 }

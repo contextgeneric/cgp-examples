@@ -257,3 +257,17 @@ delegate_components! {
             AiContentFilterComponents,
     }
 }
+
+check_components! {
+    ProductionApp {
+        UserCreatorComponent,
+        UserGetterComponent,
+        UserUpdaterComponent,
+        PostCreatorComponent,
+        PostGetterComponent,
+        PostUpdaterComponent,
+        PostDeleterComponent,
+        UsernameCensorComponent,
+        SpamMessageDetectorComponent,
+    }
+}
