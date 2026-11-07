@@ -6,6 +6,7 @@ pub struct PostgresClient {
     pub postgres_pool: PgPool,
 }
 
+/// Builds a Postgres client from the given configuration.
 #[cgp_impl(new BuildPostgresClient)]
 #[uses(CanRaiseError<sqlx::Error>)]
 #[use_type(HasErrorType.Error)]

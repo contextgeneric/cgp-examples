@@ -10,6 +10,7 @@ pub struct AnthropicClient {
     pub anthropic_agent: Agent<CompletionModel>,
 }
 
+/// Builds an Anthropic client from the default configuration.
 #[cgp_impl(new BuildDefaultAnthropicClient)]
 #[use_type(HasErrorType.Error)]
 impl<Code, Input> Handler<Code, Input> {

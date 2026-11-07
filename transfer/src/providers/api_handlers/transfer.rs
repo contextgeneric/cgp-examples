@@ -2,7 +2,7 @@ use cgp::prelude::*;
 
 use crate::interfaces::*;
 
-// Getter for the fields a transfer needs off its request struct.
+/// Getter for the fields a transfer needs off its request struct.
 #[cgp_auto_getter]
 #[use_type(
     HasUserIdType.UserId in App,
@@ -17,9 +17,9 @@ pub trait HasTransferMoneyFields<App> {
     fn quantity(&self) -> &Quantity;
 }
 
-// The transfer endpoint: an `ApiHandler` provider that requires a logged-in sender, then
-// invokes the `CanTransferMoney` capability. Like the balance handler, it names its
-// dependencies with `#[uses(...)]` and stays ignorant of which backend fulfills them.
+/// The transfer endpoint: an `ApiHandler` provider that requires a logged-in sender, then
+/// invokes the `CanTransferMoney` capability. Like the balance handler, it names its
+/// dependencies with `#[uses(...)]` and stays ignorant of which backend fulfills them.
 #[cgp_impl(new HandleTransfer<Request>)]
 #[uses(CanTransferMoney, CanRaiseHttpError<ErrUnauthorized, String>)]
 #[use_type(HasErrorType.Error)]

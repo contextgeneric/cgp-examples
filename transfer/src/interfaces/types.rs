@@ -8,35 +8,35 @@ use cgp::prelude::*;
 // The `#[prefix(... in DefaultNamespace)]` files each component under a dotted path so
 // the wiring can address it by that path; see the namespaces module.
 
-// A context's abstract user-identifier type, kept `Display` so it can appear in errors.
+/// A context's abstract user-identifier type, kept `Display` so it can appear in errors.
 #[cgp_type]
 #[prefix(@app.auth.types in DefaultNamespace)]
 pub trait HasUserIdType {
     type UserId: Display;
 }
 
-// A context's abstract money-amount type.
+/// A context's abstract money-amount type.
 #[cgp_type]
 #[prefix(@app.finance.types in DefaultNamespace)]
 pub trait HasQuantityType {
     type Quantity: Display;
 }
 
-// A context's abstract currency type.
+/// A context's abstract currency type.
 #[cgp_type]
 #[prefix(@app.finance.types in DefaultNamespace)]
 pub trait HasCurrencyType {
     type Currency: Display;
 }
 
-// A context's abstract cleartext-password type (supplied on a login request).
+/// A context's abstract cleartext-password type (supplied on a login request).
 #[cgp_type]
 #[prefix(@app.auth.types in DefaultNamespace)]
 pub trait HasPasswordType {
     type Password;
 }
 
-// A context's abstract stored-password type, compared against `Password` to authenticate.
+/// A context's abstract stored-password type, compared against `Password` to authenticate.
 #[cgp_type]
 #[prefix(@app.auth.types in DefaultNamespace)]
 pub trait HasHashedPasswordType {

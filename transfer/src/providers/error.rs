@@ -40,10 +40,10 @@ impl IsStatusCode for ErrInternal {
     }
 }
 
-// A provider for `CanRaiseHttpError` covering any `Display` detail: it stamps the status
-// code from the `Code` marker and formats the detail into an `AppError`. The
-// `#[use_type(HasErrorType.{Error = AppError})]` equality form pins the abstract error to
-// the concrete `AppError`, so the body can build one directly. `new` also declares the struct.
+/// A provider for `CanRaiseHttpError` covering any `Display` detail: it stamps the status
+/// code from the `Code` marker and formats the detail into an `AppError`. The
+/// `#[use_type(HasErrorType.{Error = AppError})]` equality form pins the abstract error to
+/// the concrete `AppError`, so the body can build one directly. `new` also declares the struct.
 #[cgp_impl(new DisplayHttpError)]
 #[use_type(HasErrorType.{Error = AppError})]
 impl<Code, Detail> HttpErrorRaiser<Code, Detail>
@@ -59,9 +59,9 @@ where
     }
 }
 
-// A sibling provider for details that are already convertible into `anyhow::Error`: it
-// forwards the detail unchanged rather than formatting it, preserving the error chain. The
-// wiring chooses between this and `DisplayHttpError` per detail type.
+/// A sibling provider for details that are already convertible into `anyhow::Error`: it
+/// forwards the detail unchanged rather than formatting it, preserving the error chain. The
+/// wiring chooses between this and `DisplayHttpError` per detail type.
 #[cgp_impl(new HandleHttpErrorWithAnyhow)]
 #[use_type(HasErrorType.{Error = AppError})]
 impl<Code, Detail> HttpErrorRaiser<Code, Detail>

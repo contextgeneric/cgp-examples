@@ -9,6 +9,7 @@ pub struct SqliteClient {
     pub sqlite_pool: SqlitePool,
 }
 
+/// Builds a SQLite client from the given configuration.
 #[cgp_impl(new BuildSqliteClient)]
 #[uses(CanRaiseError<sqlx::Error>)]
 #[use_type(HasErrorType.Error)]
@@ -37,6 +38,7 @@ impl<Code, Input> Handler<Code, Input> {
     }
 }
 
+/// Builds a SQLite client from the default configuration.
 #[cgp_impl(new BuildDefaultSqliteClient)]
 #[uses(CanRaiseError<sqlx::Error>)]
 #[use_type(HasErrorType.Error)]

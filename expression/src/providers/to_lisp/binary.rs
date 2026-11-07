@@ -10,6 +10,7 @@ use cgp::prelude::*;
 use crate::components::{HasLispExprType, HasMathExprType};
 use crate::types::{Ident, List};
 
+/// Reads the left and right operands of a binary expression.
 #[cgp_auto_getter]
 pub trait BinarySubExpression<Expr> {
     fn left(&self) -> &Box<Expr>;

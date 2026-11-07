@@ -7,7 +7,7 @@ use crate::interfaces::{HasCurrencyType, HasQuantityType, HasUserIdType};
 // never on the concrete store behind them. `#[use_type]` imports the domain's abstract types
 // so the signatures read in plain names.
 
-// Capability to read a user's balance in a currency.
+/// Capability to read a user's balance in a currency.
 #[cgp_component(UserBalanceQuerier)]
 #[prefix(@app.finance in DefaultNamespace)]
 #[async_trait]
@@ -20,7 +20,7 @@ pub trait CanQueryUserBalance {
     ) -> Result<Quantity, Error>;
 }
 
-// Capability to move a quantity of a currency from one user to another.
+/// Capability to move a quantity of a currency from one user to another.
 #[cgp_component(MoneyTransferrer)]
 #[prefix(@app.finance in DefaultNamespace)]
 #[async_trait]

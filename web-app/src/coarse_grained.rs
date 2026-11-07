@@ -2,6 +2,7 @@ use cgp::prelude::*;
 
 use crate::types::*;
 
+/// Manages users.
 #[cgp_component(UserManager)]
 pub trait CanManageUser {
     fn create_user(&self, username: &str, email: &Email) -> Result<User, Error>;
@@ -11,6 +12,7 @@ pub trait CanManageUser {
     fn update_user_data(&self, user_id: &UserId, user_data: &UserData) -> Result<(), Error>;
 }
 
+/// Manages posts.
 #[cgp_component(PostManager)]
 pub trait CanManagePost {
     fn create_post(&self, title: &str, content: &str) -> Result<Post, Error>;
@@ -22,11 +24,13 @@ pub trait CanManagePost {
     fn delete_post(&self, post_id: &PostId) -> Result<(), Error>;
 }
 
+/// Decides whether a username is censored.
 #[cgp_component(UsernameCensor)]
 pub trait CanCensorUsername {
     fn username_is_censored(&self, username: &str) -> Probability;
 }
 
+/// Decides whether a message is spam.
 #[cgp_component(SpamMessageDetector)]
 pub trait CanDetectSpamMessage {
     fn message_is_spam(&self, message: &str) -> Probability;

@@ -2,20 +2,20 @@ use cgp::prelude::*;
 
 use crate::interfaces::*;
 
-// Getter for the optional Basic-auth credentials on a request. Implemented on the request
-// struct (not the app), so it is a getter trait: the auth wrapper requires it as
-// `InHandler::Request: HasBasicAuthHeader<Self>`.
+/// Getter for the optional Basic-auth credentials on a request. Implemented on the request
+/// struct (not the app), so it is a getter trait: the auth wrapper requires it as
+/// `InHandler::Request: HasBasicAuthHeader<Self>`.
 #[cgp_auto_getter]
 #[use_type(HasUserIdType.UserId in App, HasPasswordType.Password in App)]
 pub trait HasBasicAuthHeader<App> {
     fn basic_auth_header(&self) -> &Option<(UserId, Password)>;
 }
 
-// A higher-order `ApiHandler` provider that authenticates, then delegates. If no user is
-// logged in yet, it resolves the Basic-auth header into a user, verifies the password via the
-// wired capabilities (`#[uses(...)]`), records the user on the request, and calls the inner
-// handler. `#[use_provider(InHandler: ApiHandler<Api>)]` supplies the inner handler's hidden
-// context argument, so the body calls it as `InHandler::handle_api(self, ...)`.
+/// A higher-order `ApiHandler` provider that authenticates, then delegates. If no user is
+/// logged in yet, it resolves the Basic-auth header into a user, verifies the password via the
+/// wired capabilities (`#[uses(...)]`), records the user on the request, and calls the inner
+/// handler. `#[use_provider(InHandler: ApiHandler<Api>)]` supplies the inner handler's hidden
+/// context argument, so the body calls it as `InHandler::handle_api(self, ...)`.
 #[cgp_impl(new UseBasicAuth<InHandler>)]
 #[uses(CanQueryUserHashedPassword, CanCheckPassword)]
 #[use_type(HasUserIdType.UserId, HasErrorType.Error)]

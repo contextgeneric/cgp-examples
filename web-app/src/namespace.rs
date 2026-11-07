@@ -2,54 +2,63 @@ use cgp::prelude::*;
 
 use crate::types::*;
 
+/// Creates a user.
 #[cgp_component(UserCreator)]
 #[prefix(@app.core.user in DefaultNamespace)]
 pub trait CanCreateUser {
     fn create_user(&self, username: &str, email: &Email) -> Result<User, Error>;
 }
 
+/// Reads a user.
 #[cgp_component(UserGetter)]
 #[prefix(@app.core.user in DefaultNamespace)]
 pub trait CanGetUser {
     fn get_user(&self, user_id: &UserId) -> Result<User, Error>;
 }
 
+/// Updates a user.
 #[cgp_component(UserUpdater)]
 #[prefix(@app.core.user in DefaultNamespace)]
 pub trait CanUpdateUser {
     fn update_user_data(&self, user_id: &UserId, user_data: &UserData) -> Result<(), Error>;
 }
 
+/// Creates a post.
 #[cgp_component(PostCreator)]
 #[prefix(@app.core.post in DefaultNamespace)]
 pub trait CanCreatePost {
     fn create_post(&self, title: &str, content: &str) -> Result<Post, Error>;
 }
 
+/// Reads a post.
 #[cgp_component(PostGetter)]
 #[prefix(@app.core.post in DefaultNamespace)]
 pub trait CanGetPost {
     fn get_post(&self, post_id: &PostId) -> Result<Post, Error>;
 }
 
+/// Updates a post.
 #[cgp_component(PostUpdater)]
 #[prefix(@app.core.post in DefaultNamespace)]
 pub trait CanUpdatePost {
     fn update_post(&self, post_id: &PostId, content: &str) -> Result<(), Error>;
 }
 
+/// Deletes a post.
 #[cgp_component(PostDeleter)]
 #[prefix(@app.core.post in DefaultNamespace)]
 pub trait CanDeletePost {
     fn delete_post(&self, post_id: &PostId) -> Result<(), Error>;
 }
 
+/// Decides whether a username is censored.
 #[cgp_component(UsernameCensor)]
 #[prefix(@app.extra.content_filter in DefaultNamespace)]
 pub trait CanCensorUsername {
     fn username_is_censored(&self, username: &str) -> Probability;
 }
 
+/// Decides whether a message is spam.
 #[cgp_component(SpamMessageDetector)]
 #[prefix(@app.extra.content_filter in DefaultNamespace)]
 pub trait CanDetectSpamMessage {

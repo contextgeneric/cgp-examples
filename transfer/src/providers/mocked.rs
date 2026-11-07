@@ -14,9 +14,9 @@ use crate::namespaces::MockNamespace;
 /// to register itself as the `MockNamespace` default for the component it satisfies.
 pub struct UseMockedApp;
 
-// Look up a stored password in the in-memory `user_passwords` map. The `#[implicit]` argument
-// reads that same-named field off the context; `#[default_impl(... in MockNamespace)]`
-// registers this provider as the namespace's default for the password-querier component.
+/// Look up a stored password in the in-memory `user_passwords` map. The `#[implicit]` argument
+/// reads that same-named field off the context; `#[default_impl(... in MockNamespace)]`
+/// registers this provider as the namespace's default for the password-querier component.
 #[cgp_impl(UseMockedApp)]
 #[default_impl(@app.auth.UserHashedPasswordQuerierComponent in MockNamespace)]
 #[use_type(HasUserIdType.UserId, HasHashedPasswordType.HashedPassword, HasErrorType.Error)]
@@ -36,9 +36,9 @@ where
     }
 }
 
-// Check a password by plain equality — the mock stores passwords in the clear. The
-// `#[use_type]` equality form unifies `HashedPassword` with `Password`, so both are the same
-// type and `==` type-checks. A real deployment would swap this for a hashing check.
+/// Check a password by plain equality — the mock stores passwords in the clear. The
+/// `#[use_type]` equality form unifies `HashedPassword` with `Password`, so both are the same
+/// type and `==` type-checks. A real deployment would swap this for a hashing check.
 #[cgp_impl(UseMockedApp)]
 #[default_impl(@app.auth.PasswordCheckerComponent in MockNamespace)]
 #[use_type(HasPasswordType.Password, HasHashedPasswordType.{HashedPassword = Password})]
@@ -51,9 +51,9 @@ where
     }
 }
 
-// Read a user's balance from the in-memory `user_balances` map, or raise a 404 if absent.
-// The map is pulled in by reference as an `#[implicit]` argument (no clone), and
-// `#[uses(...)]` declares the error-raising dependency the not-found branch needs.
+/// Read a user's balance from the in-memory `user_balances` map, or raise a 404 if absent.
+/// The map is pulled in by reference as an `#[implicit]` argument (no clone), and
+/// `#[uses(...)]` declares the error-raising dependency the not-found branch needs.
 #[cgp_impl(UseMockedApp)]
 #[default_impl(@app.finance.UserBalanceQuerierComponent in MockNamespace)]
 #[uses(CanRaiseHttpError<ErrNotFound, String>)]
@@ -85,15 +85,15 @@ where
     }
 }
 
-// Move funds between two users in the in-memory map, checking both accounts exist and that
-// the sender has enough balance, raising a 404 or 400 otherwise. A transfer to oneself
-// succeeds and leaves the balance unchanged.
-//
-// Note: `MoneyTransferrer` is deliberately *not* registered into `MockNamespace`.
-// `MockApp` overrides it directly with `NoTransferToSelf<UseMockedApp>` on the
-// `@app.finance.MoneyTransferrerComponent` path, and a context can only wire a
-// path the joined namespace does not itself claim — registering it here too would
-// make the context entry conflict with the namespace's blanket forwarding impl.
+/// Move funds between two users in the in-memory map, checking both accounts exist and that
+/// the sender has enough balance, raising a 404 or 400 otherwise. A transfer to oneself
+/// succeeds and leaves the balance unchanged.
+///
+/// Note: `MoneyTransferrer` is deliberately *not* registered into `MockNamespace`.
+/// `MockApp` overrides it directly with `NoTransferToSelf<UseMockedApp>` on the
+/// `@app.finance.MoneyTransferrerComponent` path, and a context can only wire a
+/// path the joined namespace does not itself claim — registering it here too would
+/// make the context entry conflict with the namespace's blanket forwarding impl.
 #[cgp_impl(UseMockedApp)]
 #[uses(CanRaiseHttpError<ErrNotFound, String>, CanRaiseHttpError<ErrBadRequest, String>)]
 #[use_type(HasUserIdType.UserId, HasCurrencyType.Currency, HasQuantityType.Quantity, HasErrorType.Error)]

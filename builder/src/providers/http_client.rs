@@ -8,6 +8,7 @@ pub struct HttpClient {
     pub http_client: Client,
 }
 
+/// Builds an HTTP client from the given configuration.
 #[cgp_impl(new BuildHttpClient)]
 #[uses(CanRaiseError<reqwest::Error>)]
 #[use_type(HasErrorType.Error)]
@@ -30,6 +31,7 @@ impl<Code, Input> Handler<Code, Input> {
     }
 }
 
+/// Builds an HTTP client from the default configuration.
 #[cgp_impl(new BuildDefaultHttpClient)]
 #[use_type(HasErrorType.Error)]
 impl<Code, Input> Handler<Code, Input> {

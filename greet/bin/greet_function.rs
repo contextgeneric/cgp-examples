@@ -1,5 +1,6 @@
 use cgp::prelude::*;
 
+/// Greets a person by name.
 #[cgp_fn]
 pub fn greet(&self, #[implicit] name: &str) {
     println!("Hello, {name}!");

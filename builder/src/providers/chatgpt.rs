@@ -11,6 +11,7 @@ pub struct OpenAiClient {
     pub open_ai_agent: Agent<openai::CompletionModel>,
 }
 
+/// Builds an OpenAI client from the given configuration.
 #[cgp_impl(new BuildOpenAiClient)]
 #[use_type(HasErrorType.Error)]
 impl<Code, Input> Handler<Code, Input> {
@@ -37,6 +38,7 @@ impl<Code, Input> Handler<Code, Input> {
     }
 }
 
+/// Builds an OpenAI client from the default configuration.
 #[cgp_impl(new BuildDefaultOpenAiClient)]
 #[uses(CanRaiseError<VarError>)]
 #[use_type(HasErrorType.Error)]

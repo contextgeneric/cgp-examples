@@ -2,11 +2,13 @@ use core::fmt::Display;
 
 use cgp::prelude::*;
 
+/// Greets a person.
 #[cgp_component(Greeter)]
 pub trait CanGreet {
     fn greet(&self);
 }
 
+/// A context's abstract name type.
 #[cgp_type]
 pub trait HasNameType {
     type Name;

@@ -2,46 +2,55 @@ use cgp::prelude::*;
 
 use crate::types::*;
 
+/// Creates a user.
 #[cgp_component(UserCreator)]
 pub trait CanCreateUser {
     fn create_user(&self, username: &str, email: &Email) -> Result<User, Error>;
 }
 
+/// Reads a user.
 #[cgp_component(UserGetter)]
 pub trait CanGetUser {
     fn get_user(&self, user_id: &UserId) -> Result<User, Error>;
 }
 
+/// Updates a user.
 #[cgp_component(UserUpdater)]
 pub trait CanUpdateUser {
     fn update_user_data(&self, user_id: &UserId, user_data: &UserData) -> Result<(), Error>;
 }
 
+/// Creates a post.
 #[cgp_component(PostCreator)]
 pub trait CanCreatePost {
     fn create_post(&self, title: &str, content: &str) -> Result<Post, Error>;
 }
 
+/// Reads a post.
 #[cgp_component(PostGetter)]
 pub trait CanGetPost {
     fn get_post(&self, post_id: &PostId) -> Result<Post, Error>;
 }
 
+/// Updates a post.
 #[cgp_component(PostUpdater)]
 pub trait CanUpdatePost {
     fn update_post(&self, post_id: &PostId, content: &str) -> Result<(), Error>;
 }
 
+/// Deletes a post.
 #[cgp_component(PostDeleter)]
 pub trait CanDeletePost {
     fn delete_post(&self, post_id: &PostId) -> Result<(), Error>;
 }
 
+/// Decides whether a username is censored.
 #[cgp_component(UsernameCensor)]
 pub trait CanCensorUsername {
     fn username_is_censored(&self, username: &str) -> Probability;
 }
 
+/// Decides whether a message is spam.
 #[cgp_component(SpamMessageDetector)]
 pub trait CanDetectSpamMessage {
     fn message_is_spam(&self, message: &str) -> Probability;

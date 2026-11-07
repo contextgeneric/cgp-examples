@@ -9,6 +9,7 @@ pub struct SqliteAndHttpClient {
     pub http_client: Client,
 }
 
+/// Builds a SQLite and HTTP client from the default configuration.
 #[cgp_impl(new BuildDefaultSqliteAndHttpClient)]
 #[uses(CanRaiseError<sqlx::Error>)]
 #[use_type(HasErrorType.Error)]

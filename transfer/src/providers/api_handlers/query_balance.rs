@@ -3,7 +3,7 @@ use serde::Serialize;
 
 use crate::interfaces::*;
 
-// Getter for the fields a balance query needs off its request struct.
+/// Getter for the fields a balance query needs off its request struct.
 #[cgp_auto_getter]
 #[use_type(HasCurrencyType.Currency in App)]
 pub trait HasQueryBalanceFields<App> {
@@ -20,10 +20,10 @@ where
     pub balance: App::Quantity,
 }
 
-// The balance endpoint: an `ApiHandler` provider that requires the caller to be logged in,
-// then queries the balance. It depends only on the `CanQueryUserBalance` capability and
-// error-raising (declared with `#[uses(...)]`), not on any concrete store, and works for any
-// request exposing the fields named in its `where` clause.
+/// The balance endpoint: an `ApiHandler` provider that requires the caller to be logged in,
+/// then queries the balance. It depends only on the `CanQueryUserBalance` capability and
+/// error-raising (declared with `#[uses(...)]`), not on any concrete store, and works for any
+/// request exposing the fields named in its `where` clause.
 #[cgp_impl(new HandleQueryBalance<Request>)]
 #[uses(CanQueryUserBalance, CanRaiseHttpError<ErrUnauthorized, String>)]
 #[use_type(HasErrorType.Error)]
