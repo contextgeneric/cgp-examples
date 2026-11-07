@@ -1,14 +1,16 @@
-# Money-Transfer API — a Context-Generic Programming walkthrough
+# Money-Transfer API: a Context-Generic Programming walkthrough
 
 This example is a small money-transfer web service: it lets a user check an account
 balance and move funds to another user, served over HTTP. Its real purpose is to teach
-**Context-Generic Programming (CGP)** — a modular style of Rust in which a capability is
+**Context-Generic Programming (CGP)**, a modular style of Rust in which a trait is
 declared once, implemented many times, and each implementation is chosen per application
 by *wiring* rather than by hardcoding. The service is deliberately tiny so that the CGP
 techniques, not the business logic, are what you take away.
 
-The walkthrough assumes you know Rust — traits, generics, `async`/`await` — but nothing
-about CGP. Every CGP construct is explained where it first appears, so you can read this
+The walkthrough assumes you know Rust, including traits, generics, and `async`/`await`, but
+nothing about CGP. The website's [quickstart](https://contextgeneric.dev/docs/quickstart) and
+[reference](https://contextgeneric.dev/docs/reference/) cover the same constructs from the other
+direction, one at a time. Every CGP construct is explained where it first appears, so you can read this
 file top to bottom without any other reference. If you only skim, the first sentence of
 each section carries the point.
 
@@ -16,9 +18,9 @@ each section carries the point.
 
 The server exposes two endpoints, both authenticated with HTTP Basic auth. `GET /balance`
 returns the caller's balance in a given currency, and `POST /transfer` moves a quantity of
-one currency from the caller to a named recipient. Failures come back as HTTP status codes
-— `401` when you are not logged in, `400` for a bad request such as transferring to
-yourself, `404` when a user is unknown.
+one currency from the caller to a named recipient. Failures come back as HTTP status codes:
+`401` when you are not logged in, `400` for a bad request such as transferring to yourself,
+and `404` when a user is unknown.
 
 The [example.sh](example.sh) script shows the shape of a session against a running server:
 
@@ -34,7 +36,7 @@ curl -i -XPOST -H "$ALICE_AUTH" 'http://localhost:8080/transfer?currency=EUR&rec
 
 The data lives in memory, seeded with two users (Alice and Bob) in
 [src/contexts/app.rs](src/contexts/app.rs). A real deployment would swap the in-memory
-store for a database, and — as the last section shows — that swap touches none of the
+store for a database, and, as the last section shows, that swap touches none of the
 request-handling code.
 
 ## How to run it
@@ -59,10 +61,10 @@ let the final application choose an implementation for a type a library defined.
 sidesteps both limits, so the same `handle_api` interface can have a mock backend today and
 a database backend tomorrow, chosen without editing the interface or its callers.
 
-**A CGP capability is split into two traits: a consumer trait you call, and a provider
+**A CGP component is split into two traits: a consumer trait you call, and a provider
 trait you implement.** When you write `#[cgp_component(MoneyTransferrer)]` on a trait
-`CanTransferMoney`, the macro keeps `CanTransferMoney` as the **consumer trait** — the
-one callers use, with the familiar `&self` receiver — and generates a matching **provider
+`CanTransferMoney`, the macro keeps `CanTransferMoney` as the **consumer trait**, the
+one callers use with the familiar `&self` receiver, and generates a matching **provider
 trait** `MoneyTransferrer<Context>`, where the original `Self` has moved into an explicit
 `Context` type parameter. The consumer reads as a verb (`CanTransferMoney`), the provider
 as a noun (`MoneyTransferrer`). You call the consumer; you implement the provider.
@@ -70,16 +72,16 @@ as a noun (`MoneyTransferrer`). You call the consumer; you implement the provide
 **A provider is a zero-sized marker type that implements a provider trait.** `UseMockedApp`
 and `NoTransferToSelf` in this example are providers: structs with no fields, existing only
 as names at the type level. Because a provider implements `MoneyTransferrer<Context>` for
-*its own* struct over a generic `Context` — rather than implementing a trait for the context
-— Rust's coherence rules never block it, and you can define as many alternative providers
-for one capability as you like. One consequence trips up every newcomer: inside a provider,
+*its own* struct over a generic `Context`, rather than implementing a trait for the context,
+Rust's coherence rules never block it, and you can define as many alternative providers
+for one component as you like. One consequence trips up every newcomer: inside a provider,
 `self` and `Self` refer to the **context**, never to the provider struct. The provider
 struct holds no data and is never constructed.
 
 **Wiring is a per-context, compile-time table that says which provider implements each
-capability.** The `delegate_components!` macro builds it. An entry like
+component.** The `delegate_components!` macro builds it. An entry like
 `MoneyTransferrerComponent: UseMockedApp` means "for this context, the money-transfer
-capability is supplied by `UseMockedApp`." The table is pure trait resolution — there is no
+component is supplied by `UseMockedApp`." The table is pure trait resolution: there is no
 runtime lookup, no dynamic dispatch, and no vtable. The compiler picks the provider during
 type-checking and compiles the call down to a direct, static function call, so all of this
 machinery costs nothing at runtime.
@@ -89,8 +91,8 @@ stay hidden from callers.** This is CGP's form of dependency injection, and it i
 most important idea. `UseBasicAuth` needs the ability to look up a hashed password and check
 it; it says so with `#[uses(CanQueryUserHashedPassword, CanCheckPassword)]`, which adds those
 as bounds on its own implementation. A caller that uses the authenticated handler never sees
-those requirements — they are satisfied one level down, by whatever the context wires for
-them. This is why endpoints can be written against abstract capabilities and stay ignorant
+those requirements, because they are satisfied one level down, by whatever the context wires
+for them. This is why endpoints can be written against abstract traits and stay ignorant
 of the concrete backend behind them.
 
 **Wiring is checked with `check_components!`.** Because wiring is resolved lazily, a missing
@@ -98,8 +100,8 @@ dependency would otherwise only surface far away, at the point of use, as a conf
 `check_components!` asserts at compile time that a context is fully and correctly wired,
 reporting the exact missing piece at the wiring site. A green build *is* the passing test.
 
-With those six ideas — two traits, providers, wiring, impl-side dependencies, and checking —
-you can read every construct below.
+With those six ideas, which are two traits, providers, wiring, impl-side dependencies, and
+checking, you can read every construct below.
 
 ## Map of the code
 
@@ -124,7 +126,7 @@ abstract vocabulary, through the handlers and backend, to the wiring and the HTT
 
 ## 1. Abstract domain types
 
-The service never names a concrete user id, currency, or amount — it names *abstract types*
+The service never names a concrete user id, currency, or amount; it names *abstract types*
 that a context supplies later. An abstract type in CGP is a trait carrying a single
 associated type, and the `#[cgp_type]` macro is the shorthand for defining one. In
 [src/interfaces/types.rs](src/interfaces/types.rs):
@@ -142,8 +144,8 @@ displayed." Generic code refers to `Self::Currency` without committing to `Strin
 or anything else; the concrete choice is made once, at wiring time. This is what lets a
 single balance-query handler serve one deployment whose currency is a rich enum and another
 whose currency is a bare string, with no change to the handler. The example defines five
-such types — user id, quantity, currency, password, and hashed password — each carrying only
-the bound the rest of the code actually needs.
+such types, which are user id, quantity, currency, password, and hashed password, each
+carrying only the bound the rest of the code actually needs.
 
 The `#[prefix(...)]` attribute files each component under a dotted path in a shared
 namespace. Ignore it for now; it is a wiring-organization detail explained in
@@ -156,9 +158,9 @@ against `DemoCurrency` right there at the wiring site.
 
 ## 2. Status-coded errors
 
-Endpoints fail with an HTTP status code, but the handlers never build one directly — they
-raise through an application-specific error capability, so the mapping from a domain failure
-to a status code lives in exactly one place. That capability, in
+Endpoints fail with an HTTP status code, but the handlers never build one directly; they
+raise through an application-specific error component, so the mapping from a domain failure
+to a status code lives in exactly one place. That component, in
 [src/interfaces/error.rs](src/interfaces/error.rs), is a component:
 
 ```rust
@@ -189,7 +191,7 @@ pub trait IsStatusCode {
 impl IsStatusCode for ErrUnauthorized { /* UNAUTHORIZED */ }
 ```
 
-The provider that satisfies the capability, `DisplayHttpError` in
+The provider that satisfies the component, `DisplayHttpError` in
 [src/providers/error.rs](src/providers/error.rs), is generic over both the code and the
 detail, so one provider serves every `raise_http_error` call whose detail is `Display`:
 
@@ -208,7 +210,7 @@ where
 `#[cgp_impl(new DisplayHttpError)]` is the idiomatic way to write a provider: you write the
 impl in consumer-trait style, and the `new` keyword also declares the `struct DisplayHttpError;`
 for you. The `#[use_type(HasErrorType.{Error = AppError})]` equality form goes one step
-further than before — it *pins* the abstract error to the concrete `AppError`, which is why
+further than before: it *pins* the abstract error to the concrete `AppError`, which is why
 the method body can construct an `AppError` value directly. A sibling provider,
 `HandleHttpErrorWithAnyhow`, handles details that are already an `anyhow::Error`; the wiring
 picks between the two per detail type.
@@ -236,7 +238,7 @@ pub struct QueryBalanceApi;
 ```
 
 Because the component is generic over `Api`, a context can bind a *different* provider for
-each endpoint marker — `TransferApi` to one, `QueryBalanceApi` to another — while the
+each endpoint marker, `TransferApi` to one and `QueryBalanceApi` to another, while the
 `Request` and `Response` associated types let each endpoint fix its own input and output
 shape. The `PhantomData<Api>` argument carries the endpoint choice at the type level, so the
 dispatch is resolved at compile time with no runtime branch. `#[async_trait]` lets the method
@@ -245,11 +247,11 @@ declaration underneath.
 
 ## 4. The endpoint handlers
 
-Each endpoint is a provider for `ApiHandler` that depends on business *capabilities* rather
+Each endpoint is a provider for `ApiHandler` that depends on business *traits* rather
 than on any concrete backend. The transfer endpoint, in
 [src/providers/api_handlers/transfer.rs](src/providers/api_handlers/transfer.rs), reads the
-logged-in sender and the transfer details from its request, then calls `CanTransferMoney` —
-itself an abstract async capability the context implements however it likes:
+logged-in sender and the transfer details from its request, then calls `CanTransferMoney`,
+which the context wires to the mock backend.
 
 ```rust
 #[cgp_impl(new HandleTransfer<Request>)]
@@ -276,13 +278,13 @@ where
 The handler is generic over its request shape: `HandleTransfer<Request>` works for any
 `Request` that exposes a logged-in user and the transfer fields through the getter traits
 named in its `where` clause, so the same logic serves whatever request struct a deployment
-decodes. The `#[uses(...)]` attribute is where the impl-side dependencies live — it declares
+decodes. The `#[uses(...)]` attribute is where the impl-side dependencies live: it declares
 that the context must provide `CanTransferMoney` and the ability to raise an unauthorized
 error, and those requirements never leak into the `ApiHandler` interface. Inside the body,
-`self.transfer_money(...)` and `Self::raise_http_error(...)` call those wired capabilities;
+`self.transfer_money(...)` and `Self::raise_http_error(...)` call those wired traits;
 which provider actually runs is decided by the context's wiring.
 
-The getter traits in the `where` clause — `HasLoggedInUser`, `HasTransferMoneyFields` — are
+The getter traits in the `where` clause, `HasLoggedInUser` and `HasTransferMoneyFields`, are
 defined with `#[cgp_auto_getter]`, which turns a trait of `&self` accessors into a blanket
 implementation that reads same-named fields off the context. They read fields from the
 *request* type (`Request: HasTransferMoneyFields<Self>`), which is why they are getter traits
@@ -297,8 +299,8 @@ has the same shape but returns a value, so it fixes a `Response` type. Its
 
 ## 5. Reusable wrappers as higher-order providers
 
-Cross-cutting concerns — decoding, authentication, JSON encoding — are handlers that wrap
-another handler. A provider that takes another provider as a type parameter and delegates
+Cross-cutting concerns such as decoding, authentication, and JSON encoding are handlers that
+wrap another handler. A provider that takes another provider as a type parameter and delegates
 part of its work to it is called a **higher-order provider**, and it is how CGP composes
 behavior. Each wrapper implements `ApiHandler` itself, takes an inner handler as a generic
 parameter, and threads the call through, transforming the request or response on the way.
@@ -324,10 +326,10 @@ where
 
 The `#[use_provider(InHandler: ApiHandler<Api>)]` attribute is the key detail. A provider
 trait moves `Self` into a leading context parameter, so the inner bound is really
-`InHandler: ApiHandler<Self, Api>` — with the context slot filled in. Writing that by hand is
+`InHandler: ApiHandler<Self, Api>`, with the context slot filled in. Writing that by hand is
 easy to get wrong, so `#[use_provider]` lets you write `InHandler: ApiHandler<Api>` and
 supplies the context argument for you. Note the body calls the inner handler as an
-associated function, `InHandler::handle_api(self, ...)`, passing the context explicitly —
+associated function, `InHandler::handle_api(self, ...)`, passing the context explicitly,
 not `self.handle_api(...)`, which would route back through the context's own wiring instead
 of the named inner provider.
 
@@ -353,9 +355,9 @@ concern, and the endpoint at the center is oblivious to all of them.
 
 ## 6. The in-memory backend
 
-The business capabilities — querying a balance, transferring money, checking passwords — are
+The business traits, which query a balance, transfer money, and check passwords, are
 satisfied by a single provider, `UseMockedApp`, that reads its data from context fields. It
-lives in [src/providers/mocked.rs](src/providers/mocked.rs) and implements each capability by
+lives in [src/providers/mocked.rs](src/providers/mocked.rs) and implements each trait by
 reaching into maps stored on the context, pulled in as `#[implicit]` arguments:
 
 ```rust
@@ -384,30 +386,30 @@ abstract types at once, so the signature can name `UserId`, `Currency`, and `Qua
 without any `Self::` qualification.
 
 Swapping this backend for a real one is a one-line wiring change. Because `UseMockedApp` is
-selected per context, a `UsePostgres` provider that implements the same capabilities would
-replace it without touching a single endpoint or wrapper — which is the entire point of the
-consumer/provider split.
+selected per context, a `UsePostgres` provider that implements the same traits would
+replace it without touching a single endpoint or wrapper, which is the entire point of the
+separation.
 
-A business capability can be wrapped just like an API handler. `NoTransferToSelf` in
+A business trait can be wrapped just like an API handler. `NoTransferToSelf` in
 [src/providers/finance.rs](src/providers/finance.rs) is a higher-order provider for
 `MoneyTransferrer` that rejects a self-transfer and otherwise delegates to an inner transfer
-provider — the same wrapping pattern as the HTTP handlers, applied to a domain capability.
+provider, the same wrapping pattern as the HTTP handlers, applied to a domain trait.
 
 ## 7. Assembling the app with namespaces
 
 A concrete context becomes the running application by resolving every abstract type and every
 component. Spelling all of that out on the context would be long and repetitive, so the
 example lifts the shared wiring into reusable **namespaces**. A namespace is a named table of
-wiring entries that a context inherits wholesale and can then selectively override — CGP's
-form of preset configuration, resolved entirely at compile time.
+wiring entries that a context inherits wholesale and can then selectively override, which is
+CGP's answer to the preset system earlier releases shipped.
 
 Namespaces are populated from two sides. Components file themselves under a path with the
-`#[prefix(@path in DefaultNamespace)]` attribute seen throughout the interfaces — this is
+`#[prefix(@path in DefaultNamespace)]` attribute seen throughout the interfaces, this is
 what those attributes were for. Providers register themselves as a namespace's default with
 the `#[default_impl(@path in MockNamespace)]` attribute seen on `UseMockedApp` above, which
 places the wiring next to the implementation it wires. `MockNamespace` in
 [src/namespaces/mock.rs](src/namespaces/mock.rs) then only needs to spell out the entries
-that have no `#[cgp_impl]` block to attach to — the concrete error type, the per-detail HTTP
+that have no `#[cgp_impl]` block to attach to: the concrete error type, the per-detail HTTP
 error dispatch, and the abstract type choices:
 
 ```rust
@@ -421,8 +423,8 @@ cgp_namespace! {
 }
 ```
 
-The API surface — which handler pipeline serves each endpoint — is a second reusable table,
-`DefaultApiHandlers` in [src/namespaces/api_handlers.rs](src/namespaces/api_handlers.rs),
+The API surface, which is the handler pipeline that serves each endpoint, is a second
+reusable table,
 keyed by the API marker so any backend can pull it in.
 
 With the backend defaults in `MockNamespace` and the endpoints in `DefaultApiHandlers`, the
@@ -446,10 +448,10 @@ delegate_components! {
 Each line states a decision, not a mechanical fact. `namespace MockNamespace;` joins the
 namespace, inheriting every default backend and type. The `for` loop pulls each entry of
 `DefaultApiHandlers` onto the `ApiHandler` dispatch path, wiring both endpoints at once. And
-the last line overrides the money-transfer capability to wrap the mock backend in
+the last line overrides the money-transfer component to wrap the mock backend in
 `NoTransferToSelf`, guarding against self-transfers. The override is possible only because
-`MockNamespace` deliberately does *not* claim the money-transfer path itself — a context can
-override a path the namespace routes *to*, but not one the namespace already terminates.
+`MockNamespace` deliberately does *not* claim the money-transfer path itself, so a context
+can override it.
 
 Because CGP wiring is checked lazily, a companion `check_components!` block proves at compile
 time that every endpoint is fully satisfied, listing the API markers to verify for the
@@ -466,8 +468,8 @@ check_components! {
 }
 ```
 
-If a provider's transitive dependency were unmet — a missing field, an unwired type — this
-block would fail to compile and name the exact gap, at the wiring site rather than at some
+If a provider's transitive dependency were unmet, such as a missing field or an unwired type,
+this block would fail to compile and name the exact gap, at the wiring site rather than at some
 distant call.
 
 ## 8. Serving over HTTP
@@ -499,7 +501,7 @@ impl CanHandleApiSend<QueryBalanceApi> for MockApp {
 ```
 
 Each impl merely forwards to `handle_api`, but at a *concrete* context and API the awaited
-future is a concrete type whose `Send`-ness the compiler can verify on its own — which is why
+future is a concrete type whose `Send`-ness the compiler can verify on its own, which is why
 the impls cannot be folded into one generic blanket impl. The repetition is the price of a
 missing language feature (Return Type Notation), not a CGP requirement.
 
@@ -507,7 +509,7 @@ The Axum routing layer in [src/providers/axum/routes.rs](src/providers/axum/rout
 bounds `App: CanHandleApiSend<Api>` and mounts each endpoint: `add_route` reads the request
 out of the HTTP layer, calls `handle_api_send`, and maps a raised `AppError` to its status
 code, so a single `add_main_api_routes` assembles the whole service. Finally
-[bin/server.rs](bin/server.rs) constructs a `MockApp`, builds the router, and serves it —
+[bin/server.rs](bin/server.rs) constructs a `MockApp`, builds the router, and serves it,
 completing the path from a request on the wire, through the decode-authenticate-handle-encode
 pipeline the namespace wired, to a JSON response or a status-coded error.
 
@@ -518,7 +520,7 @@ this application, and the shape of CGP comes into focus. Every endpoint, wrapper
 and type is a swappable part, and the context's wiring is the single place that chooses among
 them. Adding an endpoint means adding a handler provider and one line to `DefaultApiHandlers`.
 Moving to a database means writing one backend provider and changing one wiring entry. In
-both cases the interfaces, the endpoints, and the wrappers are untouched — the modularity is
-the reason CGP exists, and this small service is a template for any request/response backend
-whose endpoints share cross-cutting concerns and whose implementation should stay swappable
-behind abstract types.
+both cases the interfaces, the endpoints, and the wrappers are untouched, which is the reason
+CGP exists, and this small service is a template for any request/response backend whose
+endpoints share cross-cutting concerns and whose implementation should stay swappable behind
+abstract types.
