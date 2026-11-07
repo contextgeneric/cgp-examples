@@ -15,6 +15,9 @@ rust-version    = "1.90"
 edition         = "2024"
 license         = "MIT"
 repository      = "https://github.com/contextgeneric/cgp-examples"
+homepage        = "https://contextgeneric.dev/docs/projects/cgp-examples/"
+categories      = ["rust-patterns"]
+description     = "Example crates for Context-Generic Programming."
 authors         = ["Soares Chen <soares.chen@maybevoid.com>"]
 keywords        = ["cgp"]
 
