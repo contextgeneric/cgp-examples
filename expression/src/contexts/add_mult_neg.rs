@@ -32,6 +32,8 @@ delegate_components! {
     }
 }
 
+/// Evaluates the language enum by handing its current variant to the context's evaluation. See
+/// [the dispatch layers page](https://contextgeneric.dev/docs/projects/cgp-examples/expression/architecture/dispatch-layers).
 #[cgp_impl(new DispatchEval)]
 impl ComputerRef<Eval, MathPlusExpr> for InterpreterPlus {
     type Output = Value;

@@ -5,6 +5,8 @@ use cgp::prelude::*;
 
 use crate::types::{Minus, Negate, Plus};
 
+/// Evaluates a `Minus` by subtracting the right operand's value from the left's. See
+/// [the add_mult_neg example](https://contextgeneric.dev/docs/projects/cgp-examples/expression/examples/add-mult-neg).
 #[cgp_impl(new EvalSubtract)]
 #[uses(CanComputeRef<Code, MathExpr, Output = Output>)]
 impl<Code, MathExpr, Output> ComputerRef<Code, Minus<MathExpr>>
@@ -25,6 +27,7 @@ where
     }
 }
 
+/// Evaluates a `Minus` by rewriting it as a `Plus` of the left operand and a negated right one.
 #[cgp_impl(new EvalSubtractWithNegate)]
 #[uses(CanCompute<Code, Plus<Expr>, Output = Output>)]
 impl<Code, Expr, Output> Computer<Code, Minus<Expr>>

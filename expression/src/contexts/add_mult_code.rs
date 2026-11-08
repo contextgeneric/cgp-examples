@@ -46,6 +46,8 @@ delegate_components! {
     }
 }
 
+/// Evaluates the language enum for the `Eval` code by handing its current variant to the context. See
+/// [the dispatch layers page](https://contextgeneric.dev/docs/projects/cgp-examples/expression/architecture/dispatch-layers).
 #[cgp_impl(new DispatchEval)]
 impl ComputerRef<Eval, MathExpr> for Interpreter {
     type Output = Value;
@@ -59,6 +61,8 @@ impl ComputerRef<Eval, MathExpr> for Interpreter {
     }
 }
 
+/// Converts the language enum for the `ToLisp` code by handing its current variant to the context. See
+/// [the dispatch layers page](https://contextgeneric.dev/docs/projects/cgp-examples/expression/architecture/dispatch-layers).
 #[cgp_impl(new DispatchToLisp)]
 impl ComputerRef<ToLisp, MathExpr> for Interpreter {
     type Output = LispExpr;

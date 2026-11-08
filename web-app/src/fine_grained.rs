@@ -2,60 +2,71 @@ use cgp::prelude::*;
 
 use crate::types::*;
 
-/// Creates a user.
+/// Creates a user. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_component(UserCreator)]
 pub trait CanCreateUser {
     fn create_user(&self, username: &str, email: &Email) -> Result<User, Error>;
 }
 
-/// Reads a user.
+/// Reads a user. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_component(UserGetter)]
 pub trait CanGetUser {
     fn get_user(&self, user_id: &UserId) -> Result<User, Error>;
 }
 
-/// Updates a user.
+/// Updates a user. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_component(UserUpdater)]
 pub trait CanUpdateUser {
     fn update_user_data(&self, user_id: &UserId, user_data: &UserData) -> Result<(), Error>;
 }
 
-/// Creates a post.
+/// Creates a post. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_component(PostCreator)]
 pub trait CanCreatePost {
     fn create_post(&self, title: &str, content: &str) -> Result<Post, Error>;
 }
 
-/// Reads a post.
+/// Reads a post. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_component(PostGetter)]
 pub trait CanGetPost {
     fn get_post(&self, post_id: &PostId) -> Result<Post, Error>;
 }
 
-/// Updates a post.
+/// Updates a post. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_component(PostUpdater)]
 pub trait CanUpdatePost {
     fn update_post(&self, post_id: &PostId, content: &str) -> Result<(), Error>;
 }
 
-/// Deletes a post.
+/// Deletes a post. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_component(PostDeleter)]
 pub trait CanDeletePost {
     fn delete_post(&self, post_id: &PostId) -> Result<(), Error>;
 }
 
-/// Decides whether a username is censored.
+/// Decides whether a username is censored. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_component(UsernameCensor)]
 pub trait CanCensorUsername {
     fn username_is_censored(&self, username: &str) -> Probability;
 }
 
-/// Decides whether a message is spam.
+/// Decides whether a message is spam. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_component(SpamMessageDetector)]
 pub trait CanDetectSpamMessage {
     fn message_is_spam(&self, message: &str) -> Probability;
 }
 
+/// Rejects a censored username and otherwise forwards to the inner creator. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_impl(new FilterCensoredUsername<InnerCreator>)]
 #[uses(CanCensorUsername)]
 #[use_provider(InnerCreator: UserCreator)]
@@ -69,6 +80,8 @@ impl<InnerCreator> UserCreator {
     }
 }
 
+/// Creates a user in Postgres. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_impl(new CreateUserWithPostgres)]
 impl UserCreator {
     fn create_user(
@@ -81,6 +94,8 @@ impl UserCreator {
     }
 }
 
+/// Reads a user from Postgres. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_impl(new GetUserWithPostgres)]
 impl UserGetter {
     fn get_user(&self, #[implicit] database: &PostgresDb, user_id: &UserId) -> Result<User, Error> {
@@ -88,6 +103,8 @@ impl UserGetter {
     }
 }
 
+/// Updates a user's data in Postgres. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_impl(new UpdateUserWithPostgres)]
 impl UserUpdater {
     fn update_user_data(
@@ -100,6 +117,8 @@ impl UserUpdater {
     }
 }
 
+/// Rejects a spam message and otherwise forwards to the inner creator. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_impl(new FilterSpamMessage<InnerCreator>)]
 #[uses(CanDetectSpamMessage)]
 #[use_provider(InnerCreator: PostCreator)]
@@ -113,6 +132,8 @@ impl<InnerCreator> PostCreator {
     }
 }
 
+/// Creates a post in Postgres. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_impl(new CreatePostWithPostgres)]
 impl PostCreator {
     fn create_post(
@@ -125,6 +146,8 @@ impl PostCreator {
     }
 }
 
+/// Reads a post from Postgres. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_impl(new GetPostWithPostgres)]
 impl PostGetter {
     fn get_post(&self, #[implicit] database: &PostgresDb, post_id: &PostId) -> Result<Post, Error> {
@@ -132,6 +155,8 @@ impl PostGetter {
     }
 }
 
+/// Updates a post's content in Postgres. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_impl(new UpdatePostWithPostgres)]
 impl PostUpdater {
     fn update_post(
@@ -144,6 +169,8 @@ impl PostUpdater {
     }
 }
 
+/// Deletes a post from Postgres. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_impl(new DeletePostWithPostgres)]
 impl PostDeleter {
     fn delete_post(
@@ -155,6 +182,8 @@ impl PostDeleter {
     }
 }
 
+/// Stands in for a username censor, leaving the score unimplemented. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_impl(new DummyUserCensor)]
 impl UsernameCensor {
     fn username_is_censored(&self, username: &str) -> Probability {
@@ -162,6 +191,8 @@ impl UsernameCensor {
     }
 }
 
+/// Scores a username with a model, leaving the call unimplemented. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_impl(new AiUserCensor)]
 impl UsernameCensor {
     fn username_is_censored(&self, username: &str) -> Probability {
@@ -169,6 +200,8 @@ impl UsernameCensor {
     }
 }
 
+/// Stands in for a spam detector, leaving the score unimplemented. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_impl(new DummySpamMessageDetector)]
 impl SpamMessageDetector {
     fn message_is_spam(&self, message: &str) -> Probability {
@@ -176,6 +209,8 @@ impl SpamMessageDetector {
     }
 }
 
+/// Scores a message with a model, leaving the call unimplemented. See
+/// [the fine-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/fine-grained).
 #[cgp_impl(new AiSpamMessageDetector)]
 impl SpamMessageDetector {
     fn message_is_spam(&self, message: &str) -> Probability {

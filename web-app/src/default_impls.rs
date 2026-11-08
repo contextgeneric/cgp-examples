@@ -2,63 +2,72 @@ use cgp::prelude::*;
 
 use crate::types::*;
 
-/// Creates a user.
+/// Creates a user. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_component(UserCreator)]
 #[prefix(@app.core.user in DefaultNamespace)]
 pub trait CanCreateUser {
     fn create_user(&self, username: &str, email: &Email) -> Result<User, Error>;
 }
 
-/// Reads a user.
+/// Reads a user. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_component(UserGetter)]
 #[prefix(@app.core.user in DefaultNamespace)]
 pub trait CanGetUser {
     fn get_user(&self, user_id: &UserId) -> Result<User, Error>;
 }
 
-/// Updates a user.
+/// Updates a user. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_component(UserUpdater)]
 #[prefix(@app.core.user in DefaultNamespace)]
 pub trait CanUpdateUser {
     fn update_user_data(&self, user_id: &UserId, user_data: &UserData) -> Result<(), Error>;
 }
 
-/// Creates a post.
+/// Creates a post. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_component(PostCreator)]
 #[prefix(@app.core.post in DefaultNamespace)]
 pub trait CanCreatePost {
     fn create_post(&self, title: &str, content: &str) -> Result<Post, Error>;
 }
 
-/// Reads a post.
+/// Reads a post. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_component(PostGetter)]
 #[prefix(@app.core.post in DefaultNamespace)]
 pub trait CanGetPost {
     fn get_post(&self, post_id: &PostId) -> Result<Post, Error>;
 }
 
-/// Updates a post.
+/// Updates a post. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_component(PostUpdater)]
 #[prefix(@app.core.post in DefaultNamespace)]
 pub trait CanUpdatePost {
     fn update_post(&self, post_id: &PostId, content: &str) -> Result<(), Error>;
 }
 
-/// Deletes a post.
+/// Deletes a post. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_component(PostDeleter)]
 #[prefix(@app.core.post in DefaultNamespace)]
 pub trait CanDeletePost {
     fn delete_post(&self, post_id: &PostId) -> Result<(), Error>;
 }
 
-/// Decides whether a username is censored.
+/// Decides whether a username is censored. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_component(UsernameCensor)]
 #[prefix(@app.extra.content_filter in DefaultNamespace)]
 pub trait CanCensorUsername {
     fn username_is_censored(&self, username: &str) -> Probability;
 }
 
-/// Decides whether a message is spam.
+/// Decides whether a message is spam. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_component(SpamMessageDetector)]
 #[prefix(@app.extra.content_filter in DefaultNamespace)]
 pub trait CanDetectSpamMessage {
@@ -79,6 +88,8 @@ cgp_namespace! {
     }
 }
 
+/// Rejects a censored username and otherwise forwards to the inner creator. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_impl(new FilterCensoredUsername<InnerCreator>)]
 #[uses(CanCensorUsername)]
 #[use_provider(InnerCreator: UserCreator)]
@@ -92,6 +103,8 @@ impl<InnerCreator> UserCreator {
     }
 }
 
+/// Creates a user in Postgres. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_impl(new CreateUserWithPostgres)]
 impl UserCreator {
     fn create_user(
@@ -104,6 +117,8 @@ impl UserCreator {
     }
 }
 
+/// Reads a user from Postgres. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_impl(new GetUserWithPostgres)]
 #[default_impl(@app.core.user.UserGetterComponent in DefaultAppComponents)]
 impl UserGetter {
@@ -112,6 +127,8 @@ impl UserGetter {
     }
 }
 
+/// Updates a user's data in Postgres. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_impl(new UpdateUserWithPostgres)]
 #[default_impl(@app.core.user.UserUpdaterComponent in DefaultAppComponents)]
 impl UserUpdater {
@@ -125,6 +142,8 @@ impl UserUpdater {
     }
 }
 
+/// Rejects a spam message and otherwise forwards to the inner creator. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_impl(new FilterSpamMessage<InnerCreator>)]
 #[uses(CanDetectSpamMessage)]
 #[use_provider(InnerCreator: PostCreator)]
@@ -138,6 +157,8 @@ impl<InnerCreator> PostCreator {
     }
 }
 
+/// Creates a post in Postgres. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_impl(new CreatePostWithPostgres)]
 impl PostCreator {
     fn create_post(
@@ -150,6 +171,8 @@ impl PostCreator {
     }
 }
 
+/// Reads a post from Postgres. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_impl(new GetPostWithPostgres)]
 #[default_impl(@app.core.post.PostGetterComponent in DefaultAppComponents)]
 impl PostGetter {
@@ -158,6 +181,8 @@ impl PostGetter {
     }
 }
 
+/// Updates a post's content in Postgres. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_impl(new UpdatePostWithPostgres)]
 #[default_impl(@app.core.post.PostUpdaterComponent in DefaultAppComponents)]
 impl PostUpdater {
@@ -171,6 +196,8 @@ impl PostUpdater {
     }
 }
 
+/// Deletes a post from Postgres. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_impl(new DeletePostWithPostgres)]
 #[default_impl(@app.core.post.PostDeleterComponent in DefaultAppComponents)]
 impl PostDeleter {
@@ -183,6 +210,8 @@ impl PostDeleter {
     }
 }
 
+/// Stands in for a username censor, leaving the score unimplemented. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_impl(new DummyUserCensor)]
 impl UsernameCensor {
     fn username_is_censored(&self, username: &str) -> Probability {
@@ -190,6 +219,8 @@ impl UsernameCensor {
     }
 }
 
+/// Scores a username with a model, leaving the call unimplemented. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_impl(new AiUserCensor)]
 impl UsernameCensor {
     fn username_is_censored(&self, username: &str) -> Probability {
@@ -197,6 +228,8 @@ impl UsernameCensor {
     }
 }
 
+/// Stands in for a spam detector, leaving the score unimplemented. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_impl(new DummySpamMessageDetector)]
 impl SpamMessageDetector {
     fn message_is_spam(&self, message: &str) -> Probability {
@@ -204,6 +237,8 @@ impl SpamMessageDetector {
     }
 }
 
+/// Scores a message with a model, leaving the call unimplemented. See
+/// [the default implementations stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/default-impls).
 #[cgp_impl(new AiSpamMessageDetector)]
 impl SpamMessageDetector {
     fn message_is_spam(&self, message: &str) -> Probability {

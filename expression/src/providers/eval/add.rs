@@ -7,6 +7,8 @@ use cgp::prelude::*;
 
 use crate::types::Plus;
 
+/// Evaluates a `Plus` by adding the values its operands evaluate to. See
+/// [the add_mult example](https://contextgeneric.dev/docs/projects/cgp-examples/expression/examples/add-mult).
 #[cgp_impl(new EvalAdd)]
 #[uses(CanCompute<Code, MathExpr, Output = Output>)]
 impl<Code, MathExpr, Output> Computer<Code, Plus<MathExpr>>

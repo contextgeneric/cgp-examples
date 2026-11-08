@@ -14,6 +14,7 @@ pub trait HasNameType {
     type Name;
 }
 
+/// Greets by printing `Hello, {name}!` for the context's abstract `Name` type.
 #[cgp_impl(new GreetHello)]
 #[use_type(HasNameType.Name)]
 impl Greeter

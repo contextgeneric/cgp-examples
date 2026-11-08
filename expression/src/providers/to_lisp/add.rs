@@ -14,6 +14,8 @@ enum LispSubExpr<Expr> {
     Ident(Ident),
 }
 
+/// Converts a `Plus` to the list `(+ left right)`. See
+/// [the add_mult example](https://contextgeneric.dev/docs/projects/cgp-examples/expression/examples/add-mult).
 #[cgp_impl(new PlusToLisp)]
 #[use_type(HasLispExprType.LispExpr)]
 #[uses(CanComputeRef<Code, MathExpr, Output = LispExpr>)]

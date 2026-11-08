@@ -1,3 +1,10 @@
+//! A hand-written expansion of what `#[cgp_component]` generates for `CanGreet`.
+//!
+//! The items here are the macro's output written out by hand, so a reader can see the wiring
+//! machinery the component macro adds: the component marker, the provider trait, and the two
+//! blanket impls that connect them. They carry no docs of their own, and the file differs from
+//! the macro's current output in the details the knowledge base records.
+
 use cgp::prelude::*;
 
 pub struct GreeterComponent;

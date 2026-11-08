@@ -2,7 +2,8 @@ use cgp::prelude::*;
 
 use crate::types::*;
 
-/// Manages users.
+/// Manages users. See
+/// [the coarse-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/coarse-grained).
 #[cgp_component(UserManager)]
 pub trait CanManageUser {
     fn create_user(&self, username: &str, email: &Email) -> Result<User, Error>;
@@ -12,7 +13,8 @@ pub trait CanManageUser {
     fn update_user_data(&self, user_id: &UserId, user_data: &UserData) -> Result<(), Error>;
 }
 
-/// Manages posts.
+/// Manages posts. See
+/// [the coarse-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/coarse-grained).
 #[cgp_component(PostManager)]
 pub trait CanManagePost {
     fn create_post(&self, title: &str, content: &str) -> Result<Post, Error>;
@@ -24,18 +26,22 @@ pub trait CanManagePost {
     fn delete_post(&self, post_id: &PostId) -> Result<(), Error>;
 }
 
-/// Decides whether a username is censored.
+/// Decides whether a username is censored. See
+/// [the coarse-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/coarse-grained).
 #[cgp_component(UsernameCensor)]
 pub trait CanCensorUsername {
     fn username_is_censored(&self, username: &str) -> Probability;
 }
 
-/// Decides whether a message is spam.
+/// Decides whether a message is spam. See
+/// [the coarse-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/coarse-grained).
 #[cgp_component(SpamMessageDetector)]
 pub trait CanDetectSpamMessage {
     fn message_is_spam(&self, message: &str) -> Probability;
 }
 
+/// Manages users in Postgres, rejecting a censored username before creating one. See
+/// [the coarse-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/coarse-grained).
 #[cgp_impl(new PostgresUserManager)]
 #[uses(CanCensorUsername)]
 impl UserManager {
@@ -66,6 +72,8 @@ impl UserManager {
     }
 }
 
+/// Manages posts in Postgres, rejecting a spam message before creating one. See
+/// [the coarse-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/coarse-grained).
 #[cgp_impl(new PostgresPostManager)]
 #[uses(CanDetectSpamMessage)]
 impl PostManager {
@@ -104,6 +112,8 @@ impl PostManager {
     }
 }
 
+/// Stands in for a username censor, leaving the score unimplemented. See
+/// [the coarse-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/coarse-grained).
 #[cgp_impl(new DummyUserCensor)]
 impl UsernameCensor {
     fn username_is_censored(&self, username: &str) -> Probability {
@@ -111,6 +121,8 @@ impl UsernameCensor {
     }
 }
 
+/// Stands in for a spam detector, leaving the score unimplemented. See
+/// [the coarse-grained stage](https://contextgeneric.dev/docs/projects/cgp-examples/web-app/examples/coarse-grained).
 #[cgp_impl(new DummySpamMessageDetector)]
 impl SpamMessageDetector {
     fn message_is_spam(&self, message: &str) -> Probability {

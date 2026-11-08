@@ -10,6 +10,8 @@ enum LispSubExpr<T> {
     Literal(Literal<T>),
 }
 
+/// Converts a `Literal` to the target type's `Literal` variant. See
+/// [the add_mult example](https://contextgeneric.dev/docs/projects/cgp-examples/expression/examples/add-mult).
 #[cgp_impl(new LiteralToLisp)]
 #[use_type(HasLispExprType.LispExpr)]
 impl<Code, T> ComputerRef<Code, Literal<T>>

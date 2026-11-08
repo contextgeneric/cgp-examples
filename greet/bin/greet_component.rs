@@ -12,6 +12,7 @@ pub trait HasNameType {
     type Name;
 }
 
+/// Greets by printing `Hello, {name}!` from the context's `name` field.
 #[cgp_impl(new GreetHello)]
 impl Greeter {
     fn greet(&self, #[implicit] name: &str) {
@@ -19,6 +20,7 @@ impl Greeter {
     }
 }
 
+/// Greets by printing `Hi, {name}!` from the context's `name` field.
 #[cgp_impl(new GreetHi)]
 impl Greeter {
     fn greet(&self, #[implicit] name: &str) {
