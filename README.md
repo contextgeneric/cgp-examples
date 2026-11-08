@@ -1,5 +1,6 @@
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Rust 1.90+](https://img.shields.io/badge/rustc-1.90+-blue.svg)
+[![Tests](https://github.com/contextgeneric/cgp-examples/actions/workflows/tests.yml/badge.svg)](https://github.com/contextgeneric/cgp-examples/actions/workflows/tests.yml)
 
 # cgp-examples: example crates for CGP
 
