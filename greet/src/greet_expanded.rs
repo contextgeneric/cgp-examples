@@ -5,7 +5,7 @@
 //! blanket impls that connect them. They carry no docs of their own, and the file differs from
 //! the macro's current output in the details the knowledge base records.
 
-use cgp::prelude::*;
+use cgp::core::component::{DelegateComponent, IsProviderFor};
 
 pub struct GreeterComponent;
 

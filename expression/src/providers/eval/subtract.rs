@@ -1,5 +1,6 @@
 use core::ops::Sub;
 
+use cgp::core::field::traits::FromVariant;
 use cgp::extra::handler::{CanCompute, CanComputeRef, ComputerRef, ComputerRefComponent};
 use cgp::prelude::*;
 
