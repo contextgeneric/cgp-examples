@@ -1,6 +1,8 @@
 use core::ops::Mul;
 
-use cgp::extra::handler::{CanCompute, CanComputeRef, ComputerRef, ComputerRefComponent};
+use cgp::extra::handler::{
+    CanCompute, CanComputeRef, Computer, ComputerComponent, ComputerRef, ComputerRefComponent,
+};
 use cgp::prelude::*;
 
 use crate::types::Times;

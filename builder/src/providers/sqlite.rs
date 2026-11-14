@@ -1,5 +1,6 @@
 use core::str::FromStr;
 
+use cgp::extra::handler::{Handler, HandlerComponent};
 use cgp::prelude::*;
 use sqlx::SqlitePool;
 use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode};

@@ -1,5 +1,6 @@
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::dispatch::BuildAndMergeOutputs;
+use cgp::extra::handler::HandlerComponent;
 use cgp::prelude::*;
 use cgp_error_anyhow::{RaiseAnyhowError, UseAnyhowError};
 use reqwest::Client;

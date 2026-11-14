@@ -1,5 +1,5 @@
 use cgp::extra::dispatch::{MatchWithValueHandlers, MatchWithValueHandlersRef};
-use cgp::extra::handler::{ComputerRef, ComputerRefComponent};
+use cgp::extra::handler::{Computer, ComputerComponent, ComputerRef, ComputerRefComponent};
 use cgp::prelude::*;
 
 use crate::components::{LispExprTypeProviderComponent, MathExprTypeProviderComponent};

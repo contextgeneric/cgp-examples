@@ -1,3 +1,4 @@
+use cgp::extra::handler::{Handler, HandlerComponent};
 use cgp::prelude::*;
 use reqwest::Client;
 use sqlx::SqlitePool;

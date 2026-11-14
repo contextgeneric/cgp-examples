@@ -1,7 +1,9 @@
 use core::ops::Sub;
 
 use cgp::core::field::traits::FromVariant;
-use cgp::extra::handler::{CanCompute, CanComputeRef, ComputerRef, ComputerRefComponent};
+use cgp::extra::handler::{
+    CanCompute, CanComputeRef, Computer, ComputerComponent, ComputerRef, ComputerRefComponent,
+};
 use cgp::prelude::*;
 
 use crate::types::{Minus, Negate, Plus};

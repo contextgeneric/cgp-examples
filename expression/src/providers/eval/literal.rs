@@ -1,4 +1,4 @@
-use cgp::extra::handler::{ComputerRef, ComputerRefComponent};
+use cgp::extra::handler::{Computer, ComputerComponent, ComputerRef, ComputerRefComponent};
 use cgp::prelude::*;
 
 use crate::types::Literal;

@@ -1,7 +1,7 @@
 use core::ops::Add;
 
 use cgp::extra::handler::{
-    CanCompute, CanComputeRef, ComputerComponent, ComputerRef, ComputerRefComponent,
+    CanCompute, CanComputeRef, Computer, ComputerComponent, ComputerRef, ComputerRefComponent,
 };
 use cgp::prelude::*;
 

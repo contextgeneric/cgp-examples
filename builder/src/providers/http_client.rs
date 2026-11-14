@@ -1,5 +1,6 @@
 use core::time::Duration;
 
+use cgp::extra::handler::{Handler, HandlerComponent};
 use cgp::prelude::*;
 use reqwest::Client;
 
