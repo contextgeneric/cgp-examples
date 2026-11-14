@@ -49,6 +49,8 @@ cargo build --workspace
 cargo test --workspace
 ```
 
+Contributors and agents start from [AGENTS.md](AGENTS.md), which names these checks.
+
 ## Learn CGP
 
 The website is the main documentation: the [quickstart](https://contextgeneric.dev/docs/quickstart),
