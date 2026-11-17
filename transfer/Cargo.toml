@@ -18,11 +18,11 @@ path = "bin/server.rs"
 [dependencies]
 cgp         = { workspace = true }
 
-anyhow      = { version = "1.0.95" }
-futures     = { version = "0.3.31" }
+anyhow      = { version = "1.0.104" }
+futures     = { version = "0.3.34" }
 num-traits  = { version = "0.2.19" }
-serde       = { version = "1.0.217", features = ["derive"] }
-axum        = { version = "0.8.1" }
-axum-extra  = { version = "0.10.0", features = ["typed-header"] }
-headers     = { version = "0.4.0" }
-tokio       = { version = "1.43.0", features = ["full"] }
+serde       = { version = "1.0.229", features = ["derive"] }
+axum        = { version = "0.8.9" }
+axum-extra  = { version = "0.10.3", features = ["typed-header"] }
+headers     = { version = "0.4.2" }
+tokio       = { version = "1.54.1", features = ["full"] }
