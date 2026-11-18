@@ -35,9 +35,9 @@ Two crates have a page of their own on the website, which explains the code rath
 
 ## Building
 
-The workspace takes `cgp` and `cgp-error-anyhow` 0.8.0 from crates.io. To test against a local
-change to `cgp`, add a `[patch.crates-io]` section to the root `Cargo.toml` that points both crates at
-a checkout in `../cgp`:
+The workspace takes `cgp` and `cgp-error-anyhow` 0.8.0 from crates.io. To build against a local
+change to `cgp` instead, point both crates at a checkout in `../cgp` with a `[patch.crates-io]`
+section in the root `Cargo.toml`:
 
 ```toml
 [patch.crates-io]
