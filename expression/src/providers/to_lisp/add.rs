@@ -8,16 +8,19 @@ use cgp::prelude::*;
 use crate::components::HasLispExprType;
 use crate::types::{Ident, List, Plus};
 
-#[derive(HasFields, ExtractField, FromVariant)]
+#[derive(CgpData)]
 enum LispSubExpr<Expr> {
     List(List<Expr>),
     Ident(Ident),
 }
 
+/// Converts a `Plus` to the list `(+ left right)`. See
+/// [the add_mult example](https://contextgeneric.dev/docs/projects/cgp-examples/expression/examples/add-mult).
 #[cgp_impl(new PlusToLisp)]
-impl<Code, MathExpr, LispExpr> ComputerRef<Code, Plus<MathExpr>>
+#[use_type(HasLispExprType.LispExpr)]
+#[uses(CanComputeRef<Code, MathExpr, Output = LispExpr>)]
+impl<Code, MathExpr> ComputerRef<Code, Plus<MathExpr>>
 where
-    Self: HasLispExprType<LispExpr = LispExpr> + CanComputeRef<Code, MathExpr, Output = LispExpr>,
     LispSubExpr<LispExpr>: CanUpcast<LispExpr>,
 {
     type Output = LispExpr;

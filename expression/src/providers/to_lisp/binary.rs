@@ -10,24 +10,27 @@ use cgp::prelude::*;
 use crate::components::{HasLispExprType, HasMathExprType};
 use crate::types::{Ident, List};
 
+/// Reads the left and right operands of a binary expression. See
+/// [the add_mult_binary_op example](https://contextgeneric.dev/docs/projects/cgp-examples/expression/examples/add-mult-binary-op).
 #[cgp_auto_getter]
 pub trait BinarySubExpression<Expr> {
     fn left(&self) -> &Box<Expr>;
     fn right(&self) -> &Box<Expr>;
 }
 
-#[derive(HasFields, ExtractField, FromVariant)]
+#[derive(CgpData)]
 enum LispSubExpr<Expr> {
     List(List<Expr>),
     Ident(Ident),
 }
 
+/// Converts any binary operator to a list headed by the operator's symbol. See
+/// [the add_mult_binary_op example](https://contextgeneric.dev/docs/projects/cgp-examples/expression/examples/add-mult-binary-op).
 #[cgp_impl(new BinaryOpToLisp<Operator>)]
-impl<Code, MathExpr, MathSubExpr, LispExpr, Operator> ComputerRef<Code, MathSubExpr>
+#[use_type(HasMathExprType.MathExpr, HasLispExprType.LispExpr)]
+#[uses(CanComputeRef<Code, MathExpr, Output = LispExpr>)]
+impl<Code, MathSubExpr, Operator> ComputerRef<Code, MathSubExpr>
 where
-    Self: HasMathExprType<MathExpr = MathExpr>
-        + HasLispExprType<LispExpr = LispExpr>
-        + CanComputeRef<Code, MathExpr, Output = LispExpr>,
     MathSubExpr: BinarySubExpression<MathExpr>,
     Operator: Default + Display,
     LispSubExpr<LispExpr>: CanUpcast<LispExpr>,

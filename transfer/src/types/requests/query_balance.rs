@@ -7,6 +7,9 @@ use serde::Deserialize;
 
 use crate::types::DemoCurrency;
 
+/// The domain request the balance handler works with. `#[derive(HasField)]` exposes each
+/// field by name, which is what lets the `HasQueryBalanceFields`/`HasLoggedInUser` getters
+/// (and the auth wrapper's `HasBasicAuthHeader`) read it generically.
 #[derive(HasField)]
 pub struct QueryBalanceRequest {
     pub currency: DemoCurrency,
@@ -28,11 +31,15 @@ impl From<AxumQueryBalanceRequest> for QueryBalanceRequest {
     }
 }
 
+/// The raw type Axum extracts from the wire (query string plus optional auth header).
+/// `HandleFromRequest` converts it into `QueryBalanceRequest` via the `From` impl above, so
+/// the endpoint handler never sees the HTTP-specific extractor types.
 pub type AxumQueryBalanceRequest = (
     Query<QueryBalanceQuery>,
     Option<TypedHeader<Authorization<Basic>>>,
 );
 
+/// The query-string fields Axum deserializes for a balance request.
 #[derive(Deserialize)]
 pub struct QueryBalanceQuery {
     pub currency: DemoCurrency,

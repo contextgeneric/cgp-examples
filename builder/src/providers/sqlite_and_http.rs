@@ -1,29 +1,29 @@
+use cgp::extra::handler::{Handler, HandlerComponent};
 use cgp::prelude::*;
 use reqwest::Client;
 use sqlx::SqlitePool;
 
-use crate::providers::HasSqlitePath;
-
-#[derive(HasField, HasFields, BuildField)]
+#[derive(CgpData)]
 pub struct SqliteAndHttpClient {
     pub sqlite_pool: SqlitePool,
 
     pub http_client: Client,
 }
 
+/// Builds a SQLite and HTTP client from the default configuration.
 #[cgp_impl(new BuildDefaultSqliteAndHttpClient)]
-impl<Code, Input> Handler<Code, Input>
-where
-    Self: HasSqlitePath + CanRaiseError<sqlx::Error>,
-{
+#[uses(CanRaiseError<sqlx::Error>)]
+#[use_type(HasErrorType.Error)]
+impl<Code, Input> Handler<Code, Input> {
     type Output = SqliteAndHttpClient;
 
     async fn handle(
         &self,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Self::Error> {
-        let sqlite_pool = SqlitePool::connect(self.db_path())
+        #[implicit] db_path: &str,
+    ) -> Result<Self::Output, Error> {
+        let sqlite_pool = SqlitePool::connect(db_path)
             .await
             .map_err(Self::raise_error)?;
 

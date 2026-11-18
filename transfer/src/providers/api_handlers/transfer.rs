@@ -2,33 +2,36 @@ use cgp::prelude::*;
 
 use crate::interfaces::*;
 
+/// Getter for the fields a transfer needs off its request struct.
 #[cgp_auto_getter]
-pub trait HasTransferMoneyFields<App>
-where
-    App: HasUserIdType + HasCurrencyType + HasQuantityType,
-{
-    fn currency(&self) -> &App::Currency;
+#[use_type(
+    HasUserIdType.UserId in App,
+    HasCurrencyType.Currency in App,
+    HasQuantityType.Quantity in App,
+)]
+pub trait HasTransferMoneyFields<App> {
+    fn currency(&self) -> &Currency;
 
-    fn recipient(&self) -> &App::UserId;
+    fn recipient(&self) -> &UserId;
 
-    fn quantity(&self) -> &App::Quantity;
+    fn quantity(&self) -> &Quantity;
 }
 
+/// The transfer endpoint: an `ApiHandler` provider that requires a logged-in sender, then
+/// invokes the `CanTransferMoney` capability. Like the balance handler, it names its
+/// dependencies with `#[uses(...)]` and stays ignorant of which backend fulfills them.
 #[cgp_impl(new HandleTransfer<Request>)]
+#[uses(CanTransferMoney, CanRaiseHttpError<ErrUnauthorized, String>)]
+#[use_type(HasErrorType.Error)]
 impl<Api, Request> ApiHandler<Api>
 where
-    Self: CanTransferMoney + CanRaiseHttpError<ErrUnauthorized, String>,
     Request: HasLoggedInUser<Self> + HasTransferMoneyFields<Self>,
 {
     type Request = Request;
 
     type Response = ();
 
-    async fn handle_api(
-        &self,
-        _api: PhantomData<Api>,
-        request: Request,
-    ) -> Result<(), Self::Error> {
+    async fn handle_api(&self, _api: PhantomData<Api>, request: Request) -> Result<(), Error> {
         let sender = request.logged_in_user().as_ref().ok_or_else(|| {
             Self::raise_http_error(
                 ErrUnauthorized,

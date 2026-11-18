@@ -1,6 +1,6 @@
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::dispatch::BuildAndMergeOutputs;
-use cgp::extra::handler::CanHandle;
+use cgp::extra::handler::{CanHandle, HandlerComponent};
 use cgp::prelude::*;
 use cgp_error_anyhow::{Error, RaiseAnyhowError, UseAnyhowError};
 use reqwest::Client;
@@ -15,7 +15,7 @@ use crate::providers::{
     BuildDefaultAnthropicClient, BuildHttpClient, BuildOpenAiClient, BuildSqliteClient,
 };
 
-#[derive(HasField, HasFields, BuildField)]
+#[derive(CgpData)]
 pub struct AnthropicAndChatGptApp {
     pub sqlite_pool: SqlitePool,
     pub http_client: Client,
@@ -36,7 +36,7 @@ pub struct AnthropicAndChatGptAppBuilder {
     pub llm_preamble: String,
 }
 
-pub struct BuildAnthroicAndChatGptApp;
+pub struct BuildAnthropicAndChatGptApp;
 
 pub struct BuildChatGptApp;
 
@@ -44,45 +44,45 @@ pub struct BuildAnthropicApp;
 
 delegate_components! {
     AnthropicAndChatGptAppBuilder {
+        open HandlerComponent;
+
         ErrorTypeProviderComponent:
             UseAnyhowError,
         ErrorRaiserComponent:
             RaiseAnyhowError,
-        HandlerComponent:
-            UseDelegate<new BuilderHandlers {
-                BuildAnthroicAndChatGptApp:
-                BuildAndMergeOutputs<
-                        AnthropicAndChatGptApp,
-                        Product![
-                            BuildSqliteClient,
-                            BuildHttpClient,
-                            BuildDefaultAnthropicClient,
-                            BuildOpenAiClient,
-                        ]>,
-                BuildChatGptApp:
-                    BuildAndMergeOutputs<
-                        App,
-                        Product![
-                            BuildSqliteClient,
-                            BuildHttpClient,
-                            BuildOpenAiClient,
-                        ]>,
-                BuildAnthropicApp:
-                    BuildAndMergeOutputs<
-                        AnthropicApp,
-                        Product![
-                            BuildSqliteClient,
-                            BuildHttpClient,
-                            BuildDefaultAnthropicClient,
-                        ]>,
-            }>,
+
+        @HandlerComponent.BuildAnthropicAndChatGptApp:
+            BuildAndMergeOutputs<
+                AnthropicAndChatGptApp,
+                Product![
+                    BuildSqliteClient,
+                    BuildHttpClient,
+                    BuildDefaultAnthropicClient,
+                    BuildOpenAiClient,
+                ]>,
+        @HandlerComponent.BuildChatGptApp:
+            BuildAndMergeOutputs<
+                App,
+                Product![
+                    BuildSqliteClient,
+                    BuildHttpClient,
+                    BuildOpenAiClient,
+                ]>,
+        @HandlerComponent.BuildAnthropicApp:
+            BuildAndMergeOutputs<
+                AnthropicApp,
+                Product![
+                    BuildSqliteClient,
+                    BuildHttpClient,
+                    BuildDefaultAnthropicClient,
+                ]>,
     }
 }
 
 check_components! {
     AnthropicAndChatGptAppBuilder {
         HandlerComponent: [
-            (BuildAnthroicAndChatGptApp, ()),
+            (BuildAnthropicAndChatGptApp, ()),
             (BuildChatGptApp, ()),
             (BuildAnthropicApp, ()),
         ],
@@ -91,7 +91,7 @@ check_components! {
 
 pub async fn main() -> Result<(), Error> {
     let builder = AnthropicAndChatGptAppBuilder {
-        db_options: "file:./db.sqlite".to_owned(),
+        db_options: "sqlite:./db.sqlite?mode=rwc".to_owned(),
         db_journal_mode: "WAL".to_owned(),
         http_user_agent: "SUPER_AI_AGENT".to_owned(),
         anthropic_key: "1234567890".to_owned(),
@@ -103,7 +103,7 @@ pub async fn main() -> Result<(), Error> {
     let _chat_gpt_app: App = builder.handle(PhantomData::<BuildChatGptApp>, ()).await?;
     let _anthropic_app: AnthropicApp = builder.handle(PhantomData::<BuildAnthropicApp>, ()).await?;
     let _anthropic_and_chat_gpt_app: AnthropicAndChatGptApp = builder
-        .handle(PhantomData::<BuildAnthroicAndChatGptApp>, ())
+        .handle(PhantomData::<BuildAnthropicAndChatGptApp>, ())
         .await?;
 
     /* Call methods on the apps here */

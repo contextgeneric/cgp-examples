@@ -1,6 +1,6 @@
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::dispatch::BuildAndMergeOutputs;
-use cgp::extra::handler::CanHandle;
+use cgp::extra::handler::{CanHandle, HandlerComponent};
 use cgp::prelude::*;
 use cgp_error_anyhow::{Error, RaiseAnyhowError, UseAnyhowError};
 use serde::Deserialize;
@@ -43,7 +43,7 @@ check_components! {
 
 pub async fn main() -> Result<(), Error> {
     let builder = FullAppBuilder {
-        db_options: "file:./db.sqlite".to_owned(),
+        db_options: "sqlite:./db.sqlite?mode=rwc".to_owned(),
         db_journal_mode: "WAL".to_owned(),
         http_user_agent: "SUPER_AI_AGENT".to_owned(),
         open_ai_key: "1234567890".to_owned(),

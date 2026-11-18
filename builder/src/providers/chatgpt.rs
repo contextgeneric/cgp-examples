@@ -1,39 +1,35 @@
+use std::env::{self, VarError};
+
+use cgp::extra::handler::{Handler, HandlerComponent};
 use cgp::prelude::*;
 use rig::agent::Agent;
-use rig::client::{CompletionClient, ProviderClient};
+use rig::client::CompletionClient;
 use rig::providers::openai;
 
-#[cgp_auto_getter]
-pub trait HasOpenAiConfig {
-    fn open_ai_key(&self) -> &str;
-
-    fn open_ai_model(&self) -> &str;
-
-    fn llm_preamble(&self) -> &str;
-}
-
-#[derive(HasField, HasFields, BuildField)]
+#[derive(CgpData)]
 pub struct OpenAiClient {
     pub open_ai_client: openai::Client,
     pub open_ai_agent: Agent<openai::CompletionModel>,
 }
 
+/// Builds an OpenAI client from the given configuration.
 #[cgp_impl(new BuildOpenAiClient)]
-impl<Code, Input> Handler<Code, Input>
-where
-    Self: HasOpenAiConfig + HasErrorType,
-{
+#[use_type(HasErrorType.Error)]
+impl<Code, Input> Handler<Code, Input> {
     type Output = OpenAiClient;
 
     async fn handle(
         &self,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Self::Error> {
-        let open_ai_client = openai::Client::new(self.open_ai_key());
+        #[implicit] open_ai_key: &str,
+        #[implicit] open_ai_model: &str,
+        #[implicit] llm_preamble: &str,
+    ) -> Result<Self::Output, Error> {
+        let open_ai_client = openai::Client::new(open_ai_key);
         let open_ai_agent = open_ai_client
-            .agent(self.open_ai_model())
-            .preamble(self.llm_preamble())
+            .agent(open_ai_model)
+            .preamble(llm_preamble)
             .build();
 
         Ok(OpenAiClient {
@@ -43,19 +39,16 @@ where
     }
 }
 
+/// Builds an OpenAI client from the default configuration.
 #[cgp_impl(new BuildDefaultOpenAiClient)]
-impl<Code, Input> Handler<Code, Input>
-where
-    Self: HasErrorType,
-{
+#[uses(CanRaiseError<VarError>)]
+#[use_type(HasErrorType.Error)]
+impl<Code, Input> Handler<Code, Input> {
     type Output = OpenAiClient;
 
-    async fn handle(
-        &self,
-        _code: PhantomData<Code>,
-        _input: Input,
-    ) -> Result<Self::Output, Self::Error> {
-        let open_ai_client = openai::Client::from_env();
+    async fn handle(&self, _code: PhantomData<Code>, _input: Input) -> Result<Self::Output, Error> {
+        let open_ai_key = env::var("OPENAI_API_KEY").map_err(Self::raise_error)?;
+        let open_ai_client = openai::Client::new(&open_ai_key);
         let open_ai_agent = open_ai_client.agent("gpt-4o").build();
 
         Ok(OpenAiClient {

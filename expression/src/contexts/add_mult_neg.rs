@@ -1,5 +1,5 @@
 use cgp::extra::dispatch::MatchWithValueHandlersRef;
-use cgp::extra::handler::{ComputerRef, ComputerRefComponent, UseInputDelegate};
+use cgp::extra::handler::{ComputerRef, ComputerRefComponent};
 use cgp::prelude::*;
 
 use crate::dsl::Eval;
@@ -8,7 +8,7 @@ use crate::types::{Literal, Minus, Negate, Plus, Times};
 
 pub type Value = i64;
 
-#[derive(Debug, HasFields, FromVariant, ExtractField)]
+#[derive(Debug, CgpData)]
 pub enum MathPlusExpr {
     Plus(Plus<MathPlusExpr>),
     Times(Times<MathPlusExpr>),
@@ -21,20 +21,19 @@ pub struct InterpreterPlus;
 
 delegate_components! {
     InterpreterPlus {
-        ComputerRefComponent:
-            UseDelegate<new CodeComponents {
-                Eval: UseInputDelegate<new EvalComponents {
-                    MathPlusExpr: DispatchEval,
-                    Plus<MathPlusExpr>: EvalAdd,
-                    Times<MathPlusExpr>: EvalMultiply,
-                    Literal<Value>: EvalLiteral,
-                    Minus<MathPlusExpr>: EvalSubtract,
-                    Negate<MathPlusExpr>: EvalNegate,
-                }>,
-            }>
+        open ComputerRefComponent;
+
+        @ComputerRefComponent.Eval.MathPlusExpr: DispatchEval,
+        @ComputerRefComponent.Eval.Plus<MathPlusExpr>: EvalAdd,
+        @ComputerRefComponent.Eval.Times<MathPlusExpr>: EvalMultiply,
+        @ComputerRefComponent.Eval.Literal<Value>: EvalLiteral,
+        @ComputerRefComponent.Eval.Minus<MathPlusExpr>: EvalSubtract,
+        @ComputerRefComponent.Eval.Negate<MathPlusExpr>: EvalNegate,
     }
 }
 
+/// Evaluates the language enum by handing its current variant to the context's evaluation. See
+/// [the dispatch layers page](https://contextgeneric.dev/docs/projects/cgp-examples/expression/architecture/dispatch-layers).
 #[cgp_impl(new DispatchEval)]
 impl ComputerRef<Eval, MathPlusExpr> for InterpreterPlus {
     type Output = Value;
@@ -54,6 +53,7 @@ check_components! {
             (Eval, MathPlusExpr),
             (Eval, Literal<Value>),
             (Eval, Plus<MathPlusExpr>),
+            (Eval, Times<MathPlusExpr>),
             (Eval, Negate<MathPlusExpr>),
             (Eval, Minus<MathPlusExpr>),
         ]

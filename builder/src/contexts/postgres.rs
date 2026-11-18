@@ -1,5 +1,6 @@
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::dispatch::BuildAndMergeOutputs;
+use cgp::extra::handler::HandlerComponent;
 use cgp::prelude::*;
 use cgp_error_anyhow::{RaiseAnyhowError, UseAnyhowError};
 use reqwest::Client;
@@ -10,7 +11,7 @@ use sqlx::PgPool;
 
 use crate::providers::{BuildHttpClient, BuildOpenAiClient, BuildPostgresClient};
 
-#[derive(HasField, HasFields, BuildField)]
+#[derive(CgpData)]
 pub struct App {
     pub postgres_pool: PgPool,
     pub http_client: Client,

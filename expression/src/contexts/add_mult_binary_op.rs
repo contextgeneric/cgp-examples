@@ -1,5 +1,5 @@
 use cgp::extra::dispatch::{MatchWithValueHandlers, MatchWithValueHandlersRef};
-use cgp::extra::handler::{ComputerRef, ComputerRefComponent, UseInputDelegate};
+use cgp::extra::handler::{Computer, ComputerComponent, ComputerRef, ComputerRefComponent};
 use cgp::prelude::*;
 
 use crate::components::{LispExprTypeProviderComponent, MathExprTypeProviderComponent};
@@ -9,14 +9,14 @@ use crate::types::{Ident, List, Literal, Plus, Times};
 
 pub type Value = u64;
 
-#[derive(Debug, HasFields, FromVariant, ExtractField)]
+#[derive(Debug, CgpData)]
 pub enum MathExpr {
     Plus(Plus<MathExpr>),
     Times(Times<MathExpr>),
     Literal(Literal<Value>),
 }
 
-#[derive(Eq, PartialEq, Debug, HasFields, FromVariant, ExtractField)]
+#[derive(Eq, PartialEq, Debug, CgpData)]
 pub enum LispExpr {
     List(List<LispExpr>),
     Literal(Literal<Value>),
@@ -27,31 +27,27 @@ pub struct Interpreter;
 
 delegate_components! {
     Interpreter {
+        open { ComputerComponent, ComputerRefComponent };
+
         MathExprTypeProviderComponent:
             UseType<MathExpr>,
         LispExprTypeProviderComponent:
             UseType<LispExpr>,
-        ComputerComponent:
-            UseInputDelegate<
-                new EvalComponents {
-                    MathExpr: DispatchEval,
-                    Plus<MathExpr>: EvalAdd,
-                    Times<MathExpr>: EvalMultiply,
-                    Literal<Value>: EvalLiteral,
-                }
-            >,
-        ComputerRefComponent:
-            UseInputDelegate<
-                new ToLispComponents {
-                    MathExpr: DispatchToLisp,
-                    Literal<Value>: LiteralToLisp,
-                    Plus<MathExpr>: BinaryOpToLisp<Symbol!("+")>,
-                    Times<MathExpr>: BinaryOpToLisp<Symbol!("*")>,
-                }
-            >,
+
+        @ComputerComponent.<Code> Code.MathExpr: DispatchEval,
+        @ComputerComponent.<Code> Code.Plus<MathExpr>: EvalAdd,
+        @ComputerComponent.<Code> Code.Times<MathExpr>: EvalMultiply,
+        @ComputerComponent.<Code> Code.Literal<Value>: EvalLiteral,
+
+        @ComputerRefComponent.<Code> Code.MathExpr: DispatchToLisp,
+        @ComputerRefComponent.<Code> Code.Literal<Value>: LiteralToLisp,
+        @ComputerRefComponent.<Code> Code.Plus<MathExpr>: BinaryOpToLisp<Symbol!("+")>,
+        @ComputerRefComponent.<Code> Code.Times<MathExpr>: BinaryOpToLisp<Symbol!("*")>,
     }
 }
 
+/// Evaluates the language enum by handing its current variant to the context's evaluation. See
+/// [the dispatch layers page](https://contextgeneric.dev/docs/projects/cgp-examples/expression/architecture/dispatch-layers).
 #[cgp_impl(new DispatchEval)]
 impl<Code> Computer<Code, MathExpr> for Interpreter {
     type Output = Value;
@@ -61,6 +57,8 @@ impl<Code> Computer<Code, MathExpr> for Interpreter {
     }
 }
 
+/// Converts the language enum by handing its current variant to the context's conversion. See
+/// [the dispatch layers page](https://contextgeneric.dev/docs/projects/cgp-examples/expression/architecture/dispatch-layers).
 #[cgp_impl(new DispatchToLisp)]
 impl<Code> ComputerRef<Code, MathExpr> for Interpreter {
     type Output = LispExpr;
@@ -80,6 +78,7 @@ check_components! {
             (Eval, MathExpr),
             (Eval, Literal<Value>),
             (Eval, Plus<MathExpr>),
+            (Eval, Times<MathExpr>),
         ],
         ComputerRefComponent: [
             (ToLisp, MathExpr),

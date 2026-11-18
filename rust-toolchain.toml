@@ -1,0 +1,5 @@
+# The workspace's declared minimum (`rust-version`), so CI checks that every
+# example builds on it and a contributor builds with the same compiler.
+[toolchain]
+channel = "1.90"
+profile = "minimal"

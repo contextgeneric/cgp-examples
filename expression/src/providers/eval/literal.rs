@@ -1,8 +1,10 @@
-use cgp::extra::handler::{ComputerRef, ComputerRefComponent};
+use cgp::extra::handler::{Computer, ComputerComponent, ComputerRef, ComputerRefComponent};
 use cgp::prelude::*;
 
 use crate::types::Literal;
 
+/// Evaluates a `Literal` to its value. See
+/// [the add_mult example](https://contextgeneric.dev/docs/projects/cgp-examples/expression/examples/add-mult).
 #[cgp_impl(new EvalLiteral)]
 impl<Code, T> Computer<Code, Literal<T>> {
     type Output = T;

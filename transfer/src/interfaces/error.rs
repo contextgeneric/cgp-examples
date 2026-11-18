@@ -1,11 +1,18 @@
-use cgp::core::component::UseDelegate;
 use cgp::prelude::*;
 
+/// Capability to build the context's abstract error from a status-code marker and a detail
+/// value, so the mapping from a domain failure to an HTTP status lives in one provider. It
+/// is generic over the `Code` marker and the `Detail` type; `#[use_type(HasErrorType.Error)]`
+/// imports the context's shared error type as the return type.
 #[cgp_component(HttpErrorRaiser)]
-pub trait CanRaiseHttpError<Code, Detail>: HasErrorType {
-    fn raise_http_error(_code: Code, detail: Detail) -> Self::Error;
+#[prefix(@app.error in DefaultNamespace)]
+#[use_type(HasErrorType.Error)]
+pub trait CanRaiseHttpError<Code, Detail> {
+    fn raise_http_error(_code: Code, detail: Detail) -> Error;
 }
 
+/// Status-code markers passed as the `Code` argument of `raise_http_error`. Each is a
+/// zero-sized type that a provider maps to a concrete HTTP status (see `providers/error.rs`).
 pub struct ErrUnauthorized;
 
 pub struct ErrBadRequest;
@@ -13,15 +20,3 @@ pub struct ErrBadRequest;
 pub struct ErrNotFound;
 
 pub struct ErrInternal;
-
-#[cgp_impl(UseDelegate<Components>)]
-impl<Components, Code, Detail> HttpErrorRaiser<Code, Detail>
-where
-    Self: HasErrorType,
-    Components: DelegateComponent<(Code, Detail)>,
-    Components::Delegate: HttpErrorRaiser<Self, Code, Detail>,
-{
-    fn raise_http_error(code: Code, detail: Detail) -> Self::Error {
-        Components::Delegate::raise_http_error(code, detail)
-    }
-}
