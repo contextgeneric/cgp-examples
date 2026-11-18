@@ -35,10 +35,15 @@ Two crates have a page of their own on the website, which explains the code rath
 
 ## Building
 
-The workspace builds against unreleased `cgp` code: its `[patch.crates-io]` section overrides `cgp`
-and `cgp-error-anyhow` with the `cgp` repository's `main` branch by git URL, and the lockfile pins the
-commit. To test against a local change to `cgp`, switch the same entries to the commented-out paths
-into `../cgp`.
+The workspace takes `cgp` and `cgp-error-anyhow` 0.8.0 from crates.io. To test against a local
+change to `cgp`, add a `[patch.crates-io]` section to the root `Cargo.toml` that points both crates at
+a checkout in `../cgp`:
+
+```toml
+[patch.crates-io]
+cgp              = { path = "../cgp/crates/main/cgp" }
+cgp-error-anyhow = { path = "../cgp/crates/standalone/error/cgp-error-anyhow" }
+```
 
 It needs stable Rust 1.90 or later and uses the 2024 edition. The only tests in the workspace are
 three unit tests in `expression`; the other crates check their wiring at compile time with
